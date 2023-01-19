@@ -1,0 +1,22 @@
+[package]
+name = "vee"
+version = "0.0.0"
+edition = "2021"
+authors = ["Rouven Spreckels <rs@qu1x.dev>"]
+description = """
+Vector Expression Emitter – Multivector Parser | Symbolic Simplifier | SIMD Vectorizer –
+Optimized geometric algebra code generator inclusive LaTeX output.
+"""
+documentation = "https://docs.rs/vee"
+repository = "https://github.com/qu1x/vee"
+readme = "README.md"
+license = "MPL-2.0"
+include = [
+	"src/**/*.rs",
+	"Cargo.toml",
+	"README.md",
+	"RELEASES.md",
+	"LICENSES/*",
+]
+
+[dependencies]
