@@ -1658,7 +1658,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     pub fn bias() -> Self {
         Self::e0()
     }
-    /// The multivector of normal $`h_0 \equiv x\e_1 + y\e_2 + z\e_3 þ\e_4 + ð\e_5`$.
+    /// The multivector of normal $`h_0 \equiv x\e_1 + y\e_2 + z\e_3 + þ\e_4 + ð\e_5`$.
     #[must_use]
     #[inline]
     pub fn normal() -> Self {
@@ -1674,7 +1674,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// ```math
     /// v_0 \equiv a\e_{23} + b\e_{31} + c\e_{12} + d\e_{41} + e\e_{42}
-    ///            f\e_{43} + g\e_{15} + h\e_{25} + i\e_{35} + j\e_{45}
+    ///          + f\e_{43} + g\e_{15} + h\e_{25} + i\e_{35} + j\e_{45}
     /// ```
     #[must_use]
     #[inline]
@@ -1693,7 +1693,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of volume moment.
     ///
     /// ```math
-    /// v_\infty \equiv X\e_{01} + Y\e_{02} + Z\e_{03} Þ\e_{40} + Ð\e_{05}
+    /// v_\infty \equiv X\e_{01} + Y\e_{02} + Z\e_{03} + Þ\e_{40} + Ð\e_{05}
     /// ```
     #[must_use]
     #[inline]
@@ -1710,7 +1710,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// ```math
     /// p_0 \equiv a\e_{234} + b\e_{134} + c\e_{124} + d\e_{123} + e\e_{253}
-    ///            f\e_{315} + g\e_{152} + h\e_{145} + i\e_{245} + j\e_{345}
+    ///          + f\e_{315} + g\e_{152} + h\e_{145} + i\e_{245} + j\e_{345}
     /// ```
     #[must_use]
     #[inline]
@@ -1730,7 +1730,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// ```math
     /// p_\infty \equiv A\e_{015} + B\e_{052} + C\e_{035} + D\e_{054} + E\e_{014}
-    ///                 F\e_{042} + G\e_{034} + H\e_{032} + I\e_{013} + J\e_{021}
+    ///               + F\e_{042} + G\e_{034} + H\e_{032} + I\e_{013} + J\e_{021}
     /// ```
     #[must_use]
     #[inline]
@@ -1755,7 +1755,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of line displacement.
     ///
     /// ```math
-    /// \ell_0 \equiv x\e_{2345} + y\e_{3145} + z\e_{1245} þ\e_{1235} + ð\e_{1234}
+    /// \ell_0 \equiv x\e_{2345} + y\e_{3145} + z\e_{1245} + þ\e_{1235} + ð\e_{1234}
     /// ```
     #[must_use]
     #[inline]
@@ -1766,7 +1766,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// ```math
     /// \ell_\infty \equiv A\e_{0145} + B\e_{0245} + C\e_{0345} + D\e_{0325} + E\e_{0135}
-    ///                    F\e_{0215} + G\e_{0324} + H\e_{0134} + I\e_{0214} + J\e_{0123}
+    ///                  + F\e_{0215} + G\e_{0324} + H\e_{0134} + I\e_{0214} + J\e_{0123}
     /// ```
     #[must_use]
     #[inline]
@@ -1797,7 +1797,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of direction.
     ///
     /// ```math
-    /// P_\infty \equiv X\e_{03245} + Y\e_{01345} + Z\e_{02145} Þ\e_{01235} + Ð\e_{01243}
+    /// P_\infty \equiv X\e_{03245} + Y\e_{01345} + Z\e_{02145} + Þ\e_{01235} + Ð\e_{01243}
     /// ```
     #[must_use]
     #[inline]
