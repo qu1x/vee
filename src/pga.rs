@@ -136,7 +136,7 @@ impl<const M: i8, const N: usize> Mul for Pga<M, N> {
     fn mul(self, other: Self) -> Self::Output {
         let [lhs, rhs] = [self, other].map(|b| b.idx);
         let mul = Self { idx: lhs ^ rhs };
-        let cnt = ((1..=N).fold(0, |p, n| p ^ lhs >> n) & rhs).count_ones()
+        let cnt = ((1..=N).fold(0, |p, n| p ^ (lhs >> n)) & rhs).count_ones()
             + [self, other, mul]
                 .map(|b| u32::from(LUT[N][b.idx as usize].cnt))
                 .into_iter()
