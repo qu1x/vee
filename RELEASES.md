@@ -1,3 +1,7 @@
+# Version 0.1.1 (2025-09-02)
+
+  * Fix KaTeX documentation.
+
 # Version 0.1.0 (2025-09-02)
 
   * Implement symbolic reduction of multivector expressions.
