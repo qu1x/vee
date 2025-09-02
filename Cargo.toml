@@ -1,22 +1,55 @@
 [package]
 name = "vee"
-version = "0.0.0"
-edition = "2021"
-authors = ["Rouven Spreckels <rs@qu1x.dev>"]
-description = """
-Vector Expression Emitter – Multivector Parser | Symbolic Simplifier | SIMD Vectorizer –
-Optimized geometric algebra code generator inclusive LaTeX output.
-"""
+version = "0.1.0"
+rust-version = "1.85.0"
+edition = "2024"
+description = "Vector Expression Emitter (VEE): Geometric Algebra Code Generator"
 documentation = "https://docs.rs/vee"
 repository = "https://github.com/qu1x/vee"
-readme = "README.md"
+authors = ["Rouven Spreckels <rs@qu1x.dev>"]
 license = "MPL-2.0"
+keywords = [
+	"geometric-algebra",
+]
+categories = [
+	"science",
+	"graphics",
+	"mathematics",
+	"game-development",
+]
 include = [
 	"src/**/*.rs",
+	"tests/**/*.rs",
+	"tests/**/*.ct",
+	"katex.html",
 	"Cargo.toml",
 	"README.md",
 	"RELEASES.md",
-	"LICENSES/*",
+	"LICENSE-MPL",
 ]
 
+[package.metadata.docs.rs]
+cargo-args = ["-Z", "unstable-options", "-Z", "rustdoc-scrape-examples"]
+rustdoc-args = ["--cfg", "docsrs", "--html-in-header", "katex.html"]
+
 [dependencies]
+smartstring = { version = "1.0.1" }
+num-rational = { version = "0.4.2", default-features = false }
+change-case = "0.2.0"
+
+[lints.rust]
+ missing-docs = "forbid"
+
+[lints.rustdoc]
+broken-intra-doc-links = "forbid"
+
+[lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "deny", priority = -1 }
+nursery = { level = "deny", priority = -1 }
+
+[profile.dev]
+opt-level = 3
+
+[profile.test]
+opt-level = 3

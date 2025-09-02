@@ -1,0 +1,8 @@
+    1   e0   e1   e2  e01  e20  e12    I
+   e0   -1  e01 -e20  -e1   e2    I -e12
+   e1 -e01    1  e12  -e0    I   e2  e20
+   e2  e20 -e12    1    I   e0  -e1  e01
+  e01   e1   e0    I    1 -e12 -e20   e2
+  e20  -e2    I  -e0  e12    1  e01   e1
+  e12    I  -e2   e1  e20 -e01   -1  -e0
+    I -e12  e20  e01   e2   e1  -e0    1

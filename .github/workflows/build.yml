@@ -1,0 +1,31 @@
+name: build
+on:
+  merge_group:
+  pull_request:
+  push:
+env:
+  CARGO_TERM_COLOR: always
+jobs:
+  default:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+    - name: msrv
+      run: |
+        msrv=$(cargo metadata --no-deps --format-version 1 |
+          jq --raw-output '.packages[] | select(.name=="vee") | .rust_version')
+        echo "MSRV=$msrv" >> $GITHUB_ENV
+    - name: toolchain
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: ${{ env.MSRV }}
+        components: rustfmt, rust-docs, clippy
+    - name: test
+      run: cargo test
+    - name: clippy
+      run: cargo clippy --tests --examples
+    - name: doc
+      run: cargo doc
+    - name: fmt
+      run: cargo fmt --check
