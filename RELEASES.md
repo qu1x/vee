@@ -1,3 +1,8 @@
+# Version 0.1.2 (2025-09-03)
+
+  * Generate constructor methods of basis blades with compile-time blocks.
+  * Fix typos and improve documentation.
+
 # Version 0.1.1 (2025-09-02)
 
   * Fix KaTeX documentation.
