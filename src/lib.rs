@@ -10,14 +10,14 @@
 //! rational coefficients. In contrast, rational polynomials and hence polynomial division is not
 //! required for lower dimensional geometric algebra flavors as the inverse of a multivector is
 //! given by multiplying it with the inverse of its mixed-grade norm, i.e., a Study number for
-//! dimensions $`D < 6`$. [^1] See the [examples](#examples) below where the symbolic expressions
-//! are generated in text form. The next releases will implement code forms (e.g., Rust code in
-//! various profiles based on SIMD using [`lav`] with and without generics or arbitrary precision
-//! types using [`rug`]). Currently, the Pistachio flavor -- Projective Geometric Algebra (PGA) --
-//! is implemented for $`D \equiv N + 1 \le 6 `$ in all three metrics, i.e., elliptic, hyperbolic,
-//! and parabolic (Euclidean). [^2] The 5D PGA (i.e., $`N = 5`$) is incomplete as there is no
-//! inverse based on Study numbers but it provides dimension-agnostic insights regarding duality and
-//! the choice of basis blades.
+//! dimensions $`D < 6`$.[^1] See the [examples](#examples) below where the symbolic expressions are
+//! generated in text form. The next releases will implement code forms (e.g., Rust code in various
+//! profiles based on SIMD using [`lav`] with and without generics or arbitrary precision types
+//! using [`rug`]). Currently, the Pistachio flavor -- Projective Geometric Algebra (PGA) -- is
+//! implemented for $`D \equiv N + 1 \le 6 `$ in all three metrics, i.e., elliptic, hyperbolic, and
+//! parabolic (Euclidean).[^2] The 5D PGA (i.e., $`N = 5`$) is incomplete as there is no inverse
+//! based on Study numbers but it provides dimension-agnostic insights regarding duality and the
+//! choice of basis blades.
 //!
 //! [^1]: S. De Keninck and M. Roelfs, “Normalization, square roots, and the exponential and
 //! logarithmic maps in geometric algebras of less than 6D”, [Mathematical Methods in the Applied

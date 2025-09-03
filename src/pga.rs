@@ -241,7 +241,7 @@ impl BasisBlade {
     const fn lut<const LEN: usize>(tab: [Self; LEN]) -> [Self; LEN] {
         let mut lut = tab;
         let mut idx = 0;
-        while idx < tab.len() {
+        while idx < LEN {
             lut[tab[idx].idx as usize] = Self {
                 sym: tab[idx].sym,
                 cnt: tab[idx].cnt,

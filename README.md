@@ -22,7 +22,7 @@ coefficients.
 
 ## Features
 
-  * Uniquely reduce symbolic multivector expression.
+  * Uniquely reduce symbolic multivector expressions.
   * Generate expressions in text form.
   * Define the metric-agnostic basis (i.e., elliptic, parabolic, hyperbolic) and the multivector
     entities of the projective geometric algebra (PGA) for dimensions N < 6.
@@ -36,8 +36,8 @@ See the [release history](RELEASES.md) to keep track of the development.
 
 ## Pseudo-local Documentation Builds
 
-Build the documentation with `cargo tex` defined in [cargo-tex](cargo-tex). Note that navigating the
-documentation requires internet access as KaTeX is embedded via remote CDN.
+Build the documentation with [cargo-tex](cargo-tex). Note that navigating the documentation requires
+internet access as KaTeX is embedded via remote CDN.
 
 ```sh
 cargo tex --open
