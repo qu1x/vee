@@ -261,176 +261,188 @@ impl BasisBlade {
 const TAB: [&[BasisBlade]; 6] = [&TAB0, &TAB1, &TAB2, &TAB3, &TAB4, &TAB5];
 const LUT: [&[BasisBlade]; 6] = [&LUT0, &LUT1, &LUT2, &LUT3, &LUT4, &LUT5];
 
-#[rustfmt::skip]
-const TAB0: [BasisBlade; 02] = BasisBlade::tab([
-    "e",
-    "e0",
-]);
-#[rustfmt::skip]
-const TAB1: [BasisBlade; 04] = BasisBlade::tab([
-    "e",
-    "e0",
-    "e1",
-    "e01",
-]);
-#[rustfmt::skip]
-const TAB2: [BasisBlade; 08] = BasisBlade::tab([
-    "e",
-    "e0",
-    "e1",
-    "e2",
-    "e01",
-    "e20",
-    "e12",
-    "e012",
-]);
-#[rustfmt::skip]
-const TAB3: [BasisBlade; 16] = BasisBlade::tab([
-    "e",
-    "e0",
-    "e1",
-    "e2",
-    "e3",
-    "e01",
-    "e02",
-    "e03",
-    "e12",
-    "e31",
-    "e23",
-    "e021",
-    "e013",
-    "e032",
-    "e123",
-    "e0123",
-]);
-#[rustfmt::skip]
-const TAB4: [BasisBlade; 32] = BasisBlade::tab([
-    "e",
-    "e0",
-    "e1",
-    "e2",
-    "e3",
-    "e4",
-    "e01",
-    "e02",
-    "e03",
-    "e40",
-    "e23",
-    "e31",
-    "e12",
-    "e41",
-    "e42",
-    "e43",
-    "e021",
-    "e013",
-    "e032",
-    "e034",
-    "e024",
-    "e014",
-    "e123",
-    "e124",
-    "e314",
-    "e234",
-    "e0123",
-    "e0214",
-    "e0134",
-    "e0324",
-    "e1234",
-    "e01234",
-]);
-#[rustfmt::skip]
-const TAB5: [BasisBlade; 64] = BasisBlade::tab([
-    "e",
-    "e0",
-    "e1",
-    "e2",
-    "e3",
-    "e4",
-    "e5",
-    "e01",
-    "e02",
-    "e03",
-    "e40",
-    "e05",
-    "e23",
-    "e31",
-    "e12",
-    "e41",
-    "e42",
-    "e43",
-    "e15",
-    "e25",
-    "e35",
-    "e45",
-    "e015",
-    "e052",
-    "e035",
-    "e054",
-    "e014",
-    "e042",
-    "e034",
-    "e032",
-    "e013",
-    "e021",
-    "e345",
-    "e245",
-    "e145",
-    "e152",
-    "e315",
-    "e253",
-    "e123",
-    "e124",
-    "e134", 
-    "e234",
-    "e0123",
-    "e0214",
-    "e0134",
-    "e0324",
-    "e0215",
-    "e0135",
-    "e0325",
-    "e0345",
-    "e0245",
-    "e0145",
-    "e1234",
-    "e1235",
-    "e1245",
-    "e3145",
-    "e2345",
-    "e01243",
-    "e01235",
-    "e02145",
-    "e01345",
-    "e03245",
-	"e12345",
-    "e012345",
-]);
-const LUT0: [BasisBlade; 02] = BasisBlade::lut(TAB0);
-const LUT1: [BasisBlade; 04] = BasisBlade::lut(TAB1);
-const LUT2: [BasisBlade; 08] = BasisBlade::lut(TAB2);
-const LUT3: [BasisBlade; 16] = BasisBlade::lut(TAB3);
-const LUT4: [BasisBlade; 32] = BasisBlade::lut(TAB4);
-const LUT5: [BasisBlade; 64] = BasisBlade::lut(TAB5);
-
-macro_rules! e {
-    ($s:literal) => {{
-        const fn f() {}
-        fn type_name_of<T>(_: T) -> &'static str {
-            std::any::type_name::<T>()
+macro_rules! basis {
+    ($t:ident, $u:ident, $n:tt, [$(($s:tt, $b:tt),)*]) => {
+        /// The basis blades of the PGA with embedded dimension $`N = 0`$.
+        ///
+        /// ```gdef
+        /// \gdef\idx#1{\expandafter\sub#1\relax}
+        /// \gdef\sub#1#2\relax{#2}
+        /// \gdef\fmt#1{\e_{\idx{#1}}}
+        /// \gdef\e{\boldsymbol e}
+        /// ```
+        impl<const M: i8> Multivector<Pga<M, $n>> {
+            $(
+                #[doc = concat!(
+                    "The multivector of basis blade $`",
+                    stringify!($s),
+                    "\\fmt{",
+                    stringify!($b),
+                    "}`$.",
+                )]
+                #[must_use]
+                #[inline]
+                pub fn $b() -> Self {
+                    Self::new([(stringify!($s), const { Pga::new(stringify!($b)) })])
+                }
+            )*
         }
-        Self::new([(
-            $s,
-            Pga::new(
-                type_name_of(f)
-                    .rsplit("::")
-                    .find(|&part| part != "f" && part != "{{closure}}")
-                    .expect("short function name starting with \"e\""),
-            ),
-        )])
-    }};
+        const $t: [BasisBlade; count!($(($s, $b)),*)] = BasisBlade::tab([$(stringify!($b),)*]);
+        const $u: [BasisBlade; count!($(($s, $b)),*)] = BasisBlade::lut($t);
+    };
 }
 
-/// The multivectors of the PGA with embedded dimension $`N = 0`$.
+macro_rules! count {
+    () => (0);
+    ($head:expr $(, $tail:expr)*) => (1 + count!($($tail),*));
+}
+
+#[rustfmt::skip]
+basis!(TAB0, LUT0, 0, [
+    (w, e),
+    (W, e0),
+]);
+#[rustfmt::skip]
+basis!(TAB1, LUT1, 1, [
+    (w, e),
+    (X, e0),
+    (w, e1),
+    (W, e01),
+]);
+#[rustfmt::skip]
+basis!(TAB2, LUT2, 2, [
+    (w, e),
+    (W, e0),
+    (x, e1),
+    (y, e2),
+    (Y, e01),
+    (X, e20),
+    (w, e12),
+    (W, e012),
+]);
+#[rustfmt::skip]
+basis!(TAB3, LUT3, 3, [
+    (w, e),
+    (W, e0),
+    (x, e1),
+    (y, e2),
+    (z, e3),
+    (X, e01),
+    (Y, e02),
+    (Z, e03),
+    (z, e12),
+    (y, e31),
+    (x, e23),
+    (Z, e021),
+    (Y, e013),
+    (X, e032),
+    (w, e123),
+    (W, e0123),
+]);
+#[rustfmt::skip]
+basis!(TAB4, LUT4, 4, [
+    (v, e),
+    (W, e0),
+    (x, e1),
+    (y, e2),
+    (z, e3),
+    (þ, e4),
+    (X, e01),
+    (Y, e02),
+    (Z, e03),
+    (Þ, e40),
+    (a, e23),
+    (b, e31),
+    (c, e12),
+    (d, e41),
+    (e, e42),
+    (f, e43),
+    (F, e021),
+    (E, e013),
+    (D, e032),
+    (C, e034),
+    (B, e024),
+    (A, e014),
+    (þ, e123),
+    (z, e124),
+    (y, e314),
+    (x, e234),
+    (Þ, e0123),
+    (Z, e0214),
+    (Y, e0134),
+    (X, e0324),
+    (w, e1234),
+    (V, e01234),
+]);
+#[rustfmt::skip]
+basis!(TAB5, LUT5, 5, [
+    (v, e),
+    (W, e0),
+    (x, e1),
+    (y, e2),
+    (z, e3),
+    (þ, e4),
+    (ð, e5),
+    (X, e01),
+    (Y, e02),
+    (Z, e03),
+    (Þ, e40),
+    (Ð, e05),
+    (a, e23),
+    (b, e31),
+    (c, e12),
+    (d, e41),
+    (e, e42),
+    (f, e43),
+    (g, e15),
+    (h, e25),
+    (i, e35),
+    (j, e45),
+    (A, e015),
+    (B, e052),
+    (C, e035),
+    (D, e054),
+    (E, e014),
+    (F, e042),
+    (G, e034),
+    (H, e032),
+    (I, e013),
+    (J, e021),
+    (j, e345),
+    (i, e245),
+    (h, e145),
+    (g, e152),
+    (f, e315),
+    (e, e253),
+    (d, e123),
+    (c, e124),
+    (b, e134), 
+    (a, e234),
+    (J, e0123),
+    (I, e0214),
+    (H, e0134),
+    (G, e0324),
+    (F, e0215),
+    (E, e0135),
+    (D, e0325),
+    (C, e0345),
+    (B, e0245),
+    (A, e0145),
+    (ð, e1234),
+    (þ, e1235),
+    (z, e1245),
+    (y, e3145),
+    (x, e2345),
+    (Ð, e01243),
+    (Þ, e01235),
+    (Z, e02145),
+    (Y, e01345),
+    (X, e03245),
+    (w, e12345),
+    (V, e012345),
+]);
+
+/// The named entities of the PGA with embedded dimension $`N = 0`$.
 ///
 /// ```gdef
 /// \gdef\e{
@@ -441,25 +453,13 @@ macro_rules! e {
 /// }
 /// ```
 impl<const M: i8> Multivector<Pga<M, 0>> {
-    /// The multivector $`w`$.
-    #[must_use]
-    #[inline]
-    pub fn e() -> Self {
-        e!("w")
-    }
-    /// The multivector $`W\e_0`$.
-    #[must_use]
-    #[inline]
-    pub fn e0() -> Self {
-        e!("W")
-    }
-    /// The multivector of scalar $`n_0 \equiv w`$.
+    /// The multivector of scalar $`n_0 \equiv w\e`$ where $`\e \equiv 1`$.
     #[must_use]
     #[inline]
     pub fn scalar() -> Self {
         Self::e()
     }
-    /// The multivector of pseudoscalar $`n_\infty \equiv W\I`$.
+    /// The multivector of pseudoscalar $`n_\infty \equiv W\I`$ where $`\I \equiv \e_0`$.
     #[must_use]
     #[inline]
     pub fn pseudoscalar() -> Self {
@@ -473,7 +473,7 @@ impl<const M: i8> Multivector<Pga<M, 0>> {
     }
 }
 
-/// The multivectors of the PGA with embedded dimension $`N = 1`$.
+/// The named entities of the PGA with embedded dimension $`N = 1`$.
 ///
 /// ```gdef
 /// \gdef\e{
@@ -484,37 +484,13 @@ impl<const M: i8> Multivector<Pga<M, 0>> {
 /// }
 /// ```
 impl<const M: i8> Multivector<Pga<M, 1>> {
-    /// The multivector $`w`$.
-    #[must_use]
-    #[inline]
-    pub fn e() -> Self {
-        e!("w")
-    }
-    /// The multivector $`x\e_0`$.
-    #[must_use]
-    #[inline]
-    pub fn e0() -> Self {
-        e!("X")
-    }
-    /// The multivector $`x\e_1`$.
-    #[must_use]
-    #[inline]
-    pub fn e1() -> Self {
-        e!("w")
-    }
-    /// The multivector $`x\e_{01}`$.
-    #[must_use]
-    #[inline]
-    pub fn e01() -> Self {
-        e!("W")
-    }
-    /// The multivector of scalar $`n_0 \equiv w`$.
+    /// The multivector of scalar $`n_0 \equiv w\e`$ where $`\e \equiv 1`$.
     #[must_use]
     #[inline]
     pub fn scalar() -> Self {
         Self::e()
     }
-    /// The multivector of pseudoscalar $`n_\infty \equiv W\I`$.
+    /// The multivector of pseudoscalar $`n_\infty \equiv W\I`$ where $`\I \equiv \e_{01}`$.
     #[must_use]
     #[inline]
     pub fn pseudoscalar() -> Self {
@@ -552,7 +528,7 @@ impl<const M: i8> Multivector<Pga<M, 1>> {
     }
 }
 
-/// The multivectors of the PGA with embedded dimension $`N = 2`$.
+/// The named entities of the PGA with embedded dimension $`N = 2`$.
 ///
 /// ```gdef
 /// \gdef\e{
@@ -563,61 +539,13 @@ impl<const M: i8> Multivector<Pga<M, 1>> {
 /// }
 /// ```
 impl<const M: i8> Multivector<Pga<M, 2>> {
-    /// The multivector $`w`$.
-    #[must_use]
-    #[inline]
-    pub fn e() -> Self {
-        e!("w")
-    }
-    /// The multivector $`W\e_0`$.
-    #[must_use]
-    #[inline]
-    pub fn e0() -> Self {
-        e!("W")
-    }
-    /// The multivector $`x\e_1`$.
-    #[must_use]
-    #[inline]
-    pub fn e1() -> Self {
-        e!("x")
-    }
-    /// The multivector $`y\e_2`$.
-    #[must_use]
-    #[inline]
-    pub fn e2() -> Self {
-        e!("y")
-    }
-    /// The multivector $`Y\e_{01}`$.
-    #[must_use]
-    #[inline]
-    pub fn e01() -> Self {
-        e!("Y")
-    }
-    /// The multivector $`X\e_{20}`$.
-    #[must_use]
-    #[inline]
-    pub fn e20() -> Self {
-        e!("X")
-    }
-    /// The multivector $`W\e_{12}`$.
-    #[must_use]
-    #[inline]
-    pub fn e12() -> Self {
-        e!("w")
-    }
-    /// The multivector $`W\e_{012}`$.
-    #[must_use]
-    #[inline]
-    pub fn e012() -> Self {
-        e!("W")
-    }
-    /// The multivector of scalar $`n_0 \equiv w`$.
+    /// The multivector of scalar $`n_0 \equiv w\e`$ where $`\e \equiv 1`$.
     #[must_use]
     #[inline]
     pub fn scalar() -> Self {
         Self::e()
     }
-    /// The multivector of pseudoscalar $`n_\infty \equiv W\I`$.
+    /// The multivector of pseudoscalar $`n_\infty \equiv W\I`$ where $`\I \equiv \e_{012}`$.
     #[must_use]
     #[inline]
     pub fn pseudoscalar() -> Self {
@@ -703,7 +631,7 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     }
 }
 
-/// The multivectors of the PGA with embedded dimension $`N = 3`$.
+/// The named entities of the PGA with embedded dimension $`N = 3`$.
 ///
 /// ```gdef
 /// \gdef\e{
@@ -714,109 +642,13 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
 /// }
 /// ```
 impl<const M: i8> Multivector<Pga<M, 3>> {
-    /// The multivector $`w`$.
-    #[must_use]
-    #[inline]
-    pub fn e() -> Self {
-        e!("w")
-    }
-    /// The multivector $`W\e_0`$.
-    #[must_use]
-    #[inline]
-    pub fn e0() -> Self {
-        e!("W")
-    }
-    /// The multivector $`x\e_1`$.
-    #[must_use]
-    #[inline]
-    pub fn e1() -> Self {
-        e!("x")
-    }
-    /// The multivector $`y\e_2`$.
-    #[must_use]
-    #[inline]
-    pub fn e2() -> Self {
-        e!("y")
-    }
-    /// The multivector $`z\e_3`$.
-    #[must_use]
-    #[inline]
-    pub fn e3() -> Self {
-        e!("z")
-    }
-    /// The multivector $`X\e_{01}`$.
-    #[must_use]
-    #[inline]
-    pub fn e01() -> Self {
-        e!("X")
-    }
-    /// The multivector $`Y\e_{02}`$.
-    #[must_use]
-    #[inline]
-    pub fn e02() -> Self {
-        e!("Y")
-    }
-    /// The multivector $`Z\e_{03}`$.
-    #[must_use]
-    #[inline]
-    pub fn e03() -> Self {
-        e!("Z")
-    }
-    /// The multivector $`z\e_{12}`$.
-    #[must_use]
-    #[inline]
-    pub fn e12() -> Self {
-        e!("z")
-    }
-    /// The multivector $`y\e_{31}`$.
-    #[must_use]
-    #[inline]
-    pub fn e31() -> Self {
-        e!("y")
-    }
-    /// The multivector $`x\e_{23}`$.
-    #[must_use]
-    #[inline]
-    pub fn e23() -> Self {
-        e!("x")
-    }
-    /// The multivector $`Z\e_{021}`$.
-    #[must_use]
-    #[inline]
-    pub fn e021() -> Self {
-        e!("Z")
-    }
-    /// The multivector $`Y\e_{013}`$.
-    #[must_use]
-    #[inline]
-    pub fn e013() -> Self {
-        e!("Y")
-    }
-    /// The multivector $`X\e_{032}`$.
-    #[must_use]
-    #[inline]
-    pub fn e032() -> Self {
-        e!("X")
-    }
-    /// The multivector $`w\e_{123}`$.
-    #[must_use]
-    #[inline]
-    pub fn e123() -> Self {
-        e!("w")
-    }
-    /// The multivector $`W\e_{0123}`$.
-    #[must_use]
-    #[inline]
-    pub fn e0123() -> Self {
-        e!("W")
-    }
-    /// The multivector of scalar $`n_0 \equiv w`$.
+    /// The multivector of scalar $`n_0 \equiv w\e`$ where $`\e \equiv 1`$.
     #[must_use]
     #[inline]
     pub fn scalar() -> Self {
         Self::e()
     }
-    /// The multivector of pseudoscalar $`n_\infty \equiv W\I`$.
+    /// The multivector of pseudoscalar $`n_\infty \equiv W\I`$ where $`\I \equiv \e_{0123}`$.
     #[must_use]
     #[inline]
     pub fn pseudoscalar() -> Self {
@@ -920,7 +752,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     }
 }
 
-/// The multivectors of the PGA with embedded dimension $`N = 4`$ (experimental).
+/// The named entities of the PGA with embedded dimension $`N = 4`$ (experimental).
 ///
 /// ```gdef
 /// \gdef\e{
@@ -931,205 +763,13 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
 /// }
 /// ```
 impl<const M: i8> Multivector<Pga<M, 4>> {
-    /// The multivector $`v`$.
-    #[must_use]
-    #[inline]
-    pub fn e() -> Self {
-        e!("v")
-    }
-    /// The multivector $`x\e_0`$.
-    #[must_use]
-    #[inline]
-    pub fn e0() -> Self {
-        e!("W")
-    }
-    /// The multivector $`x\e_1`$.
-    #[must_use]
-    #[inline]
-    pub fn e1() -> Self {
-        e!("x")
-    }
-    /// The multivector $`x\e_2`$.
-    #[must_use]
-    #[inline]
-    pub fn e2() -> Self {
-        e!("y")
-    }
-    /// The multivector $`x\e_3`$.
-    #[must_use]
-    #[inline]
-    pub fn e3() -> Self {
-        e!("z")
-    }
-    /// The multivector $`x\e_4`$.
-    #[must_use]
-    #[inline]
-    pub fn e4() -> Self {
-        e!("þ")
-    }
-    /// The multivector $`x\e_{01}`$.
-    #[must_use]
-    #[inline]
-    pub fn e01() -> Self {
-        e!("X")
-    }
-    /// The multivector $`x\e_{02}`$.
-    #[must_use]
-    #[inline]
-    pub fn e02() -> Self {
-        e!("Y")
-    }
-    /// The multivector $`x\e_{03}`$.
-    #[must_use]
-    #[inline]
-    pub fn e03() -> Self {
-        e!("Z")
-    }
-    /// The multivector $`x\e_{40}`$.
-    #[must_use]
-    #[inline]
-    pub fn e40() -> Self {
-        e!("Þ")
-    }
-    /// The multivector $`x\e_{23}`$.
-    #[must_use]
-    #[inline]
-    pub fn e23() -> Self {
-        e!("a")
-    }
-    /// The multivector $`x\e_{31}`$.
-    #[must_use]
-    #[inline]
-    pub fn e31() -> Self {
-        e!("b")
-    }
-    /// The multivector $`x\e_{12}`$.
-    #[must_use]
-    #[inline]
-    pub fn e12() -> Self {
-        e!("c")
-    }
-    /// The multivector $`x\e_{41}`$.
-    #[must_use]
-    #[inline]
-    pub fn e41() -> Self {
-        e!("d")
-    }
-    /// The multivector $`x\e_{42}`$.
-    #[must_use]
-    #[inline]
-    pub fn e42() -> Self {
-        e!("e")
-    }
-    /// The multivector $`x\e_{43}`$.
-    #[must_use]
-    #[inline]
-    pub fn e43() -> Self {
-        e!("f")
-    }
-    /// The multivector $`x\e_{021}`$.
-    #[must_use]
-    #[inline]
-    pub fn e021() -> Self {
-        e!("F")
-    }
-    /// The multivector $`x\e_{013}`$.
-    #[must_use]
-    #[inline]
-    pub fn e013() -> Self {
-        e!("E")
-    }
-    /// The multivector $`x\e_{032}`$.
-    #[must_use]
-    #[inline]
-    pub fn e032() -> Self {
-        e!("D")
-    }
-    /// The multivector $`x\e_{034}`$.
-    #[must_use]
-    #[inline]
-    pub fn e034() -> Self {
-        e!("C")
-    }
-    /// The multivector $`x\e_{024}`$.
-    #[must_use]
-    #[inline]
-    pub fn e024() -> Self {
-        e!("B")
-    }
-    /// The multivector $`x\e_{014}`$.
-    #[must_use]
-    #[inline]
-    pub fn e014() -> Self {
-        e!("A")
-    }
-    /// The multivector $`x\e_{123}`$.
-    #[must_use]
-    #[inline]
-    pub fn e123() -> Self {
-        e!("þ")
-    }
-    /// The multivector $`x\e_{124}`$.
-    #[must_use]
-    #[inline]
-    pub fn e124() -> Self {
-        e!("z")
-    }
-    /// The multivector $`x\e_{314}`$.
-    #[must_use]
-    #[inline]
-    pub fn e314() -> Self {
-        e!("y")
-    }
-    /// The multivector $`x\e_{234}`$.
-    #[must_use]
-    #[inline]
-    pub fn e234() -> Self {
-        e!("x")
-    }
-    /// The multivector $`x\e_{1234}`$.
-    #[must_use]
-    #[inline]
-    pub fn e1234() -> Self {
-        e!("w")
-    }
-    /// The multivector $`x\e_{0123}`$.
-    #[must_use]
-    #[inline]
-    pub fn e0123() -> Self {
-        e!("Þ")
-    }
-    /// The multivector $`x\e_{0214}`$.
-    #[must_use]
-    #[inline]
-    pub fn e0214() -> Self {
-        e!("Z")
-    }
-    /// The multivector $`x\e_{0134}`$.
-    #[must_use]
-    #[inline]
-    pub fn e0134() -> Self {
-        e!("Y")
-    }
-    /// The multivector $`x\e_{0324}`$.
-    #[must_use]
-    #[inline]
-    pub fn e0324() -> Self {
-        e!("X")
-    }
-    /// The multivector $`x\e_{01234}`$.
-    #[must_use]
-    #[inline]
-    pub fn e01234() -> Self {
-        e!("V")
-    }
-    /// The multivector of scalar $`n_0 \equiv v`$.
+    /// The multivector of scalar $`n_0 \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
     #[inline]
     pub fn scalar() -> Self {
         Self::e()
     }
-    /// The multivector of pseudoscalar $`n_\infty \equiv V\I`$.
+    /// The multivector of pseudoscalar $`n_\infty \equiv V\I`$ where $`\I \equiv \e_{01234}`$.
     #[must_use]
     #[inline]
     pub fn pseudoscalar() -> Self {
@@ -1238,7 +878,7 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     }
 }
 
-/// The multivectors of the PGA with embedded dimension $`N = 5`$ (experimental).
+/// The named entities of the PGA with embedded dimension $`N = 5`$ (experimental).
 ///
 /// ```gdef
 /// \gdef\e{
@@ -1249,402 +889,17 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
 /// }
 /// ```
 impl<const M: i8> Multivector<Pga<M, 5>> {
-    /// The multivector $`v`$.
-    #[must_use]
-    #[inline]
-    pub fn e() -> Self {
-        e!("v")
-    }
-    /// The multivector $`w\e_0`$.
-    #[must_use]
-    #[inline]
-    pub fn e0() -> Self {
-        e!("W")
-    }
-    /// The multivector $`x\e_1`$.
-    #[must_use]
-    #[inline]
-    pub fn e1() -> Self {
-        e!("x")
-    }
-    /// The multivector $`y\e_2`$.
-    #[must_use]
-    #[inline]
-    pub fn e2() -> Self {
-        e!("y")
-    }
-    /// The multivector $`z\e_3`$.
-    #[must_use]
-    #[inline]
-    pub fn e3() -> Self {
-        e!("z")
-    }
-    /// The multivector $`þ\e_4`$.
-    #[must_use]
-    #[inline]
-    pub fn e4() -> Self {
-        e!("þ")
-    }
-    /// The multivector $`ð\e_5`$.
-    #[must_use]
-    #[inline]
-    pub fn e5() -> Self {
-        e!("ð")
-    }
-    /// The multivector $`X\e_{01}`$.
-    #[must_use]
-    #[inline]
-    pub fn e01() -> Self {
-        e!("X")
-    }
-    /// The multivector $`Y\e_{02}`$.
-    #[must_use]
-    #[inline]
-    pub fn e02() -> Self {
-        e!("Y")
-    }
-    /// The multivector $`Z\e_{03}`$.
-    #[must_use]
-    #[inline]
-    pub fn e03() -> Self {
-        e!("Z")
-    }
-    /// The multivector $`Þ\e_{40}`$.
-    #[must_use]
-    #[inline]
-    pub fn e40() -> Self {
-        e!("Þ")
-    }
-    /// The multivector $`Ð\e_{05}`$.
-    #[must_use]
-    #[inline]
-    pub fn e05() -> Self {
-        e!("Ð")
-    }
-    /// The multivector $`a\e_{23}`$.
-    #[must_use]
-    #[inline]
-    pub fn e23() -> Self {
-        e!("a")
-    }
-    /// The multivector $`b\e_{31}`$.
-    #[must_use]
-    #[inline]
-    pub fn e31() -> Self {
-        e!("b")
-    }
-    /// The multivector $`c\e_{12}`$.
-    #[must_use]
-    #[inline]
-    pub fn e12() -> Self {
-        e!("c")
-    }
-    /// The multivector $`d\e_{41}`$.
-    #[must_use]
-    #[inline]
-    pub fn e41() -> Self {
-        e!("d")
-    }
-    /// The multivector $`e\e_{42}`$.
-    #[must_use]
-    #[inline]
-    pub fn e42() -> Self {
-        e!("e")
-    }
-    /// The multivector $`f\e_{43}`$.
-    #[must_use]
-    #[inline]
-    pub fn e43() -> Self {
-        e!("f")
-    }
-    /// The multivector $`g\e_{15}`$.
-    #[must_use]
-    #[inline]
-    pub fn e15() -> Self {
-        e!("g")
-    }
-    /// The multivector $`h\e_{25}`$.
-    #[must_use]
-    #[inline]
-    pub fn e25() -> Self {
-        e!("h")
-    }
-    /// The multivector $`i\e_{35}`$.
-    #[must_use]
-    #[inline]
-    pub fn e35() -> Self {
-        e!("i")
-    }
-    /// The multivector $`j\e_{45}`$.
-    #[must_use]
-    #[inline]
-    pub fn e45() -> Self {
-        e!("j")
-    }
-    /// The multivector $`A\e_{015}`$.
-    #[must_use]
-    #[inline]
-    pub fn e015() -> Self {
-        e!("A")
-    }
-    /// The multivector $`B\e_{052}`$.
-    #[must_use]
-    #[inline]
-    pub fn e052() -> Self {
-        e!("B")
-    }
-    /// The multivector $`C\e_{035}`$.
-    #[must_use]
-    #[inline]
-    pub fn e035() -> Self {
-        e!("C")
-    }
-    /// The multivector $`D\e_{054}`$.
-    #[must_use]
-    #[inline]
-    pub fn e054() -> Self {
-        e!("D")
-    }
-    /// The multivector $`E\e_{014}`$.
-    #[must_use]
-    #[inline]
-    pub fn e014() -> Self {
-        e!("E")
-    }
-    /// The multivector $`F\e_{042}`$.
-    #[must_use]
-    #[inline]
-    pub fn e042() -> Self {
-        e!("F")
-    }
-    /// The multivector $`G\e_{034}`$.
-    #[must_use]
-    #[inline]
-    pub fn e034() -> Self {
-        e!("G")
-    }
-    /// The multivector $`H\e_{032}`$.
-    #[must_use]
-    #[inline]
-    pub fn e032() -> Self {
-        e!("H")
-    }
-    /// The multivector $`I\e_{013}`$.
-    #[must_use]
-    #[inline]
-    pub fn e013() -> Self {
-        e!("I")
-    }
-    /// The multivector $`J\e_{021}`$.
-    #[must_use]
-    #[inline]
-    pub fn e021() -> Self {
-        e!("J")
-    }
-    /// The multivector $`j\e_{345}`$.
-    #[must_use]
-    #[inline]
-    pub fn e345() -> Self {
-        e!("j")
-    }
-    /// The multivector $`i\e_{245}`$.
-    #[must_use]
-    #[inline]
-    pub fn e245() -> Self {
-        e!("i")
-    }
-    /// The multivector $`h\e_{145}`$.
-    #[must_use]
-    #[inline]
-    pub fn e145() -> Self {
-        e!("h")
-    }
-    /// The multivector $`g\e_{152}`$.
-    #[must_use]
-    #[inline]
-    pub fn e152() -> Self {
-        e!("g")
-    }
-    /// The multivector $`f\e_{315}`$.
-    #[must_use]
-    #[inline]
-    pub fn e315() -> Self {
-        e!("f")
-    }
-    /// The multivector $`e\e_{253}`$.
-    #[must_use]
-    #[inline]
-    pub fn e253() -> Self {
-        e!("e")
-    }
-    /// The multivector $`d\e_{123}`$.
-    #[must_use]
-    #[inline]
-    pub fn e123() -> Self {
-        e!("d")
-    }
-    /// The multivector $`c\e_{124}`$.
-    #[must_use]
-    #[inline]
-    pub fn e124() -> Self {
-        e!("c")
-    }
-    /// The multivector $`b\e_{134}`$.
-    #[must_use]
-    #[inline]
-    pub fn e134() -> Self {
-        e!("b")
-    }
-    /// The multivector $`a\e_{234}`$.
-    #[must_use]
-    #[inline]
-    pub fn e234() -> Self {
-        e!("a")
-    }
-    /// The multivector $`J\e_{0123}`$.
-    #[must_use]
-    #[inline]
-    pub fn e0123() -> Self {
-        e!("J")
-    }
-    /// The multivector $`I\e_{0214}`$.
-    #[must_use]
-    #[inline]
-    pub fn e0214() -> Self {
-        e!("I")
-    }
-    /// The multivector $`H\e_{0134}`$.
-    #[must_use]
-    #[inline]
-    pub fn e0134() -> Self {
-        e!("H")
-    }
-    /// The multivector $`G\e_{0324}`$.
-    #[must_use]
-    #[inline]
-    pub fn e0324() -> Self {
-        e!("G")
-    }
-    /// The multivector $`F\e_{0215}`$.
-    #[must_use]
-    #[inline]
-    pub fn e0215() -> Self {
-        e!("F")
-    }
-    /// The multivector $`E\e_{0135}`$.
-    #[must_use]
-    #[inline]
-    pub fn e0135() -> Self {
-        e!("E")
-    }
-    /// The multivector $`D\e_{0325}`$.
-    #[must_use]
-    #[inline]
-    pub fn e0325() -> Self {
-        e!("D")
-    }
-    /// The multivector $`C\e_{0345}`$.
-    #[must_use]
-    #[inline]
-    pub fn e0345() -> Self {
-        e!("C")
-    }
-    /// The multivector $`B\e_{0245}`$.
-    #[must_use]
-    #[inline]
-    pub fn e0245() -> Self {
-        e!("B")
-    }
-    /// The multivector $`A\e_{0145}`$.
-    #[must_use]
-    #[inline]
-    pub fn e0145() -> Self {
-        e!("A")
-    }
-    /// The multivector $`ð\e_{1234}`$.
-    #[must_use]
-    #[inline]
-    pub fn e1234() -> Self {
-        e!("ð")
-    }
-    /// The multivector $`þ\e_{1235}`$.
-    #[must_use]
-    #[inline]
-    pub fn e1235() -> Self {
-        e!("þ")
-    }
-    /// The multivector $`z\e_{1245}`$.
-    #[must_use]
-    #[inline]
-    pub fn e1245() -> Self {
-        e!("z")
-    }
-    /// The multivector $`y\e_{3145}`$.
-    #[must_use]
-    #[inline]
-    pub fn e3145() -> Self {
-        e!("y")
-    }
-    /// The multivector $`x\e_{2345}`$.
-    #[must_use]
-    #[inline]
-    pub fn e2345() -> Self {
-        e!("x")
-    }
-    /// The multivector $`Ð\e_{01243}`$.
-    #[must_use]
-    #[inline]
-    pub fn e01243() -> Self {
-        e!("Ð")
-    }
-    /// The multivector $`Þ\e_{01235}`$.
-    #[must_use]
-    #[inline]
-    pub fn e01235() -> Self {
-        e!("Þ")
-    }
-    /// The multivector $`Z\e_{02145}`$.
-    #[must_use]
-    #[inline]
-    pub fn e02145() -> Self {
-        e!("Z")
-    }
-    /// The multivector $`Y\e_{01345}`$.
-    #[must_use]
-    #[inline]
-    pub fn e01345() -> Self {
-        e!("Y")
-    }
-    /// The multivector $`X\e_{03245}`$.
-    #[must_use]
-    #[inline]
-    pub fn e03245() -> Self {
-        e!("X")
-    }
-    /// The multivector $`w\e_{12345}`$.
-    #[must_use]
-    #[inline]
-    pub fn e12345() -> Self {
-        e!("w")
-    }
-    /// The multivector $`V\e_{012345} \equiv \I`$.
-    #[must_use]
-    #[inline]
-    pub fn e012345() -> Self {
-        e!("V")
-    }
-
-    /// The multivector of scalar $`n_0 \equiv w`$.
+    /// The multivector of scalar $`n_0 \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
     #[inline]
     pub fn scalar() -> Self {
         Self::e()
     }
-    /// The multivector of pseudoscalar $`n_\infty \equiv W\I`$.
+    /// The multivector of pseudoscalar $`n_\infty \equiv V\I`$ where $`\I \equiv \e_{012345}`$.
     #[must_use]
     #[inline]
     pub fn pseudoscalar() -> Self {
-        Self::e01243()
+        Self::e012345()
     }
     /// The multivector of norm $`n \equiv n_0 + n_\infty`$.
     #[must_use]
