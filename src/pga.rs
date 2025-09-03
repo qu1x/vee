@@ -1706,7 +1706,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     pub fn volume() -> Self {
         Self::volume_displacement() + Self::volume_moment()
     }
-    /// The multivector of volume displacement.
+    /// The multivector of plane displacement.
     ///
     /// ```math
     /// p_0 \equiv a\e_{234} + b\e_{134} + c\e_{124} + d\e_{123} + e\e_{253}

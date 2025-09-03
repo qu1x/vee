@@ -233,7 +233,11 @@ where
     /// The grade.
     #[must_use]
     fn grade(&self) -> usize;
-    /// The number of basis blades with [`Self::grade()`].
+    /// The number $`n`$ of basis blades with the same grade $`g`$ of this basis blade.
+    ///
+    /// ```math
+    /// n = { N + 1  \choose g }
+    /// ```
     #[must_use]
     fn blade_len(&self) -> usize;
     /// The reverse.
@@ -261,7 +265,7 @@ where
 /// ```
 ///
 /// A multivector $`V`$ is realized as the sum of products of a Laurent [`Polynomial`] $`P_b`$ and a
-/// $`\e_b`$ of an ordered basis `B`.
+/// basis blade $`\e_b`$ of an ordered basis `B`.
 ///
 /// ```math
 /// V \equiv \sum_b P_b \e_b
