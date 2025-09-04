@@ -143,10 +143,10 @@
 //! use vee::PgaP3 as Vee;
 //!
 //! assert_eq!(format!("{:#}", Vee::plane().pin() << Vee::rotator()), concat!(
-//!   "+(+[+1ww+1xx+1yy+1zz]~W)e0\n",
-//!   "+(+[+2wz+2xy]~y+[-2wy+2xz]~z+[+1ww+1xx-1yy-1zz]~x)e1\n",
-//!   "+(+[+2wx+2yz]~z+[-2wz+2xy]~x+[+1ww-1xx+1yy-1zz]~y)e2\n",
-//!   "+(+[+2wy+2xz]~x+[-2wx+2yz]~y+[+1ww-1xx-1yy+1zz]~z)e3\n",
+//!   "+(+[+1vv+1xx+1yy+1zz]~W)e0\n",
+//!   "+(+[+2vz+2xy]~y+[-2vy+2xz]~z+[+1vv+1xx-1yy-1zz]~x)e1\n",
+//!   "+(+[+2vx+2yz]~z+[-2vz+2xy]~x+[+1vv-1xx+1yy-1zz]~y)e2\n",
+//!   "+(+[+2vy+2xz]~x+[-2vx+2yz]~y+[+1vv-1xx-1yy+1zz]~z)e3\n",
 //! ));
 //! ```
 //!

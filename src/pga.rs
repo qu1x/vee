@@ -299,30 +299,30 @@ macro_rules! count {
 
 #[rustfmt::skip]
 basis!(TAB0, LUT0, 0, [
-    (w, e),
-    (W, e0),
+    (v, e),
+    (V, e0),
 ]);
 #[rustfmt::skip]
 basis!(TAB1, LUT1, 1, [
-    (w, e),
-    (X, e0),
+    (v, e),
+    (W, e0),
     (w, e1),
-    (W, e01),
+    (V, e01),
 ]);
 #[rustfmt::skip]
 basis!(TAB2, LUT2, 2, [
-    (w, e),
+    (v, e),
     (W, e0),
     (x, e1),
     (y, e2),
     (Y, e01),
     (X, e20),
     (w, e12),
-    (W, e012),
+    (V, e012),
 ]);
 #[rustfmt::skip]
 basis!(TAB3, LUT3, 3, [
-    (w, e),
+    (v, e),
     (W, e0),
     (x, e1),
     (y, e2),
@@ -337,7 +337,7 @@ basis!(TAB3, LUT3, 3, [
     (Y, e013),
     (X, e032),
     (w, e123),
-    (W, e0123),
+    (V, e0123),
 ]);
 #[rustfmt::skip]
 basis!(TAB4, LUT4, 4, [
@@ -453,13 +453,13 @@ basis!(TAB5, LUT5, 5, [
 /// }
 /// ```
 impl<const M: i8> Multivector<Pga<M, 0>> {
-    /// The multivector of scalar $`n_0 \equiv w\e`$ where $`\e \equiv 1`$.
+    /// The multivector of scalar $`n_0 \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
     #[inline]
     pub fn scalar() -> Self {
         Self::e()
     }
-    /// The multivector of pseudoscalar $`n_\infty \equiv W\I`$ where $`\I \equiv \e_0`$.
+    /// The multivector of pseudoscalar $`n_\infty \equiv V\I`$ where $`\I \equiv \e_0`$.
     #[must_use]
     #[inline]
     pub fn pseudoscalar() -> Self {
@@ -484,13 +484,13 @@ impl<const M: i8> Multivector<Pga<M, 0>> {
 /// }
 /// ```
 impl<const M: i8> Multivector<Pga<M, 1>> {
-    /// The multivector of scalar $`n_0 \equiv w\e`$ where $`\e \equiv 1`$.
+    /// The multivector of scalar $`n_0 \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
     #[inline]
     pub fn scalar() -> Self {
         Self::e()
     }
-    /// The multivector of pseudoscalar $`n_\infty \equiv W\I`$ where $`\I \equiv \e_{01}`$.
+    /// The multivector of pseudoscalar $`n_\infty \equiv V\I`$ where $`\I \equiv \e_{01}`$.
     #[must_use]
     #[inline]
     pub fn pseudoscalar() -> Self {
@@ -502,13 +502,13 @@ impl<const M: i8> Multivector<Pga<M, 1>> {
     pub fn norm() -> Self {
         Self::scalar() + Self::pseudoscalar()
     }
-    /// The multivector of weight $`P_0 \equiv w\e_{01}`$.
+    /// The multivector of weight $`P_0 \equiv w\e_1`.
     #[must_use]
     #[inline]
     pub fn weight() -> Self {
         Self::e1()
     }
-    /// The multivector of direction $`P_\infty \equiv X\e_1`$.
+    /// The multivector of direction $`P_\infty \equiv W\e_0`$.
     #[must_use]
     #[inline]
     pub fn direction() -> Self {
@@ -520,11 +520,11 @@ impl<const M: i8> Multivector<Pga<M, 1>> {
     pub fn point() -> Self {
         Self::weight() + Self::direction()
     }
-    /// The multivector of translator $`t \equiv w + X\e_{01}`$.
+    /// The multivector of translator $`t \equiv v + V\e_{01}`$.
     #[must_use]
     #[inline]
     pub fn translator() -> Self {
-        Self::scalar() + Self::new([("X", Pga::new("e01"))])
+        Self::norm()
     }
 }
 
@@ -539,13 +539,13 @@ impl<const M: i8> Multivector<Pga<M, 1>> {
 /// }
 /// ```
 impl<const M: i8> Multivector<Pga<M, 2>> {
-    /// The multivector of scalar $`n_0 \equiv w\e`$ where $`\e \equiv 1`$.
+    /// The multivector of scalar $`n_0 \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
     #[inline]
     pub fn scalar() -> Self {
         Self::e()
     }
-    /// The multivector of pseudoscalar $`n_\infty \equiv W\I`$ where $`\I \equiv \e_{012}`$.
+    /// The multivector of pseudoscalar $`n_\infty \equiv V\I`$ where $`\I \equiv \e_{012}`$.
     #[must_use]
     #[inline]
     pub fn pseudoscalar() -> Self {
@@ -642,13 +642,13 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
 /// }
 /// ```
 impl<const M: i8> Multivector<Pga<M, 3>> {
-    /// The multivector of scalar $`n_0 \equiv w\e`$ where $`\e \equiv 1`$.
+    /// The multivector of scalar $`n_0 \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
     #[inline]
     pub fn scalar() -> Self {
         Self::e()
     }
-    /// The multivector of pseudoscalar $`n_\infty \equiv W\I`$ where $`\I \equiv \e_{0123}`$.
+    /// The multivector of pseudoscalar $`n_\infty \equiv V\I`$ where $`\I \equiv \e_{0123}`$.
     #[must_use]
     #[inline]
     pub fn pseudoscalar() -> Self {
@@ -1096,7 +1096,14 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
 
 #[test]
 fn not() {
-    use super::{PgaP2, PgaP3, PgaP4, PgaP5};
+    use super::{PgaP0, PgaP1, PgaP2, PgaP3, PgaP4, PgaP5};
+
+    assert_eq!(!PgaP0::norm(), PgaP0::norm().swp());
+
+    assert_eq!(
+        !PgaP1::point(),
+        (PgaP1::weight() - PgaP1::direction()).swp()
+    );
 
     assert_eq!(!PgaP2::line(), PgaP2::point().swp());
     assert_eq!(!PgaP2::point(), PgaP2::line().swp());
