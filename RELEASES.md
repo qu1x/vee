@@ -1,7 +1,11 @@
-# Version 0.1.2 (2025-09-03)
+# Version 0.1.2 (2025-09-06)
 
   * Generate constructor methods of basis blades with compile-time blocks.
-  * Fix typos and improve documentation.
+  * Distinguish bias/weight (W/w) from scalar/pseudoscalar (v/V) and relabel norm.
+  * Distinguish motors.
+  * Add more examples.
+  * Add polarity operator.
+  * Fix bugs, typos, and improve documentation.
 
 # Version 0.1.1 (2025-09-02)
 

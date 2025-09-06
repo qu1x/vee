@@ -392,6 +392,18 @@ impl<B: Algebra> Multivector<B> {
         });
         self
     }
+    /// The polarity.
+    ///
+    /// ```
+    /// use vee::PgaP3 as Vee;
+    ///
+    /// assert_eq!(Vee::plane().pol(), Vee::direction().swp());
+    /// ```
+    #[must_use]
+    #[allow(clippy::missing_panics_doc)]
+    pub fn pol(self) -> Self {
+        self * Self::new([("", B::basis().next_back().expect("empty basis"))])
+    }
     /// The mixed-grade squared norm (i.e., a Study number).
     ///
     /// ```
@@ -950,6 +962,7 @@ impl MulAssign for Monomial {
                 assert!(self.map.insert(s, rhs_e).is_none());
             }
         }
+        self.map.retain(|s, _e| !s.is_empty());
     }
 }
 
@@ -976,6 +989,7 @@ impl DivAssign for Monomial {
                 assert!(self.map.insert(s, rhs_e).is_none());
             }
         }
+        self.map.retain(|s, _e| !s.is_empty());
     }
 }
 

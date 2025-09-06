@@ -453,19 +453,19 @@ basis!(TAB5, LUT5, 5, [
 /// }
 /// ```
 impl<const M: i8> Multivector<Pga<M, 0>> {
-    /// The multivector of scalar $`n_0 \equiv v\e`$ where $`\e \equiv 1`$.
+    /// The multivector of scalar $`s \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
     #[inline]
     pub fn scalar() -> Self {
         Self::e()
     }
-    /// The multivector of pseudoscalar $`n_\infty \equiv V\I`$ where $`\I \equiv \e_0`$.
+    /// The multivector of pseudoscalar $`S \equiv V\I`$ where $`\I \equiv \e_0`$.
     #[must_use]
     #[inline]
     pub fn pseudoscalar() -> Self {
         Self::e0()
     }
-    /// The multivector of norm $`n \equiv n_0 + n_\infty`$.
+    /// The multivector of norm $`n \equiv s + S`$.
     #[must_use]
     #[inline]
     pub fn norm() -> Self {
@@ -484,25 +484,25 @@ impl<const M: i8> Multivector<Pga<M, 0>> {
 /// }
 /// ```
 impl<const M: i8> Multivector<Pga<M, 1>> {
-    /// The multivector of scalar $`n_0 \equiv v\e`$ where $`\e \equiv 1`$.
+    /// The multivector of scalar $`s \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
     #[inline]
     pub fn scalar() -> Self {
         Self::e()
     }
-    /// The multivector of pseudoscalar $`n_\infty \equiv V\I`$ where $`\I \equiv \e_{01}`$.
+    /// The multivector of pseudoscalar $`S \equiv V\I`$ where $`\I \equiv \e_{01}`$.
     #[must_use]
     #[inline]
     pub fn pseudoscalar() -> Self {
         Self::e01()
     }
-    /// The multivector of norm $`n \equiv n_0 + n_\infty`$.
+    /// The multivector of norm $`n \equiv s + S`$.
     #[must_use]
     #[inline]
     pub fn norm() -> Self {
         Self::scalar() + Self::pseudoscalar()
     }
-    /// The multivector of weight $`P_0 \equiv w\e_1`.
+    /// The multivector of weight $`P_0 \equiv w\e_1`$.
     #[must_use]
     #[inline]
     pub fn weight() -> Self {
@@ -520,7 +520,25 @@ impl<const M: i8> Multivector<Pga<M, 1>> {
     pub fn point() -> Self {
         Self::weight() + Self::direction()
     }
-    /// The multivector of translator $`t \equiv v + V\e_{01}`$.
+    /// The multivector of translator $`t \equiv s + S`$.
+    ///
+    /// ```
+    /// use vee::PgaP1 as Vee;
+    ///
+    /// let translator = Vee::point().lhs() * Vee::point().rhs();
+    ///
+    /// assert_eq!(format!("{translator:#}"), concat!(
+    ///     "+1LwRw\n",
+    ///     "+(+1LWRw-1LwRW)I\n",
+    /// ));
+    ///
+    /// let point = Vee::point().pin() << Vee::translator();
+    ///
+    /// assert_eq!(format!("{point:#}"), concat!(
+    ///     "+(+[+1vv]~W+[+2Vv]~w)e0\n",
+    ///     "+[+1vv]~we1\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn translator() -> Self {
@@ -539,13 +557,13 @@ impl<const M: i8> Multivector<Pga<M, 1>> {
 /// }
 /// ```
 impl<const M: i8> Multivector<Pga<M, 2>> {
-    /// The multivector of scalar $`n_0 \equiv v\e`$ where $`\e \equiv 1`$.
+    /// The multivector of scalar $`s \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
     #[inline]
     pub fn scalar() -> Self {
         Self::e()
     }
-    /// The multivector of pseudoscalar $`n_\infty \equiv V\I`$ where $`\I \equiv \e_{012}`$.
+    /// The multivector of pseudoscalar $`S \equiv V\I`$ where $`\I \equiv \e_{012}`$.
     #[must_use]
     #[inline]
     pub fn pseudoscalar() -> Self {
@@ -570,64 +588,141 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
         Self::e1() + Self::e2()
     }
     /// The multivector of line $`\ell \equiv \ell_0 + \ell_\infty`$.
+    ///
+    /// ```
+    /// use vee::PgaP2 as Vee;
+    ///
+    /// let line = Vee::point().lhs() & Vee::point().rhs();
+    ///
+    /// assert_eq!(format!("{line:#}"), concat!(
+    ///     "+(+1LXRY-1LYRX)e0\n",
+    ///     "+(+1LYRw-1LwRY)e1\n",
+    ///     "+(-1LXRw+1LwRX)e2\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn line() -> Self {
         Self::moment() + Self::displacement()
     }
-    /// The multivector of direction $`P_\infty \equiv X\e_{20}`$.
+    /// The multivector of direction $`P_\infty \equiv X\e_{20} + Y\e_{01}`$.
     #[must_use]
     #[inline]
     pub fn direction() -> Self {
         Self::e20() + Self::e01()
     }
-    /// The multivector of weight $`P_0 \equiv W\e_{12}`$.
+    /// The multivector of weight $`P_0 \equiv w\e_{12}`$.
     #[must_use]
     #[inline]
     pub fn weight() -> Self {
         Self::e12()
     }
     /// The multivector of point $`P \equiv P_0 + P_\infty`$.
+    ///
+    /// ```
+    /// use vee::PgaP2 as Vee;
+    ///
+    /// let point = Vee::line().lhs() ^ Vee::line().rhs();
+    ///
+    /// assert_eq!(format!("{point:#}"), concat!(
+    ///     "+(+1LxRy-1LyRx)e12\n",
+    ///     "+(-1LWRy+1LyRW)e20\n",
+    ///     "+(+1LWRx-1LxRW)e01\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn point() -> Self {
         Self::weight() + Self::direction()
     }
-    /// The multivector of rotator $`r \equiv n_0 + P_0`$.
+    /// The multivector of rotator $`r \equiv s + P_0`$.
+    ///
+    /// ```
+    /// use vee::PgaP2 as Vee;
+    ///
+    /// let rotator = Vee::displacement().lhs() * Vee::displacement().rhs();
+    ///
+    /// assert_eq!(format!("{rotator:#}"), concat!(
+    ///     "+1LxRx+1LyRy\n",
+    ///     "+(+1LxRy-1LyRx)e12\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn rotator() -> Self {
         Self::scalar() + Self::weight()
     }
-    /// The multivector of translator $`t \equiv n_0 + P_\infty`$.
+    /// The multivector of translator $`t \equiv s + P_\infty`$.
+    ///
+    /// ```
+    /// use vee::PgaP2 as Vee;
+    ///
+    /// let translator = Vee::point().lhs() * Vee::point().rhs();
+    ///
+    /// assert_eq!(format!("{translator:#}"), concat!(
+    ///     "-1LwRw\n",
+    ///     "+(-1LYRw+1LwRY)e20\n",
+    ///     "+(+1LXRw-1LwRX)e01\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn translator() -> Self {
         Self::scalar() + Self::direction()
     }
-    /// The multivector of motor $`m \equiv n_0 + P`$.
+    /// The multivector of motor $`m \equiv s + P`$.
+    ///
+    /// ```
+    /// use vee::PgaP2 as Vee;
+    ///
+    /// let motor = Vee::line().lhs() * Vee::line().rhs();
+    ///
+    /// assert_eq!(format!("{motor:#}"), concat!(
+    ///     "+1LxRx+1LyRy\n",
+    ///     "+(+1LxRy-1LyRx)e12\n",
+    ///     "+(-1LWRy+1LyRW)e20\n",
+    ///     "+(+1LWRx-1LxRW)e01\n",
+    /// ));
+    ///
+    /// let point = Vee::point().pin() << Vee::motor();
+    ///
+    /// assert_eq!(format!("{point:#}"), concat!(
+    ///     "+(+[+1vv+1ww]~w)e12\n",
+    ///     "+(+[+2vw]~Y+[+2Xw-2Yv]~w+[+1vv-1ww]~X)e20\n",
+    ///     "+(+[+2Xv+2Yw]~w+[-2vw]~X+[+1vv-1ww]~Y)e01\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn motor() -> Self {
         Self::scalar() + Self::point()
     }
-    /// The multivector of rotoflector $`f_r \equiv \ell_0 + P_0`$.
-    #[must_use]
-    #[inline]
-    pub fn rotoflector() -> Self {
-        Self::displacement() + Self::weight()
-    }
-    /// The multivector of transflector $`f_t \equiv \ell + P_\infty`$.
-    #[must_use]
-    #[inline]
-    pub fn transflector() -> Self {
-        Self::line() + Self::direction()
-    }
-    /// The multivector of flector $`f \equiv \ell + P`$.
+    /// The multivector of flector $`f \equiv \ell + S`$.
+    ///
+    /// ```
+    /// use vee::PgaP2 as Vee;
+    ///
+    /// let flector = Vee::line().lhs() * Vee::motor().rhs();
+    ///
+    /// assert_eq!(format!("{flector:#}"), concat!(
+    ///     "+(+1LWRv-1LxRY+1LyRX)e0\n",
+    ///     "+(+1LxRv-1LyRw)e1\n",
+    ///     "+(+1LxRw+1LyRv)e2\n",
+    ///     "+(+1LWRw+1LxRX+1LyRY)I\n",
+    /// ));
+    ///
+    /// let point = Vee::point().pin() << Vee::flector();
+    ///
+    /// assert_eq!(format!("{point:#}"), concat!(
+    ///     "+(+[-1xx-1yy]~w)e12\n",
+    ///     "+(+[+2xy]~Y+[+2Vy+2Wx]~w+[+1xx-1yy]~X)e20\n",
+    ///     "+(+[-2Vx+2Wy]~w+[+2xy]~X+[-1xx+1yy]~Y)e01\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn flector() -> Self {
-        Self::line() + Self::point()
+        Self::line() + Self::pseudoscalar()
     }
 }
 
@@ -642,19 +737,30 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
 /// }
 /// ```
 impl<const M: i8> Multivector<Pga<M, 3>> {
-    /// The multivector of scalar $`n_0 \equiv v\e`$ where $`\e \equiv 1`$.
+    /// The multivector of scalar $`s \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
     #[inline]
     pub fn scalar() -> Self {
         Self::e()
     }
-    /// The multivector of pseudoscalar $`n_\infty \equiv V\I`$ where $`\I \equiv \e_{0123}`$.
+    /// The multivector of pseudoscalar $`S \equiv V\I`$ where $`\I \equiv \e_{0123}`$.
     #[must_use]
     #[inline]
     pub fn pseudoscalar() -> Self {
         Self::e0123()
     }
-    /// The multivector of norm $`n \equiv n_0 + n_\infty`$.
+    /// The multivector of norm $`n \equiv s + S`$.
+    ///
+    /// ```
+    /// use vee::PgaP3 as Vee;
+    ///
+    /// let squared_norm = Vee::line().squared_norm();
+    ///
+    /// assert_eq!(format!("{squared_norm:#}"), concat!(
+    ///     "+1xx+1yy+1zz\n",
+    ///     "+(-2Xx-2Yy-2Zz)I\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn norm() -> Self {
@@ -673,24 +779,87 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
         Self::e1() + Self::e2() + Self::e3()
     }
     /// The multivector of plane $`p \equiv p_0 + p_\infty`$.
+    ///
+    /// ```
+    /// use vee::PgaP3 as Vee;
+    ///
+    /// let plane = Vee::line().lhs() & Vee::point().rhs();
+    ///
+    /// assert_eq!(format!("{plane:#}"), concat!(
+    ///     "+(-1LXRX-1LYRY-1LZRZ)e0\n",
+    ///     "+(+1LXRw+1LyRZ-1LzRY)e1\n",
+    ///     "+(+1LYRw-1LxRZ+1LzRX)e2\n",
+    ///     "+(+1LZRw+1LxRY-1LyRX)e3\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn plane() -> Self {
         Self::bias() + Self::normal()
     }
-    /// The multivector of displacement $`\ell \equiv x\e_{23} + y\e_{31} + z\e_{12}`$.
+    /// The multivector of displacement $`\ell_0 \equiv x\e_{23} + y\e_{31} + z\e_{12}`$.
+    ///
+    /// ```
+    /// use vee::PgaP3 as Vee;
+    ///
+    /// // A line through the origin as the join of a point and the origin.
+    /// let displacement = Vee::point().lhs() & Vee::weight().rhs();
+    ///
+    /// assert_eq!(format!("{displacement:#}"), concat!(
+    ///     "-1LXRwe23\n",
+    ///     "-1LYRwe31\n",
+    ///     "-1LZRwe12\n",
+    /// ));
+    ///
+    /// // A line through the origin as the meet of two planes through the origin.
+    /// let displacement = Vee::normal().lhs() ^ Vee::normal().rhs();
+    ///
+    /// assert_eq!(format!("{displacement:#}"), concat!(
+    ///     "+(+1LyRz-1LzRy)e23\n",
+    ///     "+(-1LxRz+1LzRx)e31\n",
+    ///     "+(+1LxRy-1LyRx)e12\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn displacement() -> Self {
         Self::e23() + Self::e31() + Self::e12()
     }
-    /// The multivector of moment $`\ell \equiv X\e_{01} + Y\e_{02} + Z\e_{03}`$.
+    /// The multivector of moment $`\ell_\infty \equiv X\e_{01} + Y\e_{02} + Z\e_{03}`$.
     #[must_use]
     #[inline]
     pub fn moment() -> Self {
         Self::e01() + Self::e02() + Self::e03()
     }
     /// The multivector of line $`\ell \equiv \ell_0 + \ell_\infty`$.
+    ///
+    /// ```
+    /// use vee::PgaP3 as Vee;
+    ///
+    /// // A line as the join of two points.
+    /// let line = Vee::point().lhs() & Vee::point().rhs();
+    ///
+    /// assert_eq!(format!("{line:#}"), concat!(
+    ///     "+(+1LYRZ-1LZRY)e01\n",
+    ///     "+(-1LXRZ+1LZRX)e02\n",
+    ///     "+(+1LXRY-1LYRX)e03\n",
+    ///     "+(-1LXRw+1LwRX)e23\n",
+    ///     "+(-1LYRw+1LwRY)e31\n",
+    ///     "+(-1LZRw+1LwRZ)e12\n",
+    /// ));
+    ///
+    /// // A line as the meet of two planes.
+    /// let line = Vee::plane().lhs() ^ Vee::plane().rhs();
+    ///
+    /// assert_eq!(format!("{line:#}"), concat!(
+    ///     "+(+1LWRx-1LxRW)e01\n",
+    ///     "+(+1LWRy-1LyRW)e02\n",
+    ///     "+(+1LWRz-1LzRW)e03\n",
+    ///     "+(+1LyRz-1LzRy)e23\n",
+    ///     "+(-1LxRz+1LzRx)e31\n",
+    ///     "+(+1LxRy-1LyRx)e12\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn line() -> Self {
@@ -709,42 +878,183 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
         Self::e032() + Self::e013() + Self::e021()
     }
     /// The multivector of point $`P \equiv P_0 + P_\infty`$.
+    ///
+    /// ```
+    /// use vee::PgaP3 as Vee;
+    ///
+    /// let point = Vee::plane().lhs() ^ Vee::line().rhs();
+    ///
+    /// assert_eq!(format!("{point:#}"), concat!(
+    ///     "+(+1LxRx+1LyRy+1LzRz)e123\n",
+    ///     "+(-1LWRx+1LyRZ-1LzRY)e032\n",
+    ///     "+(-1LWRy-1LxRZ+1LzRX)e013\n",
+    ///     "+(-1LWRz+1LxRY-1LyRX)e021\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn point() -> Self {
         Self::weight() + Self::direction()
     }
-    /// The multivector of rotator $`r \equiv n_0 + \ell_0`$.
+    /// The multivector of rotator $`r \equiv s + \ell_0`$.
+    ///
+    /// ```
+    /// use vee::PgaP3 as Vee;
+    ///
+    /// let rotator = Vee::normal().lhs() * Vee::normal().rhs();
+    ///
+    /// assert_eq!(format!("{rotator:#}"), concat!(
+    ///     "+1LxRx+1LyRy+1LzRz\n",
+    ///     "+(+1LyRz-1LzRy)e23\n",
+    ///     "+(-1LxRz+1LzRx)e31\n",
+    ///     "+(+1LxRy-1LyRx)e12\n",
+    /// ));
+    ///
+    /// let rotator = Vee::displacement().lhs() * Vee::displacement().rhs();
+    ///
+    /// assert_eq!(format!("{rotator:#}"), concat!(
+    ///     "-1LxRx-1LyRy-1LzRz\n",
+    ///     "+(-1LyRz+1LzRy)e23\n",
+    ///     "+(+1LxRz-1LzRx)e31\n",
+    ///     "+(-1LxRy+1LyRx)e12\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn rotator() -> Self {
         Self::scalar() + Self::displacement()
     }
-    /// The multivector of translator $`t \equiv n_0 + \ell_\infty`$.
+    /// The multivector of translator $`t \equiv s + \ell_\infty`$.
+    ///
+    /// ```
+    /// use vee::PgaP3 as Vee;
+    ///
+    /// let translator = Vee::point().lhs() * Vee::point().rhs();
+    ///
+    /// assert_eq!(format!("{translator:#}"), concat!(
+    ///     "-1LwRw\n",
+    ///     "+(+1LXRw-1LwRX)e01\n",
+    ///     "+(+1LYRw-1LwRY)e02\n",
+    ///     "+(+1LZRw-1LwRZ)e03\n",
+    /// ));
     #[must_use]
     #[inline]
     pub fn translator() -> Self {
         Self::scalar() + Self::moment()
     }
-    /// The multivector of motor $`m \equiv n + \ell`$.
+    /// The multivector of motor $`m_s \equiv s + \ell`$.
+    ///
+    /// ```
+    /// use vee::PgaP3 as Vee;
+    ///
+    /// let simple_motor = Vee::plane().lhs() * Vee::plane().rhs();
+    ///
+    /// assert_eq!(format!("{simple_motor:#}"), concat!(
+    ///     "+1LxRx+1LyRy+1LzRz\n",
+    ///     "+(+1LWRx-1LxRW)e01\n",
+    ///     "+(+1LWRy-1LyRW)e02\n",
+    ///     "+(+1LWRz-1LzRW)e03\n",
+    ///     "+(+1LyRz-1LzRy)e23\n",
+    ///     "+(-1LxRz+1LzRx)e31\n",
+    ///     "+(+1LxRy-1LyRx)e12\n",
+    /// ));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn simple_motor() -> Self {
+        Self::scalar() + Self::line()
+    }
+    /// The multivector of motor $`m \equiv s + \ell + S`$.
+    ///
+    /// ```
+    /// use vee::PgaP3 as Vee;
+    ///
+    /// let motor = Vee::line().lhs() * Vee::line().rhs();
+    ///
+    /// assert_eq!(format!("{motor:#}"), concat!(
+    ///     "-1LxRx-1LyRy-1LzRz\n",
+    ///     "+(-1LYRz+1LZRy-1LyRZ+1LzRY)e01\n",
+    ///     "+(+1LXRz-1LZRx+1LxRZ-1LzRX)e02\n",
+    ///     "+(-1LXRy+1LYRx-1LxRY+1LyRX)e03\n",
+    ///     "+(-1LyRz+1LzRy)e23\n",
+    ///     "+(+1LxRz-1LzRx)e31\n",
+    ///     "+(-1LxRy+1LyRx)e12\n",
+    ///     "+(+1LXRx+1LYRy+1LZRz+1LxRX+1LyRY+1LzRZ)I\n",
+    /// ));
+    ///
+    /// let motor = Vee::rotator().lhs() * Vee::translator().rhs();
+    ///
+    /// assert_eq!(format!("{motor:#}"), concat!(
+    ///     "+1LvRv\n",
+    ///     "+(+1LvRX-1LyRZ+1LzRY)e01\n",
+    ///     "+(+1LvRY+1LxRZ-1LzRX)e02\n",
+    ///     "+(+1LvRZ-1LxRY+1LyRX)e03\n",
+    ///     "+1LxRve23\n",
+    ///     "+1LyRve31\n",
+    ///     "+1LzRve12\n",
+    ///     "+(+1LxRX+1LyRY+1LzRZ)I\n"
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn motor() -> Self {
         Self::norm() + Self::line()
     }
     /// The multivector of rotoflector $`f_r \equiv p_0 + P_0`$.
+    ///
+    /// ```
+    /// use vee::PgaP3 as Vee;
+    ///
+    /// let rotoflector = Vee::normal().lhs() * Vee::rotator().rhs();
+    ///
+    /// assert_eq!(format!("{rotoflector:#}"), concat!(
+    ///     "+(+1LxRv-1LyRz+1LzRy)e1\n",
+    ///     "+(+1LxRz+1LyRv-1LzRx)e2\n",
+    ///     "+(-1LxRy+1LyRx+1LzRv)e3\n",
+    ///     "+(+1LxRx+1LyRy+1LzRz)e123\n",
+    /// ));
     #[must_use]
     #[inline]
     pub fn rotoflector() -> Self {
         Self::normal() + Self::weight()
     }
     /// The multivector of transflector $`f_t \equiv p + P_\infty`$.
+    ///
+    /// ```
+    /// use vee::PgaP3 as Vee;
+    ///
+    /// let transflector = Vee::normal().lhs() * Vee::translator().rhs();
+    ///
+    /// assert_eq!(format!("{transflector:#}"), concat!(
+    ///     "+(-1LxRX-1LyRY-1LzRZ)e0\n",
+    ///     "+1LxRve1\n+1LyRve2\n",
+    ///     "+1LzRve3\n",
+    ///     "+(+1LyRZ-1LzRY)e032\n",
+    ///     "+(-1LxRZ+1LzRX)e013\n",
+    ///     "+(+1LxRY-1LyRX)e021\n",
+    /// ));
     #[must_use]
     #[inline]
     pub fn transflector() -> Self {
         Self::plane() + Self::direction()
     }
     /// The multivector of flector $`f \equiv p + P`$.
+    ///
+    /// ```
+    /// use vee::PgaP3 as Vee;
+    ///
+    /// let flector = Vee::plane().lhs() * Vee::motor().rhs();
+    ///
+    /// assert_eq!(format!("{flector:#}"), concat!(
+    ///     "+(+1LWRv-1LxRX-1LyRY-1LzRZ)e0\n",
+    ///     "+(+1LxRv-1LyRz+1LzRy)e1\n",
+    ///     "+(+1LxRz+1LyRv-1LzRx)e2\n",
+    ///     "+(-1LxRy+1LyRx+1LzRv)e3\n",
+    ///     "+(+1LxRx+1LyRy+1LzRz)e123\n",
+    ///     "+(-1LWRx+1LxRV+1LyRZ-1LzRY)e032\n",
+    ///     "+(-1LWRy-1LxRZ+1LyRV+1LzRX)e013\n",
+    ///     "+(-1LWRz+1LxRY-1LyRX+1LzRV)e021\n",
+    /// ));
     #[must_use]
     #[inline]
     pub fn flector() -> Self {
@@ -763,19 +1073,19 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
 /// }
 /// ```
 impl<const M: i8> Multivector<Pga<M, 4>> {
-    /// The multivector of scalar $`n_0 \equiv v\e`$ where $`\e \equiv 1`$.
+    /// The multivector of scalar $`s \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
     #[inline]
     pub fn scalar() -> Self {
         Self::e()
     }
-    /// The multivector of pseudoscalar $`n_\infty \equiv V\I`$ where $`\I \equiv \e_{01234}`$.
+    /// The multivector of pseudoscalar $`S \equiv V\I`$ where $`\I \equiv \e_{01234}`$.
     #[must_use]
     #[inline]
     pub fn pseudoscalar() -> Self {
         Self::e01234()
     }
-    /// The multivector of norm $`n \equiv n_0 + P`$.
+    /// The multivector of norm $`n \equiv s + P`$.
     #[must_use]
     #[inline]
     pub fn norm() -> Self {
@@ -820,14 +1130,17 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
         Self::plane_displacement() + Self::plane_moment()
     }
     /// The multivector of line displacement
-    /// $`\ell_\infty \equiv x\e_{234} + y\e_{314} + z\e_{124} + þ\e_{123}`$.
+    /// $`\ell_0 \equiv x\e_{234} + y\e_{314} + z\e_{124} + þ\e_{123}`$.
     #[must_use]
     #[inline]
     pub fn line_displacement() -> Self {
         Self::e234() + Self::e314() + Self::e124() + Self::e123()
     }
-    /// The multivector of line moment
-    /// $`p_0 \equiv A\e_{014} + B\e_{024} + C\e_{034} + D\e_{035} + E\e_{013} + F\e_{021}`$.
+    /// The multivector of line moment.
+    ///
+    /// ```math
+    /// \ell_\infty \equiv A\e_{014} + B\e_{024} + C\e_{034} + D\e_{032} + E\e_{013} + F\e_{021}
+    /// ```
     #[must_use]
     #[inline]
     pub fn line_moment() -> Self {
@@ -839,14 +1152,14 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     pub fn line() -> Self {
         Self::line_displacement() + Self::line_moment()
     }
-    /// The multivector of bias $`P_0 \equiv W\e_{1234}`$.
+    /// The multivector of weight $`P_0 \equiv W\e_{1234}`$.
     #[must_use]
     #[inline]
     pub fn weight() -> Self {
         Self::e1234()
     }
     /// The multivector of direction
-    /// $`p_\infty \equiv X\e_{0324} + Y\e_{0134} + Z\e_{0214} + Þ\e_{0123}`$.
+    /// $`P_\infty \equiv X\e_{0324} + Y\e_{0134} + Z\e_{0214} + Þ\e_{0123}`$.
     #[must_use]
     #[inline]
     pub fn direction() -> Self {
@@ -858,23 +1171,209 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     pub fn point() -> Self {
         Self::weight() + Self::direction()
     }
-    /// The multivector of rotator $`r \equiv n_0 + \ell_0`$.
+    /// The multivector of single rotator $`r_1 \equiv s + \ell_0`$.
+    ///
+    /// ```
+    /// use vee::PgaP4 as Vee;
+    ///
+    /// let single_rotator = Vee::normal().lhs() * Vee::normal().rhs();
+    ///
+    /// assert_eq!(format!("{single_rotator:#}"), concat!(
+    ///     "+1LxRx+1LyRy+1LzRz+1LþRþ\n",
+    ///     "+(+1LyRz-1LzRy)e23\n",
+    ///     "+(-1LxRz+1LzRx)e31\n",
+    ///     "+(+1LxRy-1LyRx)e12\n",
+    ///     "+(-1LxRþ+1LþRx)e41\n",
+    ///     "+(-1LyRþ+1LþRy)e42\n",
+    ///     "+(-1LzRþ+1LþRz)e43\n",
+    /// ));
+    ///
+    /// let single_rotator = Vee::line_displacement().lhs() * Vee::line_displacement().rhs();
+    ///
+    /// assert_eq!(format!("{single_rotator:#}"), concat!(
+    ///     "-1LxRx-1LyRy-1LzRz-1LþRþ\n",
+    ///     "+(-1LyRz+1LzRy)e23\n",
+    ///     "+(+1LxRz-1LzRx)e31\n",
+    ///     "+(-1LxRy+1LyRx)e12\n",
+    ///     "+(-1LxRþ+1LþRx)e41\n",
+    ///     "+(-1LyRþ+1LþRy)e42\n",
+    ///     "+(-1LzRþ+1LþRz)e43\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
-    pub fn rotator() -> Self {
+    pub fn single_rotator() -> Self {
         Self::scalar() + Self::plane_displacement()
     }
-    /// The multivector of translator $`t \equiv n_0 + p_\infty`$.
+    /// The multivector of double rotator $`r_2 \equiv s + \ell_0 + P_0`$.
+    ///
+    /// ```
+    /// use vee::PgaP4 as Vee;
+    ///
+    /// let double_rotator = Vee::single_rotator().lhs() * Vee::single_rotator().rhs();
+    ///
+    /// assert_eq!(format!("{double_rotator:#}"), concat!(
+    ///     "-1LaRa-1LbRb-1LcRc-1LdRd-1LeRe-1LfRf+1LvRv\n",
+    ///     "+(+1LaRv-1LbRc+1LcRb-1LeRf+1LfRe+1LvRa)e23\n",
+    ///     "+(+1LaRc+1LbRv-1LcRa+1LdRf-1LfRd+1LvRb)e31\n",
+    ///     "+(-1LaRb+1LbRa+1LcRv-1LdRe+1LeRd+1LvRc)e12\n",
+    ///     "+(-1LbRf+1LcRe+1LdRv-1LeRc+1LfRb+1LvRd)e41\n",
+    ///     "+(+1LaRf-1LcRd+1LdRc+1LeRv-1LfRa+1LvRe)e42\n",
+    ///     "+(-1LaRe+1LbRd-1LdRb+1LeRa+1LfRv+1LvRf)e43\n",
+    ///     "+(-1LaRd-1LbRe-1LcRf-1LdRa-1LeRb-1LfRc)e1234\n",
+    /// ));
+    ///
+    /// let double_rotator = Vee::plane_displacement().lhs() * Vee::plane_displacement().rhs();
+    ///
+    /// assert_eq!(format!("{double_rotator:#}"), concat!(
+    ///     "-1LaRa-1LbRb-1LcRc-1LdRd-1LeRe-1LfRf\n",
+    ///     "+(-1LbRc+1LcRb-1LeRf+1LfRe)e23\n",
+    ///     "+(+1LaRc-1LcRa+1LdRf-1LfRd)e31\n",
+    ///     "+(-1LaRb+1LbRa-1LdRe+1LeRd)e12\n",
+    ///     "+(-1LbRf+1LcRe-1LeRc+1LfRb)e41\n",
+    ///     "+(+1LaRf-1LcRd+1LdRc-1LfRa)e42\n",
+    ///     "+(-1LaRe+1LbRd-1LdRb+1LeRa)e43\n",
+    ///     "+(-1LaRd-1LbRe-1LcRf-1LdRa-1LeRb-1LfRc)e1234\n",
+    /// ));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn double_rotator() -> Self {
+        Self::scalar() + Self::plane_displacement() + Self::weight()
+    }
+    /// The multivector of translator $`t \equiv s + p_\infty`$.
     #[must_use]
     #[inline]
     pub fn translator() -> Self {
         Self::scalar() + Self::plane_moment()
     }
-    /// The multivector of translator $`m \equiv n + p`$.
+    /// The multivector of simple motor $`m_s \equiv s + p`$.
+    ///
+    /// ```
+    /// use vee::PgaP4 as Vee;
+    ///
+    /// let simple_motor = Vee::volume().lhs() * Vee::volume().rhs();
+    ///
+    /// assert_eq!(format!("{simple_motor:#}"), concat!(
+    ///     "+1LxRx+1LyRy+1LzRz+1LþRþ\n",
+    ///     "+(+1LWRx-1LxRW)e01\n",
+    ///     "+(+1LWRy-1LyRW)e02\n",
+    ///     "+(+1LWRz-1LzRW)e03\n",
+    ///     "+(-1LWRþ+1LþRW)e40\n",
+    ///     "+(+1LyRz-1LzRy)e23\n",
+    ///     "+(-1LxRz+1LzRx)e31\n",
+    ///     "+(+1LxRy-1LyRx)e12\n",
+    ///     "+(-1LxRþ+1LþRx)e41\n",
+    ///     "+(-1LyRþ+1LþRy)e42\n",
+    ///     "+(-1LzRþ+1LþRz)e43\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
-    pub fn motor() -> Self {
-        Self::norm() + Self::plane()
+    pub fn simple_motor() -> Self {
+        Self::scalar() + Self::plane()
+    }
+    /// The multivector of single motor $`m_1 \equiv s + p + P_\infty`$.
+    ///
+    /// ```
+    /// use vee::PgaP4 as Vee;
+    ///
+    /// let single_motor = Vee::single_rotator().lhs() * Vee::translator().rhs();
+    ///
+    /// assert_eq!(format!("{single_motor:#}"), concat!(
+    ///     "+1LvRv\n",
+    ///     "+(-1LbRZ+1LcRY+1LdRÞ+1LvRX)e01\n",
+    ///     "+(+1LaRZ-1LcRX+1LeRÞ+1LvRY)e02\n",
+    ///     "+(-1LaRY+1LbRX+1LfRÞ+1LvRZ)e03\n",
+    ///     "+(-1LdRX-1LeRY-1LfRZ+1LvRÞ)e40\n",
+    ///     "+1LaRve23\n",
+    ///     "+1LbRve31\n",
+    ///     "+1LcRve12\n",
+    ///     "+1LdRve41\n",
+    ///     "+1LeRve42\n",
+    ///     "+1LfRve43\n",
+    ///     "+(+1LaRÞ-1LeRZ+1LfRY)e0324\n",
+    ///     "+(+1LbRÞ+1LdRZ-1LfRX)e0134\n",
+    ///     "+(+1LcRÞ-1LdRY+1LeRX)e0214\n",
+    ///     "+(+1LaRX+1LbRY+1LcRZ)e0123\n",
+    /// ));
+    ///
+    /// let single_motor = Vee::line().lhs() * Vee::line().rhs();
+    ///
+    /// assert_eq!(format!("{single_motor:#}"), concat!(
+    ///     "-1LxRx-1LyRy-1LzRz-1LþRþ\n",
+    ///     "+(-1LBRz+1LCRy+1LDRþ-1LyRC+1LzRB-1LþRD)e01\n",
+    ///     "+(+1LARz-1LCRx+1LERþ+1LxRC-1LzRA-1LþRE)e02\n",
+    ///     "+(-1LARy+1LBRx+1LFRþ-1LxRB+1LyRA-1LþRF)e03\n",
+    ///     "+(-1LDRx-1LERy-1LFRz+1LxRD+1LyRE+1LzRF)e40\n",
+    ///     "+(-1LyRz+1LzRy)e23\n",
+    ///     "+(+1LxRz-1LzRx)e31\n",
+    ///     "+(-1LxRy+1LyRx)e12\n",
+    ///     "+(-1LxRþ+1LþRx)e41\n",
+    ///     "+(-1LyRþ+1LþRy)e42\n",
+    ///     "+(-1LzRþ+1LþRz)e43\n",
+    ///     "+(+1LARþ-1LERz+1LFRy+1LyRF-1LzRE+1LþRA)e0324\n",
+    ///     "+(+1LBRþ+1LDRz-1LFRx-1LxRF+1LzRD+1LþRB)e0134\n",
+    ///     "+(+1LCRþ-1LDRy+1LERx+1LxRE-1LyRD+1LþRC)e0214\n",
+    ///     "+(+1LARx+1LBRy+1LCRz+1LxRA+1LyRB+1LzRC)e0123\n",
+    /// ));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn single_motor() -> Self {
+        Self::scalar() + Self::plane() + Self::direction()
+    }
+    /// The multivector of double motor $`m_2 \equiv s + p + P`$.
+    ///
+    /// ```
+    /// use vee::PgaP4 as Vee;
+    ///
+    /// let double_motor = Vee::double_rotator().lhs() * Vee::translator().rhs();
+    ///
+    /// assert_eq!(format!("{double_motor:#}"), concat!(
+    ///     "+1LvRv\n",
+    ///     "+(-1LbRZ+1LcRY+1LdRÞ+1LvRX)e01\n",
+    ///     "+(+1LaRZ-1LcRX+1LeRÞ+1LvRY)e02\n",
+    ///     "+(-1LaRY+1LbRX+1LfRÞ+1LvRZ)e03\n",
+    ///     "+(-1LdRX-1LeRY-1LfRZ+1LvRÞ)e40\n",
+    ///     "+1LaRve23\n",
+    ///     "+1LbRve31\n",
+    ///     "+1LcRve12\n",
+    ///     "+1LdRve41\n",
+    ///     "+1LeRve42\n",
+    ///     "+1LfRve43\n",
+    ///     "+1LwRve1234\n",
+    ///     "+(+1LaRÞ-1LeRZ+1LfRY+1LwRX)e0324\n",
+    ///     "+(+1LbRÞ+1LdRZ-1LfRX+1LwRY)e0134\n",
+    ///     "+(+1LcRÞ-1LdRY+1LeRX+1LwRZ)e0214\n",
+    ///     "+(+1LaRX+1LbRY+1LcRZ-1LwRÞ)e0123\n",
+    /// ));
+    ///
+    /// let double_motor = Vee::plane().lhs() * Vee::plane().rhs();
+    ///
+    /// assert_eq!(format!("{double_motor:#}"), concat!(
+    ///     "-1LaRa-1LbRb-1LcRc-1LdRd-1LeRe-1LfRf\n",
+    ///     "+(-1LYRc+1LZRb-1LbRZ+1LcRY+1LdRÞ-1LÞRd)e01\n",
+    ///     "+(+1LXRc-1LZRa+1LaRZ-1LcRX+1LeRÞ-1LÞRe)e02\n",
+    ///     "+(-1LXRb+1LYRa-1LaRY+1LbRX+1LfRÞ-1LÞRf)e03\n",
+    ///     "+(+1LXRd+1LYRe+1LZRf-1LdRX-1LeRY-1LfRZ)e40\n",
+    ///     "+(-1LbRc+1LcRb-1LeRf+1LfRe)e23\n",
+    ///     "+(+1LaRc-1LcRa+1LdRf-1LfRd)e31\n",
+    ///     "+(-1LaRb+1LbRa-1LdRe+1LeRd)e12\n",
+    ///     "+(-1LbRf+1LcRe-1LeRc+1LfRb)e41\n",
+    ///     "+(+1LaRf-1LcRd+1LdRc-1LfRa)e42\n",
+    ///     "+(-1LaRe+1LbRd-1LdRb+1LeRa)e43\n",
+    ///     "+(-1LaRd-1LbRe-1LcRf-1LdRa-1LeRb-1LfRc)e1234\n",
+    ///     "+(+1LYRf-1LZRe+1LaRÞ-1LeRZ+1LfRY+1LÞRa)e0324\n",
+    ///     "+(-1LXRf+1LZRd+1LbRÞ+1LdRZ-1LfRX+1LÞRb)e0134\n",
+    ///     "+(+1LXRe-1LYRd+1LcRÞ-1LdRY+1LeRX+1LÞRc)e0214\n",
+    ///     "+(+1LXRa+1LYRb+1LZRc+1LaRX+1LbRY+1LcRZ)e0123\n",
+    /// ));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn double_motor() -> Self {
+        Self::scalar() + Self::plane() + Self::point()
     }
 }
 
@@ -889,23 +1388,23 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
 /// }
 /// ```
 impl<const M: i8> Multivector<Pga<M, 5>> {
-    /// The multivector of scalar $`n_0 \equiv v\e`$ where $`\e \equiv 1`$.
+    /// The multivector of scalar $`s \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
     #[inline]
     pub fn scalar() -> Self {
         Self::e()
     }
-    /// The multivector of pseudoscalar $`n_\infty \equiv V\I`$ where $`\I \equiv \e_{012345}`$.
+    /// The multivector of pseudoscalar $`S \equiv V\I`$ where $`\I \equiv \e_{012345}`$.
     #[must_use]
     #[inline]
     pub fn pseudoscalar() -> Self {
         Self::e012345()
     }
-    /// The multivector of norm $`n \equiv n_0 + n_\infty`$.
+    /// The multivector of norm $`n \equiv s + \ell + P`$.
     #[must_use]
     #[inline]
     pub fn norm() -> Self {
-        Self::scalar() + Self::point()
+        Self::scalar() + Self::line() + Self::point()
     }
     /// The multivector of bias $`h_\infty \equiv w\e_0`$.
     #[must_use]
@@ -1065,23 +1564,41 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     pub fn point() -> Self {
         Self::weight() + Self::direction()
     }
-    /// The multivector of rotator $`r \equiv n_0 + p_0`$.
+    /// The multivector of rotator $`r \equiv s + v_0`$.
     #[must_use]
     #[inline]
     pub fn rotator() -> Self {
-        Self::scalar() + Self::plane_displacement()
+        Self::scalar() + Self::normal()
     }
-    /// The multivector of translator $`t \equiv n_0 + p_\infty`$.
+    /// The multivector of translator $`t \equiv s + v_\infty`$.
     #[must_use]
     #[inline]
     pub fn translator() -> Self {
-        Self::scalar() + Self::plane_moment()
+        Self::scalar() + Self::volume_moment()
     }
-    /// The multivector of motor $`m \equiv n + p`$.
+    /// The multivector of motor $`m_h \equiv n_0 + v`$.
     #[must_use]
     #[inline]
-    pub fn motor() -> Self {
-        Self::norm() + Self::plane()
+    pub fn hypervolume_motor() -> Self {
+        Self::scalar() + Self::volume()
+    }
+    /// The multivector of motor $`m_v \equiv s + v + \ell`$.
+    #[must_use]
+    #[inline]
+    pub fn volume_motor() -> Self {
+        Self::scalar() + Self::volume() + Self::line()
+    }
+    /// The multivector of motor $`m_p \equiv s + v + \ell + S`$.
+    #[must_use]
+    #[inline]
+    pub fn plane_motor() -> Self {
+        Self::scalar() + Self::volume() + Self::line() + Self::pseudoscalar()
+    }
+    /// The multivector of motor $`m_\ell \equiv s + v + \ell_\infty + S`$.
+    #[must_use]
+    #[inline]
+    pub fn line_motor() -> Self {
+        Self::scalar() + Self::volume() + Self::line_moment() + Self::pseudoscalar()
     }
 }
 
