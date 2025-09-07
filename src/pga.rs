@@ -263,7 +263,7 @@ const LUT: [&[BasisBlade]; 6] = [&LUT0, &LUT1, &LUT2, &LUT3, &LUT4, &LUT5];
 
 macro_rules! basis {
     ($t:ident, $u:ident, $n:tt, [$(($s:tt, $b:tt),)*]) => {
-        /// The basis blades of the PGA with embedded dimension $`N = 0`$.
+        #[doc = concat!("The basis blades of the PGA with embedded dimension $`N = ", $n, "`$.")]
         ///
         /// ```gdef
         /// \gdef\idx#1{\expandafter\sub#1\relax}
@@ -571,7 +571,7 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     pub fn pseudoscalar() -> Self {
         Self::e012()
     }
-    /// The multivector of norm $`n \equiv n_0 + n_\infty`$.
+    /// The multivector of norm $`n \equiv s + S`$.
     #[must_use]
     #[inline]
     pub fn norm() -> Self {
@@ -1996,7 +1996,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     pub fn simple_single_motor() -> Self {
         Self::scalar() + Self::volume()
     }
-    /// The multivector of single motor $`m_1 \equiv n_0 + v + \ell_\infty`$.
+    /// The multivector of single motor $`m_1 \equiv s + v + \ell_\infty`$.
     ///
     /// ```
     /// use vee::PgaP5 as Vee;
