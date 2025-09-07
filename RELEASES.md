@@ -1,4 +1,4 @@
-# Version 0.1.2 (2025-09-06)
+# Version 0.1.2 (2025-09-07)
 
   * Generate constructor methods of basis blades with compile-time blocks.
   * Distinguish bias/weight (W/w) from scalar/pseudoscalar (v/V) and relabel norm.
@@ -6,6 +6,7 @@
   * Add more examples.
   * Add polarity operator.
   * Fix bugs, typos, and improve documentation.
+  * Explore 4D/5D PGA.
 
 # Version 0.1.1 (2025-09-02)
 
