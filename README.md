@@ -37,7 +37,7 @@ See the [release history](RELEASES.md) to keep track of the development.
 ## Pseudo-local Documentation Builds
 
 Build the documentation with [cargo-tex](cargo-tex). Note that navigating the documentation requires
-internet access as KaTeX is embedded via remote CDN.
+web access as KaTeX is embedded via remote CDN.
 
 ```sh
 cargo tex --open

@@ -1361,16 +1361,16 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// assert_eq!(point.basis_blades(), (Vee::scalar() + Vee::point()).basis_blades());
     /// assert_eq!(format!("{point:#}"), concat!(
-    ///     "+2ad~w+2be~w+2cf~w\n", // Vanishes with weight condition.
-    ///     "+(+1aa~w+1bb~w+1cc~w+1dd~w+1ee~w+1ff~w+1vv~w)e1234\n",
-    ///     "+(-2Xv~w-2Yc~w+2Zb~w+2ab~Y+2ac~Z+1aa~X+2bf~Þ-2bv~Z-1bb~X-2ce~Þ",
-    ///       "+2cv~Y-1cc~X-2de~Y-2df~Z-2dv~Þ-2d~wÞ-1dd~X+1ee~X+1ff~X+1vv~X)e0324\n",
-    ///     "+(+2Xc~w-2Yv~w-2Za~w+2ab~X-2af~Þ+2av~Z-1aa~Y+2bc~Z+1bb~Y+2cd~Þ",
-    ///       "-2cv~X-1cc~Y-2de~X+1dd~Y-2ef~Z-2ev~Þ-2e~wÞ-1ee~Y+1ff~Y+1vv~Y)e0134\n",
-    ///     "+(-2Xb~w+2Ya~w-2Zv~w+2ac~X+2ae~Þ-2av~Y-1aa~Z+2bc~Y-2bd~Þ+2bv~X",
-    ///       "-1bb~Z+1cc~Z-2df~X+1dd~Z-2ef~Y+1ee~Z-2fv~Þ-2f~wÞ-1ff~Z+1vv~Z)e0214\n",
-    ///     "+(-2Xd~w-2Ye~w-2Zf~w+2ae~Z-2af~Y+1aa~Þ-2bd~Z+2bf~X+1bb~Þ+2cd~Y",
-    ///       "-2ce~X+1cc~Þ+2dv~X-1dd~Þ+2ev~Y-1ee~Þ+2fv~Z-1ff~Þ+2v~wÞ+1vv~Þ)e0123\n",
+    ///     "+[+2ad+2be+2cf]~w\n", // Vanishes with weight condition.
+    ///     "+(+[+1aa+1bb+1cc+1dd+1ee+1ff+1vv]~w)e1234\n",
+    ///     "+(+[+2ac-2bv-2df]~Z+[-2Xv-2Yc+2Zb-2dÞ]~w+[+2bf-2ce-2dv]~Þ",
+    ///       "+[+1aa-1bb-1cc-1dd+1ee+1ff+1vv]~X+[+2ab+2cv-2de]~Y)e0324\n",
+    ///     "+(+[+2Xc-2Yv-2Za-2eÞ]~w+[-2af+2cd-2ev]~Þ+[+2ab-2cv-2de]~X",
+    ///       "+[-1aa+1bb-1cc+1dd-1ee+1ff+1vv]~Y+[+2av+2bc-2ef]~Z)e0134\n",
+    ///     "+(+[+2ae-2bd-2fv]~Þ+[+2ac+2bv-2df]~X+[-2av+2bc-2ef]~Y",
+    ///       "+[-1aa-1bb+1cc+1dd+1ee-1ff+1vv]~Z+[-2Xb+2Ya-2Zv-2fÞ]~w)e0214\n",
+    ///     "+(+[+2bf-2ce+2dv]~X+[-2af+2cd+2ev]~Y+[+2ae-2bd+2fv]~Z",
+    ///       "+[-2Xd-2Ye-2Zf+2vÞ]~w+[+1aa+1bb+1cc-1dd-1ee-1ff+1vv]~Þ)e0123\n",
     /// ));
     ///
     /// let line = Vee::line().pin() << Vee::simple_motor();
@@ -1382,19 +1382,18 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// assert_eq!(volume.basis_blades(), (Vee::pseudoscalar() + Vee::volume()).basis_blades());
     /// assert_eq!(format!("{volume:#}"), concat!(
-    ///     "+(-2Xb~z+2Xc~y-2Xd~þ+2Xv~x+2Ya~z-2Yc~x-2Ye~þ+2Yv~y",
-    ///       "-2Za~y+2Zb~x-2Zf~þ+2Zv~z+1aa~W+1bb~W+1cc~W-2d~xÞ",
-    ///       "+1dd~W-2e~yÞ+1ee~W-2f~zÞ+1ff~W-2v~þÞ+1vv~W)e0\n",
-    ///     "+(+2ab~y+2ac~z+1aa~x+2bf~þ-2bv~z-1bb~x-2ce~þ+2cv~y",
-    ///       "-1cc~x-2de~y-2df~z-2dv~þ-1dd~x+1ee~x+1ff~x+1vv~x)e1\n",
-    ///     "+(+2ab~x-2af~þ+2av~z-1aa~y+2bc~z+1bb~y+2cd~þ-2cv~x",
-    ///       "-1cc~y-2de~x+1dd~y-2ef~z-2ev~þ-1ee~y+1ff~y+1vv~y)e2\n",
-    ///     "+(+2ac~x+2ae~þ-2av~y-1aa~z+2bc~y-2bd~þ+2bv~x-1bb~z",
-    ///       "+1cc~z-2df~x+1dd~z-2ef~y+1ee~z-2fv~þ-1ff~z+1vv~z)e3\n",
-    ///     "+(+2ae~z-2af~y+1aa~þ-2bd~z+2bf~x+1bb~þ+2cd~y-2ce~x",
-    ///       "+1cc~þ+2dv~x-1dd~þ+2ev~y-1ee~þ+2fv~z-1ff~þ+1vv~þ)e4\n",
-    ///     "+(-2Xa~þ-2Xe~z+2Xf~y-2Yb~þ+2Yd~z-2Yf~x-2Zc~þ-2Zd~y",
-    ///       "+2Ze~x+2ad~W-2a~xÞ+2be~W-2b~yÞ+2cf~W-2c~zÞ)I\n", // Vanishes with point condition.
+    ///     "+(+[+1aa+1bb+1cc+1dd+1ee+1ff+1vv]~W+[+2Xv-2Yc+2Zb-2dÞ]~x",
+    ///       "+[+2Xc+2Yv-2Za-2eÞ]~y+[-2Xb+2Ya+2Zv-2fÞ]~z+[-2Xd-2Ye-2Zf-2vÞ]~þ)e0\n",
+    ///     "+(+[+2ab+2cv-2de]~y+[+2ac-2bv-2df]~z+[+2bf-2ce-2dv]~þ",
+    ///       "+[+1aa-1bb-1cc-1dd+1ee+1ff+1vv]~x)e1\n",
+    ///     "+(+[+2av+2bc-2ef]~z+[-2af+2cd-2ev]~þ+[+2ab-2cv-2de]~x",
+    ///       "+[-1aa+1bb-1cc+1dd-1ee+1ff+1vv]~y)e2\n",
+    ///     "+(+[+2ae-2bd-2fv]~þ+[+2ac+2bv-2df]~x+[-2av+2bc-2ef]~y",
+    ///       "+[-1aa-1bb+1cc+1dd+1ee-1ff+1vv]~z)e3\n",
+    ///     "+(+[+2bf-2ce+2dv]~x+[-2af+2cd+2ev]~y+[+2ae-2bd+2fv]~z",
+    ///       "+[+1aa+1bb+1cc-1dd-1ee-1ff+1vv]~þ)e4\n",
+    ///     "+(+[+2ad+2be+2cf]~W+[-2Yf+2Ze-2aÞ]~x+[+2Xf-2Zd-2bÞ]~y",
+    ///       "+[-2Xe+2Yd-2cÞ]~z+[-2Xa-2Yb-2Zc]~þ)I\n", // Vanishes with point condition.
     /// ));
     /// ```
     #[must_use]
@@ -1538,12 +1537,12 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// assert_eq!(point.basis_blades(), (Vee::scalar() + Vee::point()).basis_blades());
     /// assert_eq!(format!("{point:#}"), concat!(
-    ///     "+2xx~w+2yy~w+2zz~w-2~wþþ\n", // Vanishes with weight condition.
-    ///     "+(-2xx~w-2yy~w-2zz~w-2~wþþ)e1234\n",
-    ///     "+(+4x~Þþ+4y~Zþ-4z~Yþ)e0324\n",
-    ///     "+(-4x~Zþ+4y~Þþ+4z~Xþ)e0134\n",
-    ///     "+(+4x~Yþ-4y~Xþ+4z~Þþ)e0214\n",
-    ///     "+(+4x~Xþ+4y~Yþ+4z~Zþ)e0123\n",
+    ///     "+[+2xx+2yy+2zz-2þþ]~w\n", // Vanishes with weight condition.
+    ///     "+(+[-2xx-2yy-2zz-2þþ]~w)e1234\n",
+    ///     "+(+[+4xþ]~Þ+[-4zþ]~Y+[+4yþ]~Z)e0324\n",
+    ///     "+(+[+4zþ]~X+[-4xþ]~Z+[+4yþ]~Þ)e0134\n",
+    ///     "+(+[+4xþ]~Y+[+4zþ]~Þ+[-4yþ]~X)e0214\n",
+    ///     "+(+[+4zþ]~Z+[+4xþ]~X+[+4yþ]~Y)e0123\n",
     /// ));
     /// ```
     #[must_use]

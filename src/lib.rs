@@ -639,12 +639,23 @@ impl<B: Algebra> Display for Multivector<B> {
                 .map
                 .values()
                 .flat_map(|pol| pol.map.keys())
-                .filter_map(|sym| sym.map.keys().last())
+                .filter_map(|sym| {
+                    sym.map
+                        .keys()
+                        .rfind(|sym| sym.starts_with('~'))
+                        .or_else(|| sym.map.keys().last())
+                })
                 .all(|sym| sym.starts_with('~'))
             {
                 let mut map = BTreeMap::<_, Polynomial>::new();
                 for (mut s, c) in p.map.clone() {
-                    let pin = s.map.pop_last().unwrap();
+                    let key = s
+                        .map
+                        .keys()
+                        .rfind(|sym| sym.starts_with('~'))
+                        .unwrap()
+                        .clone();
+                    let pin = s.map.remove_entry(&key).unwrap();
                     assert!(map.entry(pin).or_default().map.insert(s, c).is_none());
                 }
                 let len = if map.len() % B::N == 0 {
