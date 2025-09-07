@@ -381,6 +381,11 @@ impl<B: Algebra> Multivector<B> {
         self.map.retain(|b, _p| grade == b.grade());
         self
     }
+    /// Collects the basis blades.
+    #[must_use]
+    pub fn basis_blades(&self) -> BTreeSet<B> {
+        self.map.keys().copied().collect()
+    }
     /// The reverse.
     #[must_use]
     pub fn rev(mut self) -> Self {

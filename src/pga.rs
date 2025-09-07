@@ -527,6 +527,7 @@ impl<const M: i8> Multivector<Pga<M, 1>> {
     ///
     /// let translator = Vee::point().lhs() * Vee::point().rhs();
     ///
+    /// assert_eq!(translator.basis_blades(), Vee::translator().basis_blades());
     /// assert_eq!(format!("{translator:#}"), concat!(
     ///     "+1LwRw\n",
     ///     "+(+1LWRw-1LwRW)I\n",
@@ -534,6 +535,7 @@ impl<const M: i8> Multivector<Pga<M, 1>> {
     ///
     /// let point = Vee::point().pin() << Vee::translator();
     ///
+    /// assert_eq!(point.basis_blades(), Vee::point().basis_blades());
     /// assert_eq!(format!("{point:#}"), concat!(
     ///     "+(+[+1vv]~W+[+2Vv]~w)e0\n",
     ///     "+[+1vv]~we1\n",
@@ -594,6 +596,7 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     ///
     /// let line = Vee::point().lhs() & Vee::point().rhs();
     ///
+    /// assert_eq!(line.basis_blades(), Vee::line().basis_blades());
     /// assert_eq!(format!("{line:#}"), concat!(
     ///     "+(+1LXRY-1LYRX)e0\n",
     ///     "+(+1LYRw-1LwRY)e1\n",
@@ -624,6 +627,7 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     ///
     /// let point = Vee::line().lhs() ^ Vee::line().rhs();
     ///
+    /// assert_eq!(point.basis_blades(), Vee::point().basis_blades());
     /// assert_eq!(format!("{point:#}"), concat!(
     ///     "+(+1LxRy-1LyRx)e12\n",
     ///     "+(-1LWRy+1LyRW)e20\n",
@@ -642,6 +646,7 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     ///
     /// let rotator = Vee::displacement().lhs() * Vee::displacement().rhs();
     ///
+    /// assert_eq!(rotator.basis_blades(), Vee::rotator().basis_blades());
     /// assert_eq!(format!("{rotator:#}"), concat!(
     ///     "+1LxRx+1LyRy\n",
     ///     "+(+1LxRy-1LyRx)e12\n",
@@ -659,6 +664,7 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     ///
     /// let translator = Vee::point().lhs() * Vee::point().rhs();
     ///
+    /// assert_eq!(translator.basis_blades(), Vee::translator().basis_blades());
     /// assert_eq!(format!("{translator:#}"), concat!(
     ///     "-1LwRw\n",
     ///     "+(-1LYRw+1LwRY)e20\n",
@@ -677,6 +683,7 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     ///
     /// let motor = Vee::line().lhs() * Vee::line().rhs();
     ///
+    /// assert_eq!(motor.basis_blades(), Vee::motor().basis_blades());
     /// assert_eq!(format!("{motor:#}"), concat!(
     ///     "+1LxRx+1LyRy\n",
     ///     "+(+1LxRy-1LyRx)e12\n",
@@ -686,6 +693,7 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     ///
     /// let point = Vee::point().pin() << Vee::motor();
     ///
+    /// assert_eq!(point.basis_blades(), Vee::point().basis_blades());
     /// assert_eq!(format!("{point:#}"), concat!(
     ///     "+(+[+1vv+1ww]~w)e12\n",
     ///     "+(+[+2vw]~Y+[+2Xw-2Yv]~w+[+1vv-1ww]~X)e20\n",
@@ -704,6 +712,7 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     ///
     /// let flector = Vee::line().lhs() * Vee::motor().rhs();
     ///
+    /// assert_eq!(flector.basis_blades(), Vee::flector().basis_blades());
     /// assert_eq!(format!("{flector:#}"), concat!(
     ///     "+(+1LWRv-1LxRY+1LyRX)e0\n",
     ///     "+(+1LxRv-1LyRw)e1\n",
@@ -713,6 +722,7 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     ///
     /// let point = Vee::point().pin() << Vee::flector();
     ///
+    /// assert_eq!(point.basis_blades(), Vee::point().basis_blades());
     /// assert_eq!(format!("{point:#}"), concat!(
     ///     "+(+[-1xx-1yy]~w)e12\n",
     ///     "+(+[+2xy]~Y+[+2Vy+2Wx]~w+[+1xx-1yy]~X)e20\n",
@@ -756,6 +766,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// let squared_norm = Vee::line().squared_norm();
     ///
+    /// assert_eq!(squared_norm.basis_blades(), Vee::norm().basis_blades());
     /// assert_eq!(format!("{squared_norm:#}"), concat!(
     ///     "+1xx+1yy+1zz\n",
     ///     "+(-2Xx-2Yy-2Zz)I\n",
@@ -785,6 +796,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// let plane = Vee::line().lhs() & Vee::point().rhs();
     ///
+    /// assert_eq!(plane.basis_blades(), Vee::plane().basis_blades());
     /// assert_eq!(format!("{plane:#}"), concat!(
     ///     "+(-1LXRX-1LYRY-1LZRZ)e0\n",
     ///     "+(+1LXRw+1LyRZ-1LzRY)e1\n",
@@ -805,6 +817,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// // A line through the origin as the join of a point and the origin.
     /// let displacement = Vee::point().lhs() & Vee::weight().rhs();
     ///
+    /// assert_eq!(displacement.basis_blades(), Vee::displacement().basis_blades());
     /// assert_eq!(format!("{displacement:#}"), concat!(
     ///     "-1LXRwe23\n",
     ///     "-1LYRwe31\n",
@@ -814,6 +827,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// // A line through the origin as the meet of two planes through the origin.
     /// let displacement = Vee::normal().lhs() ^ Vee::normal().rhs();
     ///
+    /// assert_eq!(displacement.basis_blades(), Vee::displacement().basis_blades());
     /// assert_eq!(format!("{displacement:#}"), concat!(
     ///     "+(+1LyRz-1LzRy)e23\n",
     ///     "+(-1LxRz+1LzRx)e31\n",
@@ -839,6 +853,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// // A line as the join of two points.
     /// let line = Vee::point().lhs() & Vee::point().rhs();
     ///
+    /// assert_eq!(line.basis_blades(), Vee::line().basis_blades());
     /// assert_eq!(format!("{line:#}"), concat!(
     ///     "+(+1LYRZ-1LZRY)e01\n",
     ///     "+(-1LXRZ+1LZRX)e02\n",
@@ -851,6 +866,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// // A line as the meet of two planes.
     /// let line = Vee::plane().lhs() ^ Vee::plane().rhs();
     ///
+    /// assert_eq!(line.basis_blades(), Vee::line().basis_blades());
     /// assert_eq!(format!("{line:#}"), concat!(
     ///     "+(+1LWRx-1LxRW)e01\n",
     ///     "+(+1LWRy-1LyRW)e02\n",
@@ -884,6 +900,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// let point = Vee::plane().lhs() ^ Vee::line().rhs();
     ///
+    /// assert_eq!(point.basis_blades(), Vee::point().basis_blades());
     /// assert_eq!(format!("{point:#}"), concat!(
     ///     "+(+1LxRx+1LyRy+1LzRz)e123\n",
     ///     "+(-1LWRx+1LyRZ-1LzRY)e032\n",
@@ -903,6 +920,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// let rotator = Vee::normal().lhs() * Vee::normal().rhs();
     ///
+    /// assert_eq!(rotator.basis_blades(), Vee::rotator().basis_blades());
     /// assert_eq!(format!("{rotator:#}"), concat!(
     ///     "+1LxRx+1LyRy+1LzRz\n",
     ///     "+(+1LyRz-1LzRy)e23\n",
@@ -912,6 +930,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// let rotator = Vee::displacement().lhs() * Vee::displacement().rhs();
     ///
+    /// assert_eq!(rotator.basis_blades(), Vee::rotator().basis_blades());
     /// assert_eq!(format!("{rotator:#}"), concat!(
     ///     "-1LxRx-1LyRy-1LzRz\n",
     ///     "+(-1LyRz+1LzRy)e23\n",
@@ -931,24 +950,27 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// let translator = Vee::point().lhs() * Vee::point().rhs();
     ///
+    /// assert_eq!(translator.basis_blades(), Vee::translator().basis_blades());
     /// assert_eq!(format!("{translator:#}"), concat!(
     ///     "-1LwRw\n",
     ///     "+(+1LXRw-1LwRX)e01\n",
     ///     "+(+1LYRw-1LwRY)e02\n",
     ///     "+(+1LZRw-1LwRZ)e03\n",
     /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn translator() -> Self {
         Self::scalar() + Self::moment()
     }
-    /// The multivector of motor $`m_s \equiv s + \ell`$.
+    /// The multivector of simple motor $`m_s \equiv s + \ell`$.
     ///
     /// ```
     /// use vee::PgaP3 as Vee;
     ///
     /// let simple_motor = Vee::plane().lhs() * Vee::plane().rhs();
     ///
+    /// assert_eq!(simple_motor.basis_blades(), Vee::simple_motor().basis_blades());
     /// assert_eq!(format!("{simple_motor:#}"), concat!(
     ///     "+1LxRx+1LyRy+1LzRz\n",
     ///     "+(+1LWRx-1LxRW)e01\n",
@@ -971,6 +993,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// let motor = Vee::line().lhs() * Vee::line().rhs();
     ///
+    /// assert_eq!(motor.basis_blades(), Vee::motor().basis_blades());
     /// assert_eq!(format!("{motor:#}"), concat!(
     ///     "-1LxRx-1LyRy-1LzRz\n",
     ///     "+(-1LYRz+1LZRy-1LyRZ+1LzRY)e01\n",
@@ -984,6 +1007,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// let motor = Vee::rotator().lhs() * Vee::translator().rhs();
     ///
+    /// assert_eq!(motor.basis_blades(), Vee::motor().basis_blades());
     /// assert_eq!(format!("{motor:#}"), concat!(
     ///     "+1LvRv\n",
     ///     "+(+1LvRX-1LyRZ+1LzRY)e01\n",
@@ -1000,22 +1024,24 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     pub fn motor() -> Self {
         Self::norm() + Self::line()
     }
-    /// The multivector of rotoflector $`f_r \equiv p_0 + P_0`$.
+    /// The multivector of rotoreflector $`f_r \equiv p_0 + P_0`$.
     ///
     /// ```
     /// use vee::PgaP3 as Vee;
     ///
-    /// let rotoflector = Vee::normal().lhs() * Vee::rotator().rhs();
+    /// let rotoreflector = Vee::normal().lhs() * Vee::rotator().rhs();
     ///
-    /// assert_eq!(format!("{rotoflector:#}"), concat!(
+    /// assert_eq!(rotoreflector.basis_blades(), Vee::rotoreflector().basis_blades());
+    /// assert_eq!(format!("{rotoreflector:#}"), concat!(
     ///     "+(+1LxRv-1LyRz+1LzRy)e1\n",
     ///     "+(+1LxRz+1LyRv-1LzRx)e2\n",
     ///     "+(-1LxRy+1LyRx+1LzRv)e3\n",
     ///     "+(+1LxRx+1LyRy+1LzRz)e123\n",
     /// ));
+    /// ```
     #[must_use]
     #[inline]
-    pub fn rotoflector() -> Self {
+    pub fn rotoreflector() -> Self {
         Self::normal() + Self::weight()
     }
     /// The multivector of transflector $`f_t \equiv p + P_\infty`$.
@@ -1025,6 +1051,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// let transflector = Vee::normal().lhs() * Vee::translator().rhs();
     ///
+    /// assert_eq!(transflector.basis_blades(), Vee::transflector().basis_blades());
     /// assert_eq!(format!("{transflector:#}"), concat!(
     ///     "+(-1LxRX-1LyRY-1LzRZ)e0\n",
     ///     "+1LxRve1\n+1LyRve2\n",
@@ -1033,6 +1060,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///     "+(-1LxRZ+1LzRX)e013\n",
     ///     "+(+1LxRY-1LyRX)e021\n",
     /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn transflector() -> Self {
@@ -1045,6 +1073,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// let flector = Vee::plane().lhs() * Vee::motor().rhs();
     ///
+    /// assert_eq!(flector.basis_blades(), Vee::flector().basis_blades());
     /// assert_eq!(format!("{flector:#}"), concat!(
     ///     "+(+1LWRv-1LxRX-1LyRY-1LzRZ)e0\n",
     ///     "+(+1LxRv-1LyRz+1LzRy)e1\n",
@@ -1055,6 +1084,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///     "+(-1LWRy-1LxRZ+1LyRV+1LzRX)e013\n",
     ///     "+(-1LWRz+1LxRY-1LyRX+1LzRV)e021\n",
     /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn flector() -> Self {
@@ -1086,6 +1116,18 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
         Self::e01234()
     }
     /// The multivector of norm $`n \equiv s + P`$.
+    ///
+    /// Quadvector $`P`$ does square to a scalar, therefore $`n`$ is a Study number.
+    ///
+    /// ```
+    /// use vee::PgaP4 as Vee;
+    ///
+    /// let quadvector_squared_norm = Vee::point().squared_norm();
+    ///
+    /// assert_eq!(format!("{quadvector_squared_norm:#}"), concat!(
+    ///     "+1ww\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn norm() -> Self {
@@ -1178,6 +1220,7 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// let single_rotator = Vee::normal().lhs() * Vee::normal().rhs();
     ///
+    /// assert_eq!(single_rotator.basis_blades(), Vee::single_rotator().basis_blades());
     /// assert_eq!(format!("{single_rotator:#}"), concat!(
     ///     "+1LxRx+1LyRy+1LzRz+1LþRþ\n",
     ///     "+(+1LyRz-1LzRy)e23\n",
@@ -1190,6 +1233,7 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// let single_rotator = Vee::line_displacement().lhs() * Vee::line_displacement().rhs();
     ///
+    /// assert_eq!(single_rotator.basis_blades(), Vee::single_rotator().basis_blades());
     /// assert_eq!(format!("{single_rotator:#}"), concat!(
     ///     "-1LxRx-1LyRy-1LzRz-1LþRþ\n",
     ///     "+(-1LyRz+1LzRy)e23\n",
@@ -1198,6 +1242,13 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///     "+(-1LxRþ+1LþRx)e41\n",
     ///     "+(-1LyRþ+1LþRy)e42\n",
     ///     "+(-1LzRþ+1LþRz)e43\n",
+    /// ));
+    ///
+    /// let squared_norm = Vee::single_rotator().squared_norm();
+    /// assert_eq!(squared_norm.basis_blades(), (Vee::scalar() + Vee::weight()).basis_blades());
+    /// assert_eq!(format!("{squared_norm:#}"), concat!(
+    ///     "+1aa+1bb+1cc+1dd+1ee+1ff+1vv\n",
+    ///     "+(+2ad+2be+2cf)e1234\n",
     /// ));
     /// ```
     #[must_use]
@@ -1212,6 +1263,7 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// let double_rotator = Vee::single_rotator().lhs() * Vee::single_rotator().rhs();
     ///
+    /// assert_eq!(double_rotator.basis_blades(), Vee::double_rotator().basis_blades());
     /// assert_eq!(format!("{double_rotator:#}"), concat!(
     ///     "-1LaRa-1LbRb-1LcRc-1LdRd-1LeRe-1LfRf+1LvRv\n",
     ///     "+(+1LaRv-1LbRc+1LcRb-1LeRf+1LfRe+1LvRa)e23\n",
@@ -1225,6 +1277,7 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// let double_rotator = Vee::plane_displacement().lhs() * Vee::plane_displacement().rhs();
     ///
+    /// assert_eq!(double_rotator.basis_blades(), Vee::double_rotator().basis_blades());
     /// assert_eq!(format!("{double_rotator:#}"), concat!(
     ///     "-1LaRa-1LbRb-1LcRc-1LdRd-1LeRe-1LfRf\n",
     ///     "+(-1LbRc+1LcRb-1LeRf+1LfRe)e23\n",
@@ -1235,6 +1288,13 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///     "+(-1LaRe+1LbRd-1LdRb+1LeRa)e43\n",
     ///     "+(-1LaRd-1LbRe-1LcRf-1LdRa-1LeRb-1LfRc)e1234\n",
     /// ));
+    ///
+    /// let squared_norm = Vee::double_rotator().squared_norm();
+    /// assert_eq!(squared_norm.basis_blades(), (Vee::scalar() + Vee::weight()).basis_blades());
+    /// assert_eq!(format!("{squared_norm:#}"), concat!(
+    ///     "+1aa+1bb+1cc+1dd+1ee+1ff+1vv+1ww\n",
+    ///     "+(+2ad+2be+2cf+2vw)e1234\n",
+    /// ));
     /// ```
     #[must_use]
     #[inline]
@@ -1242,6 +1302,21 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
         Self::scalar() + Self::plane_displacement() + Self::weight()
     }
     /// The multivector of translator $`t \equiv s + p_\infty`$.
+    ///
+    /// ```
+    /// use vee::PgaP4 as Vee;
+    ///
+    /// let translator = Vee::point().lhs() * Vee::point().rhs();
+    ///
+    /// assert_eq!(translator.basis_blades(), Vee::translator().basis_blades());
+    /// assert_eq!(format!("{translator:#}"), concat!(
+    ///     "+1LwRw\n",
+    ///     "+(-1LXRw+1LwRX)e01\n",
+    ///     "+(-1LYRw+1LwRY)e02\n",
+    ///     "+(-1LZRw+1LwRZ)e03\n",
+    ///     "+(-1LwRÞ+1LÞRw)e40\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn translator() -> Self {
@@ -1254,6 +1329,7 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// let simple_motor = Vee::volume().lhs() * Vee::volume().rhs();
     ///
+    /// assert_eq!(simple_motor.basis_blades(), Vee::simple_motor().basis_blades());
     /// assert_eq!(format!("{simple_motor:#}"), concat!(
     ///     "+1LxRx+1LyRy+1LzRz+1LþRþ\n",
     ///     "+(+1LWRx-1LxRW)e01\n",
@@ -1266,6 +1342,59 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///     "+(-1LxRþ+1LþRx)e41\n",
     ///     "+(-1LyRþ+1LþRy)e42\n",
     ///     "+(-1LzRþ+1LþRz)e43\n",
+    /// ));
+    ///
+    /// let squared_norm = Vee::simple_motor().squared_norm();
+    /// assert_eq!(squared_norm.basis_blades(), Vee::norm().basis_blades());
+    /// assert_eq!(format!("{squared_norm:#}"), concat!(
+    ///     // Scalar condition.
+    ///     "+1aa+1bb+1cc+1dd+1ee+1ff+1vv\n",
+    ///     // Point condition.
+    ///     "+(+2ad+2be+2cf)e1234\n", // Weight condition.
+    ///     "+(-2Yf+2Ze-2aÞ)e0324\n", // Direction condition.
+    ///     "+(+2Xf-2Zd-2bÞ)e0134\n", // Direction condition.
+    ///     "+(-2Xe+2Yd-2cÞ)e0214\n", // Direction condition.
+    ///     "+(-2Xa-2Yb-2Zc)e0123\n", // Direction condition.
+    /// ));
+    ///
+    /// let point = Vee::point().pin() << Vee::simple_motor();
+    ///
+    /// assert_eq!(point.basis_blades(), (Vee::scalar() + Vee::point()).basis_blades());
+    /// assert_eq!(format!("{point:#}"), concat!(
+    ///     "+2ad~w+2be~w+2cf~w\n", // Vanishes with weight condition.
+    ///     "+(+1aa~w+1bb~w+1cc~w+1dd~w+1ee~w+1ff~w+1vv~w)e1234\n",
+    ///     "+(-2Xv~w-2Yc~w+2Zb~w+2ab~Y+2ac~Z+1aa~X+2bf~Þ-2bv~Z-1bb~X-2ce~Þ",
+    ///       "+2cv~Y-1cc~X-2de~Y-2df~Z-2dv~Þ-2d~wÞ-1dd~X+1ee~X+1ff~X+1vv~X)e0324\n",
+    ///     "+(+2Xc~w-2Yv~w-2Za~w+2ab~X-2af~Þ+2av~Z-1aa~Y+2bc~Z+1bb~Y+2cd~Þ",
+    ///       "-2cv~X-1cc~Y-2de~X+1dd~Y-2ef~Z-2ev~Þ-2e~wÞ-1ee~Y+1ff~Y+1vv~Y)e0134\n",
+    ///     "+(-2Xb~w+2Ya~w-2Zv~w+2ac~X+2ae~Þ-2av~Y-1aa~Z+2bc~Y-2bd~Þ+2bv~X",
+    ///       "-1bb~Z+1cc~Z-2df~X+1dd~Z-2ef~Y+1ee~Z-2fv~Þ-2f~wÞ-1ff~Z+1vv~Z)e0214\n",
+    ///     "+(-2Xd~w-2Ye~w-2Zf~w+2ae~Z-2af~Y+1aa~Þ-2bd~Z+2bf~X+1bb~Þ+2cd~Y",
+    ///       "-2ce~X+1cc~Þ+2dv~X-1dd~Þ+2ev~Y-1ee~Þ+2fv~Z-1ff~Þ+2v~wÞ+1vv~Þ)e0123\n",
+    /// ));
+    ///
+    /// let line = Vee::line().pin() << Vee::simple_motor();
+    /// assert_eq!(line.basis_blades(), Vee::line().basis_blades());
+    /// let plane = Vee::plane().pin() << Vee::simple_motor();
+    /// assert_eq!(plane.basis_blades(), Vee::plane().basis_blades());
+    ///
+    /// let volume = Vee::volume().pin() << Vee::simple_motor();
+    ///
+    /// assert_eq!(volume.basis_blades(), (Vee::pseudoscalar() + Vee::volume()).basis_blades());
+    /// assert_eq!(format!("{volume:#}"), concat!(
+    ///     "+(-2Xb~z+2Xc~y-2Xd~þ+2Xv~x+2Ya~z-2Yc~x-2Ye~þ+2Yv~y",
+    ///       "-2Za~y+2Zb~x-2Zf~þ+2Zv~z+1aa~W+1bb~W+1cc~W-2d~xÞ",
+    ///       "+1dd~W-2e~yÞ+1ee~W-2f~zÞ+1ff~W-2v~þÞ+1vv~W)e0\n",
+    ///     "+(+2ab~y+2ac~z+1aa~x+2bf~þ-2bv~z-1bb~x-2ce~þ+2cv~y",
+    ///       "-1cc~x-2de~y-2df~z-2dv~þ-1dd~x+1ee~x+1ff~x+1vv~x)e1\n",
+    ///     "+(+2ab~x-2af~þ+2av~z-1aa~y+2bc~z+1bb~y+2cd~þ-2cv~x",
+    ///       "-1cc~y-2de~x+1dd~y-2ef~z-2ev~þ-1ee~y+1ff~y+1vv~y)e2\n",
+    ///     "+(+2ac~x+2ae~þ-2av~y-1aa~z+2bc~y-2bd~þ+2bv~x-1bb~z",
+    ///       "+1cc~z-2df~x+1dd~z-2ef~y+1ee~z-2fv~þ-1ff~z+1vv~z)e3\n",
+    ///     "+(+2ae~z-2af~y+1aa~þ-2bd~z+2bf~x+1bb~þ+2cd~y-2ce~x",
+    ///       "+1cc~þ+2dv~x-1dd~þ+2ev~y-1ee~þ+2fv~z-1ff~þ+1vv~þ)e4\n",
+    ///     "+(-2Xa~þ-2Xe~z+2Xf~y-2Yb~þ+2Yd~z-2Yf~x-2Zc~þ-2Zd~y",
+    ///       "+2Ze~x+2ad~W-2a~xÞ+2be~W-2b~yÞ+2cf~W-2c~zÞ)I\n", // Vanishes with point condition.
     /// ));
     /// ```
     #[must_use]
@@ -1280,6 +1409,7 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// let single_motor = Vee::single_rotator().lhs() * Vee::translator().rhs();
     ///
+    /// assert_eq!(single_motor.basis_blades(), Vee::single_motor().basis_blades());
     /// assert_eq!(format!("{single_motor:#}"), concat!(
     ///     "+1LvRv\n",
     ///     "+(-1LbRZ+1LcRY+1LdRÞ+1LvRX)e01\n",
@@ -1300,6 +1430,7 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// let single_motor = Vee::line().lhs() * Vee::line().rhs();
     ///
+    /// assert_eq!(single_motor.basis_blades(), Vee::single_motor().basis_blades());
     /// assert_eq!(format!("{single_motor:#}"), concat!(
     ///     "-1LxRx-1LyRy-1LzRz-1LþRþ\n",
     ///     "+(-1LBRz+1LCRy+1LDRþ-1LyRC+1LzRB-1LþRD)e01\n",
@@ -1330,6 +1461,7 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// let double_motor = Vee::double_rotator().lhs() * Vee::translator().rhs();
     ///
+    /// assert_eq!(double_motor.basis_blades(), Vee::double_motor().basis_blades());
     /// assert_eq!(format!("{double_motor:#}"), concat!(
     ///     "+1LvRv\n",
     ///     "+(-1LbRZ+1LcRY+1LdRÞ+1LvRX)e01\n",
@@ -1351,6 +1483,7 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// let double_motor = Vee::plane().lhs() * Vee::plane().rhs();
     ///
+    /// assert_eq!(double_motor.basis_blades(), Vee::double_motor().basis_blades());
     /// assert_eq!(format!("{double_motor:#}"), concat!(
     ///     "-1LaRa-1LbRb-1LcRc-1LdRd-1LeRe-1LfRf\n",
     ///     "+(-1LYRc+1LZRb-1LbRZ+1LcRY+1LdRÞ-1LÞRd)e01\n",
@@ -1374,6 +1507,108 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     #[inline]
     pub fn double_motor() -> Self {
         Self::scalar() + Self::plane() + Self::point()
+    }
+    /// The multivector of rotoreflector $`f_r \equiv v_0 + \ell_0`$.
+    ///
+    /// ```
+    /// use vee::PgaP4 as Vee;
+    ///
+    /// let rotoreflector = Vee::normal().lhs() * Vee::single_rotator().rhs();
+    ///
+    /// assert_eq!(rotoreflector.basis_blades(), Vee::rotoreflector().basis_blades());
+    /// assert_eq!(format!("{rotoreflector:#}"), concat!(
+    ///     "+(+1LxRv-1LyRc+1LzRb+1LþRd)e1\n",
+    ///     "+(+1LxRc+1LyRv-1LzRa+1LþRe)e2\n",
+    ///     "+(-1LxRb+1LyRa+1LzRv+1LþRf)e3\n",
+    ///     "+(-1LxRd-1LyRe-1LzRf+1LþRv)e4\n",
+    ///     "+(-1LyRf+1LzRe+1LþRa)e234\n",
+    ///     "+(+1LxRf-1LzRd+1LþRb)e314\n",
+    ///     "+(-1LxRe+1LyRd+1LþRc)e124\n",
+    ///     "+(+1LxRa+1LyRb+1LzRc)e123\n",
+    /// ));
+    ///
+    /// let squared_norm = Vee::rotoreflector().squared_norm();
+    /// assert_eq!(squared_norm.basis_blades(), (Vee::scalar() + Vee::weight()).basis_blades());
+    /// assert_eq!(format!("{squared_norm:#}"), concat!(
+    ///     "+2xx+2yy+2zz+2þþ\n",
+    ///     "+(-2xx-2yy-2zz+2þþ)e1234\n", // Weight condition.
+    /// ));
+    ///
+    /// let point = Vee::point().pin() << Vee::rotoreflector();
+    ///
+    /// assert_eq!(point.basis_blades(), (Vee::scalar() + Vee::point()).basis_blades());
+    /// assert_eq!(format!("{point:#}"), concat!(
+    ///     "+2xx~w+2yy~w+2zz~w-2~wþþ\n", // Vanishes with weight condition.
+    ///     "+(-2xx~w-2yy~w-2zz~w-2~wþþ)e1234\n",
+    ///     "+(+4x~Þþ+4y~Zþ-4z~Yþ)e0324\n",
+    ///     "+(-4x~Zþ+4y~Þþ+4z~Xþ)e0134\n",
+    ///     "+(+4x~Yþ-4y~Xþ+4z~Þþ)e0214\n",
+    ///     "+(+4x~Xþ+4y~Yþ+4z~Zþ)e0123\n",
+    /// ));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn rotoreflector() -> Self {
+        Self::normal() + Self::line_displacement()
+    }
+    /// The multivector of transflector $`f_t \equiv v + P_\infty`$.
+    ///
+    /// ```
+    /// use vee::PgaP4 as Vee;
+    ///
+    /// let transflector = Vee::normal().lhs() * Vee::translator().rhs();
+    ///
+    /// assert_eq!(transflector.basis_blades(), Vee::transflector().basis_blades());
+    /// assert_eq!(format!("{transflector:#}"), concat!(
+    ///     "+(-1LxRX-1LyRY-1LzRZ+1LþRÞ)e0\n",
+    ///     "+1LxRve1\n",
+    ///     "+1LyRve2\n",
+    ///     "+1LzRve3\n",
+    ///     "+1LþRve4\n",
+    ///     "+(+1LxRÞ+1LþRX)e014\n",
+    ///     "+(+1LyRÞ+1LþRY)e024\n",
+    ///     "+(+1LzRÞ+1LþRZ)e034\n",
+    ///     "+(+1LyRZ-1LzRY)e032\n",
+    ///     "+(-1LxRZ+1LzRX)e013\n",
+    ///     "+(+1LxRY-1LyRX)e021\n",
+    /// ));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn transflector() -> Self {
+        Self::volume() + Self::line_moment()
+    }
+    /// The multivector of flector $`f \equiv v + \ell + S`$.
+    ///
+    /// ```
+    /// use vee::PgaP4 as Vee;
+    ///
+    /// let flector = Vee::volume().lhs() * Vee::single_motor().rhs();
+    ///
+    /// assert_eq!(flector.basis_blades(), Vee::flector().basis_blades());
+    /// assert_eq!(format!("{flector:#}"), concat!(
+    ///     "+(+1LWRv-1LxRX-1LyRY-1LzRZ+1LþRÞ)e0\n",
+    ///     "+(+1LxRv-1LyRc+1LzRb+1LþRd)e1\n",
+    ///     "+(+1LxRc+1LyRv-1LzRa+1LþRe)e2\n",
+    ///     "+(-1LxRb+1LyRa+1LzRv+1LþRf)e3\n",
+    ///     "+(-1LxRd-1LyRe-1LzRf+1LþRv)e4\n",
+    ///     "+(-1LyRf+1LzRe+1LþRa)e234\n",
+    ///     "+(+1LxRf-1LzRd+1LþRb)e314\n",
+    ///     "+(-1LxRe+1LyRd+1LþRc)e124\n",
+    ///     "+(+1LxRa+1LyRb+1LzRc)e123\n",
+    ///     "+(-1LWRd+1LxRÞ-1LyRZ+1LzRY+1LþRX)e014\n",
+    ///     "+(-1LWRe+1LxRZ+1LyRÞ-1LzRX+1LþRY)e024\n",
+    ///     "+(-1LWRf-1LxRY+1LyRX+1LzRÞ+1LþRZ)e034\n",
+    ///     "+(-1LWRa+1LxRÞ+1LyRZ-1LzRY-1LþRX)e032\n",
+    ///     "+(-1LWRb-1LxRZ+1LyRÞ+1LzRX-1LþRY)e013\n",
+    ///     "+(-1LWRc+1LxRY-1LyRX+1LzRÞ-1LþRZ)e021\n",
+    ///     "+(+1LxRX+1LyRY+1LzRZ+1LþRÞ)I\n",
+    /// ));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn flector() -> Self {
+        Self::volume() + Self::line() + Self::pseudoscalar()
     }
 }
 
@@ -1400,11 +1635,35 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     pub fn pseudoscalar() -> Self {
         Self::e012345()
     }
-    /// The multivector of norm $`n \equiv s + \ell + P`$.
+    /// The multivector of norm $`n \equiv s + \ell`$.
+    ///
+    /// Quadvector $`\ell`$ does not square to a scalar, therefore $`n`$ is **not** a Study number.
+    ///
+    /// ```
+    /// use vee::PgaP5 as Vee;
+    ///
+    /// let quadvector_squared_norm = Vee::line().squared_norm();
+    ///
+    /// assert_eq!(quadvector_squared_norm.basis_blades(),
+    ///     (Vee::scalar() + Vee::line_moment()).basis_blades());
+    /// assert_eq!(format!("{quadvector_squared_norm:#}"), concat!(
+    ///     "+1xx+1yy+1zz+1ðð+1þþ\n",
+    ///     "+(+2Dð-2Gþ-2Jx)e0145\n",
+    ///     "+(+2Eð-2Hþ-2Jy)e0245\n",
+    ///     "+(+2Fð-2Iþ-2Jz)e0345\n",
+    ///     "+(+2Að-2Hz+2Iy)e0325\n",
+    ///     "+(+2Bð+2Gz-2Ix)e0135\n",
+    ///     "+(+2Cð-2Gy+2Hx)e0215\n",
+    ///     "+(-2Aþ+2Ez-2Fy)e0324\n",
+    ///     "+(-2Bþ-2Dz+2Fx)e0134\n",
+    ///     "+(-2Cþ+2Dy-2Ex)e0214\n",
+    ///     "+(-2Ax-2By-2Cz)e0123\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn norm() -> Self {
-        Self::scalar() + Self::line() + Self::point()
+        Self::scalar() + Self::line()
     }
     /// The multivector of bias $`h_\infty \equiv w\e_0`$.
     #[must_use]
@@ -1564,41 +1823,658 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     pub fn point() -> Self {
         Self::weight() + Self::direction()
     }
-    /// The multivector of rotator $`r \equiv s + v_0`$.
+    /// The multivector of single rotator $`r_1 \equiv s + v_0`$.
+    ///
+    /// ```
+    /// use vee::PgaP5 as Vee;
+    ///
+    /// let single_rotator = Vee::normal().lhs() * Vee::normal().rhs();
+    ///
+    /// assert_eq!(single_rotator.basis_blades(), Vee::single_rotator().basis_blades());
+    /// assert_eq!(format!("{single_rotator:#}"), concat!(
+    ///     "+1LxRx+1LyRy+1LzRz+1LðRð+1LþRþ\n",
+    ///     "+(+1LyRz-1LzRy)e23\n",
+    ///     "+(-1LxRz+1LzRx)e31\n",
+    ///     "+(+1LxRy-1LyRx)e12\n",
+    ///     "+(-1LxRþ+1LþRx)e41\n",
+    ///     "+(-1LyRþ+1LþRy)e42\n",
+    ///     "+(-1LzRþ+1LþRz)e43\n",
+    ///     "+(+1LxRð-1LðRx)e15\n",
+    ///     "+(+1LyRð-1LðRy)e25\n",
+    ///     "+(+1LzRð-1LðRz)e35\n",
+    ///     "+(-1LðRþ+1LþRð)e45\n",
+    /// ));
+    ///
+    /// let single_rotator = Vee::line_displacement().lhs() * Vee::line_displacement().rhs();
+    ///
+    /// assert_eq!(single_rotator.basis_blades(), Vee::single_rotator().basis_blades());
+    /// assert_eq!(format!("{single_rotator:#}"), concat!(
+    ///     "+1LxRx+1LyRy+1LzRz+1LðRð+1LþRþ\n",
+    ///     "+(+1LyRz-1LzRy)e23\n",
+    ///     "+(-1LxRz+1LzRx)e31\n",
+    ///     "+(+1LxRy-1LyRx)e12\n",
+    ///     "+(+1LxRþ-1LþRx)e41\n",
+    ///     "+(+1LyRþ-1LþRy)e42\n",
+    ///     "+(+1LzRþ-1LþRz)e43\n",
+    ///     "+(+1LxRð-1LðRx)e15\n",
+    ///     "+(+1LyRð-1LðRy)e25\n",
+    ///     "+(+1LzRð-1LðRz)e35\n",
+    ///     "+(+1LðRþ-1LþRð)e45\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
-    pub fn rotator() -> Self {
-        Self::scalar() + Self::normal()
+    pub fn single_rotator() -> Self {
+        Self::scalar() + Self::volume_displacement()
+    }
+    /// The multivector of double rotator $`r_2 \equiv s + v_0 + \ell_0`$.
+    ///
+    /// ```
+    /// use vee::PgaP5 as Vee;
+    ///
+    /// let double_rotator = Vee::single_rotator().lhs() * Vee::single_rotator().rhs();
+    ///
+    /// assert_eq!(double_rotator.basis_blades(), Vee::double_rotator().basis_blades());
+    /// assert_eq!(format!("{double_rotator:#}"), concat!(
+    ///     "-1LaRa-1LbRb-1LcRc-1LdRd-1LeRe-1LfRf-1LgRg-1LhRh-1LiRi-1LjRj+1LvRv\n",
+    ///     "+(+1LaRv-1LbRc+1LcRb-1LeRf+1LfRe-1LhRi+1LiRh+1LvRa)e23\n",
+    ///     "+(+1LaRc+1LbRv-1LcRa+1LdRf-1LfRd+1LgRi-1LiRg+1LvRb)e31\n",
+    ///     "+(-1LaRb+1LbRa+1LcRv-1LdRe+1LeRd-1LgRh+1LhRg+1LvRc)e12\n",
+    ///     "+(-1LbRf+1LcRe+1LdRv-1LeRc+1LfRb+1LgRj-1LjRg+1LvRd)e41\n",
+    ///     "+(+1LaRf-1LcRd+1LdRc+1LeRv-1LfRa+1LhRj-1LjRh+1LvRe)e42\n",
+    ///     "+(-1LaRe+1LbRd-1LdRb+1LeRa+1LfRv+1LiRj-1LjRi+1LvRf)e43\n",
+    ///     "+(-1LbRi+1LcRh-1LdRj+1LgRv-1LhRc+1LiRb+1LjRd+1LvRg)e15\n",
+    ///     "+(+1LaRi-1LcRg-1LeRj+1LgRc+1LhRv-1LiRa+1LjRe+1LvRh)e25\n",
+    ///     "+(-1LaRh+1LbRg-1LfRj-1LgRb+1LhRa+1LiRv+1LjRf+1LvRi)e35\n",
+    ///     "+(+1LdRg+1LeRh+1LfRi-1LgRd-1LhRe-1LiRf+1LjRv+1LvRj)e45\n",
+    ///     "+(+1LaRj+1LeRi-1LfRh-1LhRf+1LiRe+1LjRa)e2345\n",
+    ///     "+(+1LbRj-1LdRi+1LfRg+1LgRf-1LiRd+1LjRb)e3145\n",
+    ///     "+(+1LcRj+1LdRh-1LeRg-1LgRe+1LhRd+1LjRc)e1245\n",
+    ///     "+(+1LaRg+1LbRh+1LcRi+1LgRa+1LhRb+1LiRc)e1235\n",
+    ///     "+(-1LaRd-1LbRe-1LcRf-1LdRa-1LeRb-1LfRc)e1234\n",
+    /// ));
+    ///
+    /// let double_rotator = Vee::volume_displacement().lhs() * Vee::volume_displacement().rhs();
+    ///
+    /// assert_eq!(double_rotator.basis_blades(), Vee::double_rotator().basis_blades());
+    /// assert_eq!(format!("{double_rotator:#}"), concat!(
+    ///     "-1LaRa-1LbRb-1LcRc-1LdRd-1LeRe-1LfRf-1LgRg-1LhRh-1LiRi-1LjRj\n",
+    ///     "+(-1LbRc+1LcRb-1LeRf+1LfRe-1LhRi+1LiRh)e23\n",
+    ///     "+(+1LaRc-1LcRa+1LdRf-1LfRd+1LgRi-1LiRg)e31\n",
+    ///     "+(-1LaRb+1LbRa-1LdRe+1LeRd-1LgRh+1LhRg)e12\n",
+    ///     "+(-1LbRf+1LcRe-1LeRc+1LfRb+1LgRj-1LjRg)e41\n",
+    ///     "+(+1LaRf-1LcRd+1LdRc-1LfRa+1LhRj-1LjRh)e42\n",
+    ///     "+(-1LaRe+1LbRd-1LdRb+1LeRa+1LiRj-1LjRi)e43\n",
+    ///     "+(-1LbRi+1LcRh-1LdRj-1LhRc+1LiRb+1LjRd)e15\n",
+    ///     "+(+1LaRi-1LcRg-1LeRj+1LgRc-1LiRa+1LjRe)e25\n",
+    ///     "+(-1LaRh+1LbRg-1LfRj-1LgRb+1LhRa+1LjRf)e35\n",
+    ///     "+(+1LdRg+1LeRh+1LfRi-1LgRd-1LhRe-1LiRf)e45\n",
+    ///     "+(+1LaRj+1LeRi-1LfRh-1LhRf+1LiRe+1LjRa)e2345\n",
+    ///     "+(+1LbRj-1LdRi+1LfRg+1LgRf-1LiRd+1LjRb)e3145\n",
+    ///     "+(+1LcRj+1LdRh-1LeRg-1LgRe+1LhRd+1LjRc)e1245\n",
+    ///     "+(+1LaRg+1LbRh+1LcRi+1LgRa+1LhRb+1LiRc)e1235\n",
+    ///     "+(-1LaRd-1LbRe-1LcRf-1LdRa-1LeRb-1LfRc)e1234\n",
+    /// ));
+    ///
+    /// let double_rotator = Vee::plane_displacement().lhs() * Vee::plane_displacement().rhs();
+    ///
+    /// assert_eq!(double_rotator.basis_blades(), Vee::double_rotator().basis_blades());
+    /// assert_eq!(format!("{double_rotator:#}"), concat!(
+    ///     "-1LaRa-1LbRb-1LcRc-1LdRd-1LeRe-1LfRf-1LgRg-1LhRh-1LiRi-1LjRj\n",
+    ///     "+(+1LbRc-1LcRb+1LfRg-1LgRf-1LiRj+1LjRi)e23\n",
+    ///     "+(+1LaRc-1LcRa+1LeRg-1LgRe+1LhRj-1LjRh)e31\n",
+    ///     "+(+1LaRb-1LbRa+1LeRf-1LfRe-1LhRi+1LiRh)e12\n",
+    ///     "+(-1LaRd+1LdRa+1LfRj+1LgRi-1LiRg-1LjRf)e41\n",
+    ///     "+(+1LbRd-1LdRb+1LeRj-1LgRh+1LhRg-1LjRe)e42\n",
+    ///     "+(-1LcRd+1LdRc-1LeRi-1LfRh+1LhRf+1LiRe)e43\n",
+    ///     "+(-1LbRj-1LcRi+1LdRe-1LeRd+1LiRc+1LjRb)e15\n",
+    ///     "+(-1LaRj+1LcRh-1LdRf+1LfRd-1LhRc+1LjRa)e25\n",
+    ///     "+(+1LaRi+1LbRh+1LdRg-1LgRd-1LhRb-1LiRa)e35\n",
+    ///     "+(+1LaRe+1LbRf+1LcRg-1LeRa-1LfRb-1LgRc)e45\n",
+    ///     "+(-1LbRg+1LcRf+1LdRh+1LfRc-1LgRb+1LhRd)e2345\n",
+    ///     "+(-1LaRg+1LcRe+1LdRi+1LeRc-1LgRa+1LiRd)e3145\n",
+    ///     "+(-1LaRf+1LbRe+1LdRj+1LeRb-1LfRa+1LjRd)e1245\n",
+    ///     "+(-1LaRh+1LbRi-1LcRj-1LhRa+1LiRb-1LjRc)e1235\n",
+    ///     "+(-1LeRh+1LfRi-1LgRj-1LhRe+1LiRf-1LjRg)e1234\n",
+    /// ));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn double_rotator() -> Self {
+        Self::scalar() + Self::volume_displacement() + Self::line_displacement()
     }
     /// The multivector of translator $`t \equiv s + v_\infty`$.
+    ///
+    /// ```
+    /// use vee::PgaP5 as Vee;
+    ///
+    /// let translator = Vee::point().lhs() * Vee::point().rhs();
+    ///
+    /// assert_eq!(translator.basis_blades(), Vee::translator().basis_blades());
+    /// assert_eq!(format!("{translator:#}"), concat!(
+    ///     "+1LwRw\n",
+    ///     "+(-1LXRw+1LwRX)e01\n",
+    ///     "+(-1LYRw+1LwRY)e02\n",
+    ///     "+(-1LZRw+1LwRZ)e03\n",
+    ///     "+(-1LwRÞ+1LÞRw)e40\n",
+    ///     "+(+1LwRÐ-1LÐRw)e05\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
     pub fn translator() -> Self {
         Self::scalar() + Self::volume_moment()
     }
-    /// The multivector of motor $`m_h \equiv n_0 + v`$.
+    /// The multivector of simple single motor $`m_{s1} \equiv s + v`$.
+    ///
+    /// ```
+    /// use vee::PgaP5 as Vee;
+    ///
+    /// let simple_single_motor = Vee::hypervolume().lhs() * Vee::hypervolume().rhs();
+    ///
+    /// assert_eq!(simple_single_motor.basis_blades(), Vee::simple_single_motor().basis_blades());
+    /// assert_eq!(format!("{simple_single_motor:#}"), concat!(
+    ///     "+1LxRx+1LyRy+1LzRz+1LðRð+1LþRþ\n",
+    ///     "+(+1LWRx-1LxRW)e01\n",
+    ///     "+(+1LWRy-1LyRW)e02\n",
+    ///     "+(+1LWRz-1LzRW)e03\n",
+    ///     "+(-1LWRþ+1LþRW)e40\n",
+    ///     "+(+1LWRð-1LðRW)e05\n",
+    ///     "+(+1LyRz-1LzRy)e23\n",
+    ///     "+(-1LxRz+1LzRx)e31\n",
+    ///     "+(+1LxRy-1LyRx)e12\n",
+    ///     "+(-1LxRþ+1LþRx)e41\n",
+    ///     "+(-1LyRþ+1LþRy)e42\n",
+    ///     "+(-1LzRþ+1LþRz)e43\n",
+    ///     "+(+1LxRð-1LðRx)e15\n",
+    ///     "+(+1LyRð-1LðRy)e25\n",
+    ///     "+(+1LzRð-1LðRz)e35\n",
+    ///     "+(-1LðRþ+1LþRð)e45\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
-    pub fn hypervolume_motor() -> Self {
+    pub fn simple_single_motor() -> Self {
         Self::scalar() + Self::volume()
     }
-    /// The multivector of motor $`m_v \equiv s + v + \ell`$.
+    /// The multivector of single motor $`m_1 \equiv n_0 + v + \ell_\infty`$.
+    ///
+    /// ```
+    /// use vee::PgaP5 as Vee;
+    ///
+    /// let single_motor = Vee::single_rotator().lhs() * Vee::translator().rhs();
+    ///
+    /// assert_eq!(single_motor.basis_blades(), Vee::single_motor().basis_blades());
+    /// assert_eq!(format!("{single_motor:#}"), concat!(
+    ///     "+1LvRv\n",
+    ///     "+(-1LbRZ+1LcRY+1LdRÞ+1LgRÐ+1LvRX)e01\n",
+    ///     "+(+1LaRZ-1LcRX+1LeRÞ+1LhRÐ+1LvRY)e02\n",
+    ///     "+(-1LaRY+1LbRX+1LfRÞ+1LiRÐ+1LvRZ)e03\n",
+    ///     "+(-1LdRX-1LeRY-1LfRZ-1LjRÐ+1LvRÞ)e40\n",
+    ///     "+(-1LgRX-1LhRY-1LiRZ+1LjRÞ+1LvRÐ)e05\n",
+    ///     "+1LaRve23\n",
+    ///     "+1LbRve31\n",
+    ///     "+1LcRve12\n",
+    ///     "+1LdRve41\n",
+    ///     "+1LeRve42\n",
+    ///     "+1LfRve43\n",
+    ///     "+1LgRve15\n",
+    ///     "+1LhRve25\n",
+    ///     "+1LiRve35\n",
+    ///     "+1LjRve45\n",
+    ///     "+(-1LdRÐ+1LgRÞ+1LjRX)e0145\n",
+    ///     "+(-1LeRÐ+1LhRÞ+1LjRY)e0245\n",
+    ///     "+(-1LfRÐ+1LiRÞ+1LjRZ)e0345\n",
+    ///     "+(-1LaRÐ+1LhRZ-1LiRY)e0325\n",
+    ///     "+(-1LbRÐ-1LgRZ+1LiRX)e0135\n",
+    ///     "+(-1LcRÐ+1LgRY-1LhRX)e0215\n",
+    ///     "+(+1LaRÞ-1LeRZ+1LfRY)e0324\n",
+    ///     "+(+1LbRÞ+1LdRZ-1LfRX)e0134\n",
+    ///     "+(+1LcRÞ-1LdRY+1LeRX)e0214\n",
+    ///     "+(+1LaRX+1LbRY+1LcRZ)e0123\n",
+    /// ));
+    ///
+    /// let single_motor = Vee::line().lhs() * Vee::line().rhs();
+    ///
+    /// assert_eq!(single_motor.basis_blades(), Vee::single_motor().basis_blades());
+    /// assert_eq!(format!("{single_motor:#}"), concat!(
+    ///     "+1LxRx+1LyRy+1LzRz+1LðRð+1LþRþ\n",
+    ///     "+(+1LBRz-1LCRy-1LDRþ-1LGRð+1LyRC-1LzRB+1LðRG+1LþRD)e01\n",
+    ///     "+(-1LARz+1LCRx-1LERþ-1LHRð-1LxRC+1LzRA+1LðRH+1LþRE)e02\n",
+    ///     "+(+1LARy-1LBRx-1LFRþ-1LIRð+1LxRB-1LyRA+1LðRI+1LþRF)e03\n",
+    ///     "+(+1LDRx+1LERy+1LFRz+1LJRð-1LxRD-1LyRE-1LzRF-1LðRJ)e40\n",
+    ///     "+(+1LGRx+1LHRy+1LIRz-1LJRþ-1LxRG-1LyRH-1LzRI+1LþRJ)e05\n",
+    ///     "+(+1LyRz-1LzRy)e23\n",
+    ///     "+(-1LxRz+1LzRx)e31\n",
+    ///     "+(+1LxRy-1LyRx)e12\n",
+    ///     "+(+1LxRþ-1LþRx)e41\n",
+    ///     "+(+1LyRþ-1LþRy)e42\n",
+    ///     "+(+1LzRþ-1LþRz)e43\n",
+    ///     "+(+1LxRð-1LðRx)e15\n",
+    ///     "+(+1LyRð-1LðRy)e25\n",
+    ///     "+(+1LzRð-1LðRz)e35\n",
+    ///     "+(+1LðRþ-1LþRð)e45\n",
+    ///     "+(+1LDRð-1LGRþ-1LJRx-1LxRJ+1LðRD-1LþRG)e0145\n",
+    ///     "+(+1LERð-1LHRþ-1LJRy-1LyRJ+1LðRE-1LþRH)e0245\n",
+    ///     "+(+1LFRð-1LIRþ-1LJRz-1LzRJ+1LðRF-1LþRI)e0345\n",
+    ///     "+(+1LARð-1LHRz+1LIRy+1LyRI-1LzRH+1LðRA)e0325\n",
+    ///     "+(+1LBRð+1LGRz-1LIRx-1LxRI+1LzRG+1LðRB)e0135\n",
+    ///     "+(+1LCRð-1LGRy+1LHRx+1LxRH-1LyRG+1LðRC)e0215\n",
+    ///     "+(-1LARþ+1LERz-1LFRy-1LyRF+1LzRE-1LþRA)e0324\n",
+    ///     "+(-1LBRþ-1LDRz+1LFRx+1LxRF-1LzRD-1LþRB)e0134\n",
+    ///     "+(-1LCRþ+1LDRy-1LERx-1LxRE+1LyRD-1LþRC)e0214\n",
+    ///     "+(-1LARx-1LBRy-1LCRz-1LxRA-1LyRB-1LzRC)e0123\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
-    pub fn volume_motor() -> Self {
+    pub fn single_motor() -> Self {
+        Self::scalar() + Self::volume() + Self::line_moment()
+    }
+    /// The multivector of simple double motor $`m_{s2} \equiv s + v + \ell`$.
+    ///
+    /// ```
+    /// use vee::PgaP5 as Vee;
+    ///
+    /// let simple_double_motor = Vee::volume().lhs() * Vee::volume().rhs();
+    ///
+    /// assert_eq!(simple_double_motor.basis_blades(), Vee::simple_double_motor().basis_blades());
+    /// assert_eq!(format!("{simple_double_motor:#}"), concat!(
+    ///     "-1LaRa-1LbRb-1LcRc-1LdRd-1LeRe-1LfRf-1LgRg-1LhRh-1LiRi-1LjRj\n",
+    ///     "+(-1LYRc+1LZRb-1LbRZ+1LcRY+1LdRÞ+1LgRÐ-1LÐRg-1LÞRd)e01\n",
+    ///     "+(+1LXRc-1LZRa+1LaRZ-1LcRX+1LeRÞ+1LhRÐ-1LÐRh-1LÞRe)e02\n",
+    ///     "+(-1LXRb+1LYRa-1LaRY+1LbRX+1LfRÞ+1LiRÐ-1LÐRi-1LÞRf)e03\n",
+    ///     "+(+1LXRd+1LYRe+1LZRf-1LdRX-1LeRY-1LfRZ-1LjRÐ+1LÐRj)e40\n",
+    ///     "+(+1LXRg+1LYRh+1LZRi-1LgRX-1LhRY-1LiRZ+1LjRÞ-1LÞRj)e05\n",
+    ///     "+(-1LbRc+1LcRb-1LeRf+1LfRe-1LhRi+1LiRh)e23\n",
+    ///     "+(+1LaRc-1LcRa+1LdRf-1LfRd+1LgRi-1LiRg)e31\n",
+    ///     "+(-1LaRb+1LbRa-1LdRe+1LeRd-1LgRh+1LhRg)e12\n",
+    ///     "+(-1LbRf+1LcRe-1LeRc+1LfRb+1LgRj-1LjRg)e41\n",
+    ///     "+(+1LaRf-1LcRd+1LdRc-1LfRa+1LhRj-1LjRh)e42\n",
+    ///     "+(-1LaRe+1LbRd-1LdRb+1LeRa+1LiRj-1LjRi)e43\n",
+    ///     "+(-1LbRi+1LcRh-1LdRj-1LhRc+1LiRb+1LjRd)e15\n",
+    ///     "+(+1LaRi-1LcRg-1LeRj+1LgRc-1LiRa+1LjRe)e25\n",
+    ///     "+(-1LaRh+1LbRg-1LfRj-1LgRb+1LhRa+1LjRf)e35\n",
+    ///     "+(+1LdRg+1LeRh+1LfRi-1LgRd-1LhRe-1LiRf)e45\n",
+    ///     "+(+1LaRj+1LeRi-1LfRh-1LhRf+1LiRe+1LjRa)e2345\n",
+    ///     "+(+1LbRj-1LdRi+1LfRg+1LgRf-1LiRd+1LjRb)e3145\n",
+    ///     "+(+1LcRj+1LdRh-1LeRg-1LgRe+1LhRd+1LjRc)e1245\n",
+    ///     "+(+1LaRg+1LbRh+1LcRi+1LgRa+1LhRb+1LiRc)e1235\n",
+    ///     "+(-1LaRd-1LbRe-1LcRf-1LdRa-1LeRb-1LfRc)e1234\n",
+    ///     "+(+1LXRj-1LdRÐ+1LgRÞ+1LjRX-1LÐRd+1LÞRg)e0145\n",
+    ///     "+(+1LYRj-1LeRÐ+1LhRÞ+1LjRY-1LÐRe+1LÞRh)e0245\n",
+    ///     "+(+1LZRj-1LfRÐ+1LiRÞ+1LjRZ-1LÐRf+1LÞRi)e0345\n",
+    ///     "+(-1LYRi+1LZRh-1LaRÐ+1LhRZ-1LiRY-1LÐRa)e0325\n",
+    ///     "+(+1LXRi-1LZRg-1LbRÐ-1LgRZ+1LiRX-1LÐRb)e0135\n",
+    ///     "+(-1LXRh+1LYRg-1LcRÐ+1LgRY-1LhRX-1LÐRc)e0215\n",
+    ///     "+(+1LYRf-1LZRe+1LaRÞ-1LeRZ+1LfRY+1LÞRa)e0324\n",
+    ///     "+(-1LXRf+1LZRd+1LbRÞ+1LdRZ-1LfRX+1LÞRb)e0134\n",
+    ///     "+(+1LXRe-1LYRd+1LcRÞ-1LdRY+1LeRX+1LÞRc)e0214\n",
+    ///     "+(+1LXRa+1LYRb+1LZRc+1LaRX+1LbRY+1LcRZ)e0123\n",
+    /// ));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn simple_double_motor() -> Self {
         Self::scalar() + Self::volume() + Self::line()
     }
-    /// The multivector of motor $`m_p \equiv s + v + \ell + S`$.
+    /// The multivector of double motor $`m_2 \equiv s + v + \ell + S`$.
+    ///
+    /// ```
+    /// use vee::PgaP5 as Vee;
+    ///
+    /// let double_motor = Vee::double_rotator().lhs() * Vee::translator().rhs();
+    ///
+    /// assert_eq!(double_motor.basis_blades(), Vee::double_motor().basis_blades());
+    /// assert_eq!(format!("{double_motor:#}"), concat!(
+    ///     "+1LvRv\n",
+    ///     "+(-1LbRZ+1LcRY+1LdRÞ+1LgRÐ+1LvRX)e01\n",
+    ///     "+(+1LaRZ-1LcRX+1LeRÞ+1LhRÐ+1LvRY)e02\n",
+    ///     "+(-1LaRY+1LbRX+1LfRÞ+1LiRÐ+1LvRZ)e03\n",
+    ///     "+(-1LdRX-1LeRY-1LfRZ-1LjRÐ+1LvRÞ)e40\n",
+    ///     "+(-1LgRX-1LhRY-1LiRZ+1LjRÞ+1LvRÐ)e05\n",
+    ///     "+1LaRve23\n",
+    ///     "+1LbRve31\n",
+    ///     "+1LcRve12\n",
+    ///     "+1LdRve41\n",
+    ///     "+1LeRve42\n",
+    ///     "+1LfRve43\n",
+    ///     "+1LgRve15\n",
+    ///     "+1LhRve25\n",
+    ///     "+1LiRve35\n",
+    ///     "+1LjRve45\n",
+    ///     "+1LxRve2345\n",
+    ///     "+1LyRve3145\n",
+    ///     "+1LzRve1245\n",
+    ///     "+1LþRve1235\n",
+    ///     "+1LðRve1234\n",
+    ///     "+(-1LdRÐ+1LgRÞ+1LjRX-1LyRZ+1LzRY)e0145\n",
+    ///     "+(-1LeRÐ+1LhRÞ+1LjRY+1LxRZ-1LzRX)e0245\n",
+    ///     "+(-1LfRÐ+1LiRÞ+1LjRZ-1LxRY+1LyRX)e0345\n",
+    ///     "+(-1LaRÐ+1LhRZ-1LiRY-1LxRÞ+1LþRX)e0325\n",
+    ///     "+(-1LbRÐ-1LgRZ+1LiRX-1LyRÞ+1LþRY)e0135\n",
+    ///     "+(-1LcRÐ+1LgRY-1LhRX-1LzRÞ+1LþRZ)e0215\n",
+    ///     "+(+1LaRÞ-1LeRZ+1LfRY-1LxRÐ+1LðRX)e0324\n",
+    ///     "+(+1LbRÞ+1LdRZ-1LfRX-1LyRÐ+1LðRY)e0134\n",
+    ///     "+(+1LcRÞ-1LdRY+1LeRX-1LzRÐ+1LðRZ)e0214\n",
+    ///     "+(+1LaRX+1LbRY+1LcRZ-1LðRÞ+1LþRÐ)e0123\n",
+    ///     "+(+1LxRX+1LyRY+1LzRZ+1LðRÐ+1LþRÞ)I\n",
+    /// ));
+    ///
+    /// let double_motor = Vee::plane().lhs() * Vee::plane().rhs();
+    ///
+    /// assert_eq!(double_motor.basis_blades(), Vee::double_motor().basis_blades());
+    /// assert_eq!(format!("{double_motor:#}"), concat!(
+    ///     "-1LaRa-1LbRb-1LcRc-1LdRd-1LeRe-1LfRf-1LgRg-1LhRh-1LiRi-1LjRj\n",
+    ///     "+(-1LBRg+1LCRf+1LDRh+1LFRc-1LGRb+1LHRd+1LbRG-1LcRF-1LdRH-1LfRC+1LgRB-1LhRD)e01\n",
+    ///     "+(-1LARg+1LCRe+1LDRi+1LERc-1LGRa+1LIRd+1LaRG-1LcRE-1LdRI-1LeRC+1LgRA-1LiRD)e02\n",
+    ///     "+(-1LARf+1LBRe+1LDRj+1LERb-1LFRa+1LJRd+1LaRF-1LbRE-1LdRJ-1LeRB+1LfRA-1LjRD)e03\n",
+    ///     "+(-1LARh+1LBRi-1LCRj-1LHRa+1LIRb-1LJRc+1LaRH-1LbRI+1LcRJ+1LhRA-1LiRB+1LjRC)e40\n",
+    ///     "+(-1LERh+1LFRi-1LGRj-1LHRe+1LIRf-1LJRg+1LeRH-1LfRI+1LgRJ+1LhRE-1LiRF+1LjRG)e05\n",
+    ///     "+(+1LbRc-1LcRb+1LfRg-1LgRf-1LiRj+1LjRi)e23\n",
+    ///     "+(+1LaRc-1LcRa+1LeRg-1LgRe+1LhRj-1LjRh)e31\n",
+    ///     "+(+1LaRb-1LbRa+1LeRf-1LfRe-1LhRi+1LiRh)e12\n",
+    ///     "+(-1LaRd+1LdRa+1LfRj+1LgRi-1LiRg-1LjRf)e41\n",
+    ///     "+(+1LbRd-1LdRb+1LeRj-1LgRh+1LhRg-1LjRe)e42\n",
+    ///     "+(-1LcRd+1LdRc-1LeRi-1LfRh+1LhRf+1LiRe)e43\n",
+    ///     "+(-1LbRj-1LcRi+1LdRe-1LeRd+1LiRc+1LjRb)e15\n",
+    ///     "+(-1LaRj+1LcRh-1LdRf+1LfRd-1LhRc+1LjRa)e25\n",
+    ///     "+(+1LaRi+1LbRh+1LdRg-1LgRd-1LhRb-1LiRa)e35\n",
+    ///     "+(+1LaRe+1LbRf+1LcRg-1LeRa-1LfRb-1LgRc)e45\n",
+    ///     "+(-1LbRg+1LcRf+1LdRh+1LfRc-1LgRb+1LhRd)e2345\n",
+    ///     "+(-1LaRg+1LcRe+1LdRi+1LeRc-1LgRa+1LiRd)e3145\n",
+    ///     "+(-1LaRf+1LbRe+1LdRj+1LeRb-1LfRa+1LjRd)e1245\n",
+    ///     "+(-1LaRh+1LbRi-1LcRj-1LhRa+1LiRb-1LjRc)e1235\n",
+    ///     "+(-1LeRh+1LfRi-1LgRj-1LhRe+1LiRf-1LjRg)e1234\n",
+    ///     "+(-1LBRc+1LCRb-1LFRg+1LGRf+1LIRj-1LJRi+1LbRC-1LcRB+1LfRG-1LgRF-1LiRJ+1LjRI)e0145\n",
+    ///     "+(-1LARc+1LCRa-1LERg+1LGRe-1LHRj+1LJRh+1LaRC-1LcRA+1LeRG-1LgRE+1LhRJ-1LjRH)e0245\n",
+    ///     "+(-1LARb+1LBRa-1LERf+1LFRe+1LHRi-1LIRh+1LaRB-1LbRA+1LeRF-1LfRE-1LhRI+1LiRH)e0345\n",
+    ///     "+(+1LARd-1LDRa-1LFRj-1LGRi+1LIRg+1LJRf-1LaRD+1LdRA+1LfRJ+1LgRI-1LiRG-1LjRF)e0325\n",
+    ///     "+(-1LBRd+1LDRb-1LERj+1LGRh-1LHRg+1LJRe+1LbRD-1LdRB+1LeRJ-1LgRH+1LhRG-1LjRE)e0135\n",
+    ///     "+(+1LCRd-1LDRc+1LERi+1LFRh-1LHRf-1LIRe-1LcRD+1LdRC-1LeRI-1LfRH+1LhRF+1LiRE)e0215\n",
+    ///     "+(+1LBRj+1LCRi-1LDRe+1LERd-1LIRc-1LJRb-1LbRJ-1LcRI+1LdRE-1LeRD+1LiRC+1LjRB)e0324\n",
+    ///     "+(+1LARj-1LCRh+1LDRf-1LFRd+1LHRc-1LJRa-1LaRJ+1LcRH-1LdRF+1LfRD-1LhRC+1LjRA)e0134\n",
+    ///     "+(-1LARi-1LBRh-1LDRg+1LGRd+1LHRb+1LIRa+1LaRI+1LbRH+1LdRG-1LgRD-1LhRB-1LiRA)e0214\n",
+    ///     "+(-1LARe-1LBRf-1LCRg+1LERa+1LFRb+1LGRc+1LaRE+1LbRF+1LcRG-1LeRA-1LfRB-1LgRC)e0123\n",
+    ///     "+(-1LARa-1LBRb-1LCRc-1LDRd-1LERe-1LFRf-1LGRg-1LHRh-1LIRi-1LJRj",
+    ///       "+1LaRA+1LbRB+1LcRC+1LdRD+1LeRE+1LfRF+1LgRG+1LhRH+1LiRI+1LjRJ)I\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
-    pub fn plane_motor() -> Self {
+    pub fn double_motor() -> Self {
         Self::scalar() + Self::volume() + Self::line() + Self::pseudoscalar()
     }
-    /// The multivector of motor $`m_\ell \equiv s + v + \ell_\infty + S`$.
+    /// The multivector of single rotoreflector $`f_{r1} \equiv h_0 + p_0`$.
+    ///
+    /// ```
+    /// use vee::PgaP5 as Vee;
+    ///
+    /// let single_rotoreflector = Vee::normal().lhs() * Vee::single_rotator().rhs();
+    ///
+    /// assert_eq!(single_rotoreflector.basis_blades(), Vee::single_rotoreflector().basis_blades());
+    /// assert_eq!(format!("{single_rotoreflector:#}"), concat!(
+    ///     "+(+1LxRv-1LyRc+1LzRb-1LðRg+1LþRd)e1\n",
+    ///     "+(+1LxRc+1LyRv-1LzRa-1LðRh+1LþRe)e2\n",
+    ///     "+(-1LxRb+1LyRa+1LzRv-1LðRi+1LþRf)e3\n",
+    ///     "+(-1LxRd-1LyRe-1LzRf-1LðRj+1LþRv)e4\n",
+    ///     "+(+1LxRg+1LyRh+1LzRi+1LðRv+1LþRj)e5\n",
+    ///     "+(-1LyRf+1LzRe+1LþRa)e234\n",
+    ///     "+(-1LxRf+1LzRd-1LþRb)e134\n",
+    ///     "+(-1LxRe+1LyRd+1LþRc)e124\n",
+    ///     "+(+1LxRa+1LyRb+1LzRc)e123\n",
+    ///     "+(-1LyRi+1LzRh-1LðRa)e253\n",
+    ///     "+(-1LxRi+1LzRg+1LðRb)e315\n",
+    ///     "+(-1LxRh+1LyRg-1LðRc)e152\n",
+    ///     "+(+1LxRj-1LðRd-1LþRg)e145\n",
+    ///     "+(+1LyRj-1LðRe-1LþRh)e245\n",
+    ///     "+(+1LzRj-1LðRf-1LþRi)e345\n",
+    /// ));
+    /// ```
     #[must_use]
     #[inline]
-    pub fn line_motor() -> Self {
-        Self::scalar() + Self::volume() + Self::line_moment() + Self::pseudoscalar()
+    pub fn single_rotoreflector() -> Self {
+        Self::normal() + Self::plane_displacement()
+    }
+    /// The multivector of double rotoreflector $`f_{r2} \equiv h_0 + p_0 + P_0`$.
+    ///
+    /// ```
+    /// use vee::PgaP5 as Vee;
+    ///
+    /// let double_rotoreflector = Vee::normal().lhs() * Vee::double_rotator().rhs();
+    ///
+    /// assert_eq!(double_rotoreflector.basis_blades(), Vee::double_rotoreflector().basis_blades());
+    /// assert_eq!(format!("{double_rotoreflector:#}"), concat!(
+    ///     "+(+1LxRv-1LyRc+1LzRb-1LðRg+1LþRd)e1\n",
+    ///     "+(+1LxRc+1LyRv-1LzRa-1LðRh+1LþRe)e2\n",
+    ///     "+(-1LxRb+1LyRa+1LzRv-1LðRi+1LþRf)e3\n",
+    ///     "+(-1LxRd-1LyRe-1LzRf-1LðRj+1LþRv)e4\n",
+    ///     "+(+1LxRg+1LyRh+1LzRi+1LðRv+1LþRj)e5\n",
+    ///     "+(+1LxRð-1LyRf+1LzRe-1LðRx+1LþRa)e234\n",
+    ///     "+(-1LxRf-1LyRð+1LzRd+1LðRy-1LþRb)e134\n",
+    ///     "+(-1LxRe+1LyRd+1LzRð-1LðRz+1LþRc)e124\n",
+    ///     "+(+1LxRa+1LyRb+1LzRc-1LðRþ-1LþRð)e123\n",
+    ///     "+(-1LxRþ-1LyRi+1LzRh-1LðRa-1LþRx)e253\n",
+    ///     "+(-1LxRi+1LyRþ+1LzRg+1LðRb+1LþRy)e315\n",
+    ///     "+(-1LxRh+1LyRg-1LzRþ-1LðRc-1LþRz)e152\n",
+    ///     "+(+1LxRj-1LyRz+1LzRy-1LðRd-1LþRg)e145\n",
+    ///     "+(+1LxRz+1LyRj-1LzRx-1LðRe-1LþRh)e245\n",
+    ///     "+(-1LxRy+1LyRx+1LzRj-1LðRf-1LþRi)e345\n",
+    ///     "+(+1LxRx+1LyRy+1LzRz+1LðRð-1LþRþ)e12345\n",
+    /// ));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn double_rotoreflector() -> Self {
+        Self::normal() + Self::plane_displacement() + Self::weight()
+    }
+    /// The multivector of transflector $`f_t \equiv h + p_\infty`$.
+    ///
+    /// ```
+    /// use vee::PgaP5 as Vee;
+    ///
+    /// let transflector = Vee::normal().lhs() * Vee::translator().rhs();
+    ///
+    /// assert_eq!(transflector.basis_blades(), Vee::transflector().basis_blades());
+    /// assert_eq!(format!("{transflector:#}"), concat!(
+    ///     "+(-1LxRX-1LyRY-1LzRZ-1LðRÐ+1LþRÞ)e0\n",
+    ///     "+1LxRve1\n",
+    ///     "+1LyRve2\n",
+    ///     "+1LzRve3\n",
+    ///     "+1LþRve4\n",
+    ///     "+1LðRve5\n",
+    ///     "+(-1LxRÐ+1LðRX)e015\n",
+    ///     "+(+1LyRÐ-1LðRY)e052\n",
+    ///     "+(-1LzRÐ+1LðRZ)e035\n",
+    ///     "+(+1LðRÞ+1LþRÐ)e054\n",
+    ///     "+(+1LxRÞ+1LþRX)e014\n",
+    ///     "+(-1LyRÞ-1LþRY)e042\n",
+    ///     "+(+1LzRÞ+1LþRZ)e034\n",
+    ///     "+(+1LyRZ-1LzRY)e032\n",
+    ///     "+(-1LxRZ+1LzRX)e013\n",
+    ///     "+(+1LxRY-1LyRX)e021\n",
+    /// ));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn transflector() -> Self {
+        Self::hypervolume() + Self::plane_moment()
+    }
+    /// The multivector of simple single flector $`f_{s1} \equiv h + p`$.
+    ///
+    /// ```
+    /// use vee::PgaP5 as Vee;
+    ///
+    /// let simple_single_flector = Vee::hypervolume().lhs() * Vee::simple_single_motor().rhs();
+    ///
+    /// assert_eq!(simple_single_flector.basis_blades(),
+    ///     Vee::simple_single_flector().basis_blades());
+    /// assert_eq!(format!("{simple_single_flector:#}"), concat!(
+    ///     "+(+1LWRv-1LxRX-1LyRY-1LzRZ-1LðRÐ+1LþRÞ)e0\n",
+    ///     "+(+1LxRv-1LyRc+1LzRb-1LðRg+1LþRd)e1\n",
+    ///     "+(+1LxRc+1LyRv-1LzRa-1LðRh+1LþRe)e2\n",
+    ///     "+(-1LxRb+1LyRa+1LzRv-1LðRi+1LþRf)e3\n",
+    ///     "+(-1LxRd-1LyRe-1LzRf-1LðRj+1LþRv)e4\n",
+    ///     "+(+1LxRg+1LyRh+1LzRi+1LðRv+1LþRj)e5\n",
+    ///     "+(+1LWRg-1LxRÐ+1LðRX)e015\n",
+    ///     "+(-1LWRh+1LyRÐ-1LðRY)e052\n",
+    ///     "+(+1LWRi-1LzRÐ+1LðRZ)e035\n",
+    ///     "+(-1LWRj+1LðRÞ+1LþRÐ)e054\n",
+    ///     "+(-1LWRd+1LxRÞ+1LþRX)e014\n",
+    ///     "+(+1LWRe-1LyRÞ-1LþRY)e042\n",
+    ///     "+(-1LWRf+1LzRÞ+1LþRZ)e034\n",
+    ///     "+(-1LWRa+1LyRZ-1LzRY)e032\n",
+    ///     "+(-1LWRb-1LxRZ+1LzRX)e013\n",
+    ///     "+(-1LWRc+1LxRY-1LyRX)e021\n",
+    ///     "+(-1LyRf+1LzRe+1LþRa)e234\n",
+    ///     "+(-1LxRf+1LzRd-1LþRb)e134\n",
+    ///     "+(-1LxRe+1LyRd+1LþRc)e124\n",
+    ///     "+(+1LxRa+1LyRb+1LzRc)e123\n",
+    ///     "+(-1LyRi+1LzRh-1LðRa)e253\n",
+    ///     "+(-1LxRi+1LzRg+1LðRb)e315\n",
+    ///     "+(-1LxRh+1LyRg-1LðRc)e152\n",
+    ///     "+(+1LxRj-1LðRd-1LþRg)e145\n",
+    ///     "+(+1LyRj-1LðRe-1LþRh)e245\n",
+    ///     "+(+1LzRj-1LðRf-1LþRi)e345\n",
+    /// ));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn simple_single_flector() -> Self {
+        Self::hypervolume() + Self::plane()
+    }
+    /// The multivector of single flector $`f_1 \equiv h + p + P_\infty`$.
+    ///
+    /// ```
+    /// use vee::PgaP5 as Vee;
+    ///
+    /// let single_flector = Vee::hypervolume().lhs() * Vee::single_motor().rhs();
+    ///
+    /// assert_eq!(single_flector.basis_blades(), Vee::single_flector().basis_blades());
+    /// assert_eq!(format!("{single_flector:#}"), concat!(
+    ///     "+(+1LWRv-1LxRX-1LyRY-1LzRZ-1LðRÐ+1LþRÞ)e0\n",
+    ///     "+(+1LxRv-1LyRc+1LzRb-1LðRg+1LþRd)e1\n",
+    ///     "+(+1LxRc+1LyRv-1LzRa-1LðRh+1LþRe)e2\n",
+    ///     "+(-1LxRb+1LyRa+1LzRv-1LðRi+1LþRf)e3\n",
+    ///     "+(-1LxRd-1LyRe-1LzRf-1LðRj+1LþRv)e4\n",
+    ///     "+(+1LxRg+1LyRh+1LzRi+1LðRv+1LþRj)e5\n",
+    ///     "+(+1LWRg-1LxRÐ-1LyRF+1LzRE+1LðRX+1LþRA)e015\n",
+    ///     "+(-1LWRh-1LxRF+1LyRÐ+1LzRD-1LðRY-1LþRB)e052\n",
+    ///     "+(+1LWRi-1LxRE+1LyRD-1LzRÐ+1LðRZ+1LþRC)e035\n",
+    ///     "+(-1LWRj+1LxRA+1LyRB+1LzRC+1LðRÞ+1LþRÐ)e054\n",
+    ///     "+(-1LWRd+1LxRÞ-1LyRI+1LzRH-1LðRA+1LþRX)e014\n",
+    ///     "+(+1LWRe-1LxRI-1LyRÞ+1LzRG+1LðRB-1LþRY)e042\n",
+    ///     "+(-1LWRf-1LxRH+1LyRG+1LzRÞ-1LðRC+1LþRZ)e034\n",
+    ///     "+(-1LWRa+1LxRJ+1LyRZ-1LzRY-1LðRD-1LþRG)e032\n",
+    ///     "+(-1LWRb-1LxRZ+1LyRJ+1LzRX-1LðRE-1LþRH)e013\n",
+    ///     "+(-1LWRc+1LxRY-1LyRX+1LzRJ-1LðRF-1LþRI)e021\n",
+    ///     "+(-1LyRf+1LzRe+1LþRa)e234\n",
+    ///     "+(-1LxRf+1LzRd-1LþRb)e134\n",
+    ///     "+(-1LxRe+1LyRd+1LþRc)e124\n",
+    ///     "+(+1LxRa+1LyRb+1LzRc)e123\n",
+    ///     "+(-1LyRi+1LzRh-1LðRa)e253\n",
+    ///     "+(-1LxRi+1LzRg+1LðRb)e315\n",
+    ///     "+(-1LxRh+1LyRg-1LðRc)e152\n",
+    ///     "+(+1LxRj-1LðRd-1LþRg)e145\n",
+    ///     "+(+1LyRj-1LðRe-1LþRh)e245\n",
+    ///     "+(+1LzRj-1LðRf-1LþRi)e345\n",
+    ///     "+(+1LyRC-1LzRB+1LðRG-1LþRD)e03245\n",
+    ///     "+(-1LxRC+1LzRA+1LðRH-1LþRE)e01345\n",
+    ///     "+(+1LxRB-1LyRA+1LðRI-1LþRF)e02145\n",
+    ///     "+(+1LxRD+1LyRE+1LzRF+1LðRJ)e01235\n",
+    ///     "+(-1LxRG-1LyRH-1LzRI-1LþRJ)e01243\n",
+    /// ));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn single_flector() -> Self {
+        Self::hypervolume() + Self::plane() + Self::direction()
+    }
+    /// The multivector of double flector $`f_2 \equiv h + p + P`$.
+    ///
+    /// ```
+    /// use vee::PgaP5 as Vee;
+    ///
+    /// let double_flector = Vee::hypervolume().lhs() * Vee::simple_double_motor().rhs();
+    ///
+    /// assert_eq!(double_flector.basis_blades(), Vee::double_flector().basis_blades());
+    /// assert_eq!(format!("{double_flector:#}"), concat!(
+    ///     "+(+1LWRv-1LxRX-1LyRY-1LzRZ-1LðRÐ+1LþRÞ)e0\n",
+    ///     "+(+1LxRv-1LyRc+1LzRb-1LðRg+1LþRd)e1\n",
+    ///     "+(+1LxRc+1LyRv-1LzRa-1LðRh+1LþRe)e2\n",
+    ///     "+(-1LxRb+1LyRa+1LzRv-1LðRi+1LþRf)e3\n",
+    ///     "+(-1LxRd-1LyRe-1LzRf-1LðRj+1LþRv)e4\n",
+    ///     "+(+1LxRg+1LyRh+1LzRi+1LðRv+1LþRj)e5\n",
+    ///     "+(+1LWRg-1LxRÐ-1LyRF+1LzRE+1LðRX+1LþRA)e015\n",
+    ///     "+(-1LWRh-1LxRF+1LyRÐ+1LzRD-1LðRY-1LþRB)e052\n",
+    ///     "+(+1LWRi-1LxRE+1LyRD-1LzRÐ+1LðRZ+1LþRC)e035\n",
+    ///     "+(-1LWRj+1LxRA+1LyRB+1LzRC+1LðRÞ+1LþRÐ)e054\n",
+    ///     "+(-1LWRd+1LxRÞ-1LyRI+1LzRH-1LðRA+1LþRX)e014\n",
+    ///     "+(+1LWRe-1LxRI-1LyRÞ+1LzRG+1LðRB-1LþRY)e042\n",
+    ///     "+(-1LWRf-1LxRH+1LyRG+1LzRÞ-1LðRC+1LþRZ)e034\n",
+    ///     "+(-1LWRa+1LxRJ+1LyRZ-1LzRY-1LðRD-1LþRG)e032\n",
+    ///     "+(-1LWRb-1LxRZ+1LyRJ+1LzRX-1LðRE-1LþRH)e013\n",
+    ///     "+(-1LWRc+1LxRY-1LyRX+1LzRJ-1LðRF-1LþRI)e021\n",
+    ///     "+(+1LxRð-1LyRf+1LzRe-1LðRx+1LþRa)e234\n",
+    ///     "+(-1LxRf-1LyRð+1LzRd+1LðRy-1LþRb)e134\n",
+    ///     "+(-1LxRe+1LyRd+1LzRð-1LðRz+1LþRc)e124\n",
+    ///     "+(+1LxRa+1LyRb+1LzRc-1LðRþ-1LþRð)e123\n",
+    ///     "+(-1LxRþ-1LyRi+1LzRh-1LðRa-1LþRx)e253\n",
+    ///     "+(-1LxRi+1LyRþ+1LzRg+1LðRb+1LþRy)e315\n",
+    ///     "+(-1LxRh+1LyRg-1LzRþ-1LðRc-1LþRz)e152\n",
+    ///     "+(+1LxRj-1LyRz+1LzRy-1LðRd-1LþRg)e145\n",
+    ///     "+(+1LxRz+1LyRj-1LzRx-1LðRe-1LþRh)e245\n",
+    ///     "+(-1LxRy+1LyRx+1LzRj-1LðRf-1LþRi)e345\n",
+    ///     "+(+1LxRx+1LyRy+1LzRz+1LðRð-1LþRþ)e12345\n",
+    ///     "+(-1LWRx+1LyRC-1LzRB+1LðRG-1LþRD)e03245\n",
+    ///     "+(-1LWRy-1LxRC+1LzRA+1LðRH-1LþRE)e01345\n",
+    ///     "+(-1LWRz+1LxRB-1LyRA+1LðRI-1LþRF)e02145\n",
+    ///     "+(+1LWRþ+1LxRD+1LyRE+1LzRF+1LðRJ)e01235\n",
+    ///     "+(-1LWRð-1LxRG-1LyRH-1LzRI-1LþRJ)e01243\n",
+    /// ));
+    ///
+    /// let double_flector = Vee::hypervolume().lhs() * Vee::double_motor().rhs();
+    ///
+    /// assert_eq!(double_flector.basis_blades(), Vee::double_flector().basis_blades());
+    /// assert_eq!(format!("{double_flector:#}"), concat!(
+    ///     "+(+1LWRv-1LxRX-1LyRY-1LzRZ-1LðRÐ+1LþRÞ)e0\n",
+    ///     "+(+1LxRv-1LyRc+1LzRb-1LðRg+1LþRd)e1\n",
+    ///     "+(+1LxRc+1LyRv-1LzRa-1LðRh+1LþRe)e2\n",
+    ///     "+(-1LxRb+1LyRa+1LzRv-1LðRi+1LþRf)e3\n",
+    ///     "+(-1LxRd-1LyRe-1LzRf-1LðRj+1LþRv)e4\n",
+    ///     "+(+1LxRg+1LyRh+1LzRi+1LðRv+1LþRj)e5\n",
+    ///     "+(+1LWRg-1LxRÐ-1LyRF+1LzRE+1LðRX+1LþRA)e015\n",
+    ///     "+(-1LWRh-1LxRF+1LyRÐ+1LzRD-1LðRY-1LþRB)e052\n",
+    ///     "+(+1LWRi-1LxRE+1LyRD-1LzRÐ+1LðRZ+1LþRC)e035\n",
+    ///     "+(-1LWRj+1LxRA+1LyRB+1LzRC+1LðRÞ+1LþRÐ)e054\n",
+    ///     "+(-1LWRd+1LxRÞ-1LyRI+1LzRH-1LðRA+1LþRX)e014\n",
+    ///     "+(+1LWRe-1LxRI-1LyRÞ+1LzRG+1LðRB-1LþRY)e042\n",
+    ///     "+(-1LWRf-1LxRH+1LyRG+1LzRÞ-1LðRC+1LþRZ)e034\n",
+    ///     "+(-1LWRa+1LxRJ+1LyRZ-1LzRY-1LðRD-1LþRG)e032\n",
+    ///     "+(-1LWRb-1LxRZ+1LyRJ+1LzRX-1LðRE-1LþRH)e013\n",
+    ///     "+(-1LWRc+1LxRY-1LyRX+1LzRJ-1LðRF-1LþRI)e021\n",
+    ///     "+(+1LxRð-1LyRf+1LzRe-1LðRx+1LþRa)e234\n",
+    ///     "+(-1LxRf-1LyRð+1LzRd+1LðRy-1LþRb)e134\n",
+    ///     "+(-1LxRe+1LyRd+1LzRð-1LðRz+1LþRc)e124\n",
+    ///     "+(+1LxRa+1LyRb+1LzRc-1LðRþ-1LþRð)e123\n",
+    ///     "+(-1LxRþ-1LyRi+1LzRh-1LðRa-1LþRx)e253\n",
+    ///     "+(-1LxRi+1LyRþ+1LzRg+1LðRb+1LþRy)e315\n",
+    ///     "+(-1LxRh+1LyRg-1LzRþ-1LðRc-1LþRz)e152\n",
+    ///     "+(+1LxRj-1LyRz+1LzRy-1LðRd-1LþRg)e145\n",
+    ///     "+(+1LxRz+1LyRj-1LzRx-1LðRe-1LþRh)e245\n",
+    ///     "+(-1LxRy+1LyRx+1LzRj-1LðRf-1LþRi)e345\n",
+    ///     "+(+1LxRx+1LyRy+1LzRz+1LðRð-1LþRþ)e12345\n",
+    ///     "+(-1LWRx+1LxRV+1LyRC-1LzRB+1LðRG-1LþRD)e03245\n",
+    ///     "+(-1LWRy-1LxRC+1LyRV+1LzRA+1LðRH-1LþRE)e01345\n",
+    ///     "+(-1LWRz+1LxRB-1LyRA+1LzRV+1LðRI-1LþRF)e02145\n",
+    ///     "+(+1LWRþ+1LxRD+1LyRE+1LzRF+1LðRJ+1LþRV)e01235\n",
+    ///     "+(-1LWRð-1LxRG-1LyRH-1LzRI+1LðRV-1LþRJ)e01243\n",
+    /// ));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn double_flector() -> Self {
+        Self::hypervolume() + Self::plane() + Self::point()
     }
 }
 
