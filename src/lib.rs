@@ -14,7 +14,7 @@
 //! generated in text form. The next releases will implement code forms (e.g., Rust code in various
 //! profiles based on SIMD using [`lav`] with and without generics or arbitrary precision types
 //! using [`rug`]). Currently, the Pistachio flavor -- Projective Geometric Algebra (PGA) -- is
-//! implemented for $`D \equiv N + 1 \le 6 `$ in all three metrics, i.e., elliptic, hyperbolic, and
+//! implemented for $`D \equiv N + 1 \le 6`$ in all three metrics, i.e., elliptic, hyperbolic, and
 //! parabolic (Euclidean).[^2] The 5D PGA (i.e., $`N = 5`$) is incomplete as there is no inverse
 //! based on Study numbers but it provides dimension-agnostic insights regarding duality and the
 //! choice of basis blades.

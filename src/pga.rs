@@ -898,6 +898,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// ```
     /// use vee::PgaP3 as Vee;
     ///
+    /// // A point as the meet of a plane and a line.
     /// let point = Vee::plane().lhs() ^ Vee::line().rhs();
     ///
     /// assert_eq!(point.basis_blades(), Vee::point().basis_blades());
@@ -1054,7 +1055,8 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// assert_eq!(transflector.basis_blades(), Vee::transflector().basis_blades());
     /// assert_eq!(format!("{transflector:#}"), concat!(
     ///     "+(-1LxRX-1LyRY-1LzRZ)e0\n",
-    ///     "+1LxRve1\n+1LyRve2\n",
+    ///     "+1LxRve1\n",
+    ///     "+1LyRve2\n",
     ///     "+1LzRve3\n",
     ///     "+(+1LyRZ-1LzRY)e032\n",
     ///     "+(-1LxRZ+1LzRX)e013\n",
