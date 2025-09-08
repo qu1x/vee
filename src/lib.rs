@@ -173,7 +173,7 @@ use core::{
     num::NonZeroI32,
     ops::{
         Add, AddAssign, BitAnd, BitOr, BitXor, Div, DivAssign, Mul, MulAssign, Neg, Not, Rem, Shl,
-        Sub, SubAssign,
+        Shr, Sub, SubAssign,
     },
 };
 use num_rational::Ratio;
@@ -621,6 +621,14 @@ impl<B: Algebra> Shl for Multivector<B> {
             self = -self;
         }
         other.clone() * self * other.rev()
+    }
+}
+
+impl<B: Algebra> Shr for Multivector<B> {
+    type Output = Self;
+
+    fn shr(self, other: Self) -> Self::Output {
+        (self | other.clone()) * other.rev()
     }
 }
 
