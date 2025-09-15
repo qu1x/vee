@@ -3528,6 +3528,7 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
 // }
 
 #[test]
+#[allow(clippy::cognitive_complexity)]
 fn not() {
     use super::{PgaP0, PgaP1, PgaP2, PgaP3, PgaP4, PgaP5, PgaP6, PgaP7};
 
