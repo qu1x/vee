@@ -1,3 +1,9 @@
+# Version 0.1.3 (2025-09-15)
+
+  * Add projection operator. Supports rejection, i.e., projecting lower- onto higher-grade blade.
+  * Use Unicode Diacritical Marks instead of ~/L/R.
+  * Define 6D/7D PGA blades.
+
 # Version 0.1.2 (2025-09-07)
 
   * Generate constructor methods of basis blades with compile-time blocks.

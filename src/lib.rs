@@ -14,10 +14,10 @@
 //! generated in text form. The next releases will implement code forms (e.g., Rust code in various
 //! profiles based on SIMD using [`lav`] with and without generics or arbitrary precision types
 //! using [`rug`]). Currently, the Pistachio flavor -- Projective Geometric Algebra (PGA) -- is
-//! implemented for $`D \equiv N + 1 \le 6`$ in all three metrics, i.e., elliptic, hyperbolic, and
-//! parabolic (Euclidean).[^2] The 5D PGA (i.e., $`N = 5`$) is incomplete as there is no inverse
-//! based on Study numbers but it provides dimension-agnostic insights regarding duality and the
-//! choice of basis blades.
+//! implemented for $`D \equiv N + 1 \le 8`$ in all three metrics, i.e., elliptic, hyperbolic, and
+//! parabolic (Euclidean).[^2] The 5D, 6D, and 7D PGAs (i.e., $`N = 5`$, $`N = 6`$, and $`N = 7`$)
+//! are incomplete as there are no inverses based on Study numbers but they provide
+//! dimension-agnostic insights regarding duality and the choice of basis blades.
 //!
 //! [^1]: S. De Keninck and M. Roelfs, “Normalization, square roots, and the exponential and
 //! logarithmic maps in geometric algebras of less than 6D”, [Mathematical Methods in the Applied
@@ -140,14 +140,14 @@
 //! distinguish them from the symbols of [`Multivector::rotator()`].
 //!
 //! ```
-//! use vee::PgaP3 as Vee;
+//! use vee::{format_eq, PgaP3 as Vee};
 //!
-//! assert_eq!(format!("{:#}", Vee::plane().pin() << Vee::rotator()), concat!(
-//!   "+(+[+1vv+1xx+1yy+1zz]~W)e0\n",
-//!   "+(+[+2vz+2xy]~y+[-2vy+2xz]~z+[+1vv+1xx-1yy-1zz]~x)e1\n",
-//!   "+(+[+2vx+2yz]~z+[-2vz+2xy]~x+[+1vv-1xx+1yy-1zz]~y)e2\n",
-//!   "+(+[+2vy+2xz]~x+[-2vx+2yz]~y+[+1vv-1xx-1yy+1zz]~z)e3\n",
-//! ));
+//! format_eq!(Vee::plane().pin() << Vee::rotator(), [
+//!     "+(+[+1vv+1xx+1yy+1zz]W͓)e0",
+//!     "+(+[+2vz+2xy]y͓+[-2vy+2xz]z͓+[+1vv+1xx-1yy-1zz]x͓)e1",
+//!     "+(+[+2vx+2yz]z͓+[-2vz+2xy]x͓+[+1vv-1xx+1yy-1zz]y͓)e2",
+//!     "+(+[+2vy+2xz]x͓+[-2vx+2yz]y͓+[+1vv-1xx-1yy+1zz]z͓)e3",
+//! ]);
 //! ```
 //!
 //! The symbols are assigned to basis blades such that lowercase symbols are dual to their
@@ -156,14 +156,36 @@
 //! duality equivalences.
 //!
 //! ```
-//! use vee::PgaP3 as Vee;
+//! use vee::{format_eq, PgaP3 as Vee};
 //!
-//! assert_eq!(Vee::plane().to_string(), "We0+xe1+ye2+ze3");
-//! assert_eq!(Vee::point().to_string(), "we123+Xe032+Ye013+Ze021");
+//! format_eq!(Vee::plane(), "We0+xe1+ye2+ze3");
+//! format_eq!(Vee::point(), "we123+Xe032+Ye013+Ze021");
 //!
 //! assert_ne!(!Vee::plane(), Vee::point());
 //! assert_eq!(!Vee::plane(), Vee::point().swp());
 //! ```
+
+/// Like `assert_eq!` but formats `$left` expression and `$right` literal using [`Display`].
+///
+/// If the preformatted `$right` literal is an array of multiple literals, `$left` is formated in
+/// alternate form `"{:#}"` instead of default form `"{}"`.
+#[cfg(feature = "pretty_assertions")]
+#[macro_export]
+macro_rules! format_eq {
+    ($emitted:expr, $literal:literal) => {{
+        let emitted = format!("{}", $emitted);
+        pretty_assertions::assert_eq!(emitted, $literal);
+    }};
+    ($emitted:expr, [$($literal:literal),* $(,)?]) => {{
+        let emitted = format!("{:#}", $emitted);
+        let mut literal = String::with_capacity(emitted.len());
+        $(
+            literal.push_str($literal);
+            literal.push_str("\n");
+        )*
+        pretty_assertions::assert_eq!(emitted, literal);
+    }};
+}
 
 use change_case::swap_case;
 use core::{
@@ -187,7 +209,7 @@ trait Choose {
     fn choose(self, other: Self) -> Self::Output;
 }
 
-impl Choose for usize {
+impl Choose for u32 {
     type Output = Self;
 
     #[inline]
@@ -225,14 +247,14 @@ where
     ///
     /// Not to be confused with the embedding dimension, e.g., `N + 1` is the embedding dimension
     /// for one-up flavors of embedded dimension `N`.
-    const N: usize;
+    const N: u32;
 
     /// The ordered basis (i.e., all basis blades).
     #[must_use]
     fn basis() -> impl ExactSizeIterator<Item = Self> + DoubleEndedIterator<Item = Self>;
     /// The grade.
     #[must_use]
-    fn grade(&self) -> usize;
+    fn grade(&self) -> u32;
     /// The number $`n`$ of basis blades with the same grade $`g`$ of this basis blade.
     ///
     /// ```math
@@ -283,7 +305,7 @@ impl<B: Algebra> Multivector<B> {
     /// Creates a new multivector from an iterator over tuples of symbols and basis blades.
     ///
     /// ```
-    /// use vee::{PgaP3 as Vee, pga::Pga};
+    /// use vee::{format_eq, PgaP3 as Vee, pga::Pga};
     ///
     /// let plane = Vee::new([
     ///     ("W", Pga::new("e0")),
@@ -293,7 +315,7 @@ impl<B: Algebra> Multivector<B> {
     /// ]);
     ///
     /// assert_eq!(plane, Vee::plane());
-    /// assert_eq!(plane.to_string(), "We0+xe1+ye2+ze3");
+    /// format_eq!(plane, "We0+xe1+ye2+ze3");
     /// ```
     #[must_use]
     #[inline]
@@ -304,41 +326,47 @@ impl<B: Algebra> Multivector<B> {
     {
         iter.into_iter().map(|(s, b)| ([[s]], b)).collect()
     }
-    /// Adds prefix `"L"` to all symbols pinning this multivector as left-hand side.
+    /// Adds combining X below (i.e., `" ͓"`) to all symbols.
     ///
-    /// Calls <code>[Self::sym]\(\"L\"\)</code>.
-    #[must_use]
-    #[inline]
-    pub fn lhs(self) -> Self {
-        self.sym("L")
-    }
-    /// Adds prefix `"R"` to all symbols pinning this multivector as right-hand side.
+    /// Pins this multivector as being sandwiched by the reflection or projection operator.
     ///
-    /// Calls <code>[Self::sym]\(\"R\"\)</code>.
-    #[must_use]
-    #[inline]
-    pub fn rhs(self) -> Self {
-        self.sym("R")
-    }
-    /// Adds prefix `"~"` to all symbols pinning this multivector as being sandwiched.
-    ///
-    /// Calls <code>[Self::sym]\(\"~\"\)</code>.
+    /// Calls <code>[Self::sym]\(\"\u{0353}\"\)</code>.
     #[must_use]
     #[inline]
     pub fn pin(self) -> Self {
-        self.sym("~")
+        self.sym("\u{0353}")
     }
-    /// Adds `prefix` to all symbols.
+    /// Adds combining left arrowhead below (i.e., `" ͔"`) to all symbols.
+    ///
+    /// Pins this multivector as left-hand side.
+    ///
+    /// Calls <code>[Self::sym]\(\"\u{0354}\"\)</code>.
+    #[must_use]
+    #[inline]
+    pub fn lhs(self) -> Self {
+        self.sym("\u{0354}")
+    }
+    /// Adds combining left arrowhead below (i.e., `" ͕"`) to all symbols.
+    ///
+    /// Pins this multivector as right-hand side.
+    ///
+    /// Calls <code>[Self::sym]\(\"\u{0355}\"\)</code>.
+    #[must_use]
+    #[inline]
+    pub fn rhs(self) -> Self {
+        self.sym("\u{0355}")
+    }
+    /// Appends combining diacritical `mark` to all symbols.
     ///
     /// ```
-    /// use vee::PgaP3 as Vee;
+    /// use vee::{format_eq, PgaP3 as Vee};
     ///
-    /// assert_eq!(Vee::plane().to_string(), "We0+xe1+ye2+ze3");
-    /// assert_eq!(Vee::plane().sym("S").to_string(), "SWe0+Sxe1+Sye2+Sze3");
+    /// format_eq!(Vee::plane(), "We0+xe1+ye2+ze3");
+    /// format_eq!(Vee::plane().sym("\u{0338}"), "W̸e0+x̸e1+y̸e2+z̸e3");
     /// ```
     #[must_use]
-    pub fn sym(mut self, prefix: &str) -> Self {
-        self.map.values_mut().for_each(|p| *p = take(p).sym(prefix));
+    pub fn sym(mut self, mark: &str) -> Self {
+        self.map.values_mut().for_each(|p| *p = take(p).sym(mark));
         self
     }
     /// Swaps lowercase and uppercase symbols.
@@ -349,12 +377,12 @@ impl<B: Algebra> Multivector<B> {
     }
     /// Collects all grades.
     #[must_use]
-    pub fn grades(&self) -> BTreeSet<usize> {
+    pub fn grades(&self) -> BTreeSet<u32> {
         self.map.keys().map(Algebra::grade).collect()
     }
     /// Returns the grade or `None` if it is of mixed-grade.
     #[must_use]
-    pub fn grade(&self) -> Option<usize> {
+    pub fn grade(&self) -> Option<u32> {
         let grades = self.grades();
         (grades.len() == 1)
             .then(|| grades.first().copied())
@@ -362,7 +390,7 @@ impl<B: Algebra> Multivector<B> {
     }
     /// Collects the vectors per grade.
     #[must_use]
-    pub fn vectors(/*mut*/ self) -> BTreeMap<usize, Self> {
+    pub fn vectors(/*mut*/ self) -> BTreeMap<u32, Self> {
         let mut vectors = BTreeMap::new();
         for grade in self.grades() {
             // let map = self
@@ -377,7 +405,7 @@ impl<B: Algebra> Multivector<B> {
     }
     /// Returns the vector of `grade`. The vector is empty if there is no `grade`.
     #[must_use]
-    pub fn vector(mut self, grade: usize) -> Self {
+    pub fn vector(mut self, grade: u32) -> Self {
         self.map.retain(|b, _p| grade == b.grade());
         self
     }
@@ -412,13 +440,13 @@ impl<B: Algebra> Multivector<B> {
     /// The mixed-grade squared norm (i.e., a Study number).
     ///
     /// ```
-    /// use vee::PgaP3 as Vee;
+    /// use vee::{format_eq, PgaP3 as Vee};
     ///
-    /// assert_eq!(Vee::plane().squared_norm().to_string(), "xx+yy+zz");
-    /// assert_eq!(Vee::point().squared_norm().to_string(), "ww");
-    /// assert_eq!(Vee::line().squared_norm().to_string(), "xx+yy+zz+(-Xx-Yy-Zz)I");
-    /// assert_eq!(Vee::displacement().squared_norm().to_string(), "xx+yy+zz");
-    /// assert_eq!(Vee::moment().squared_norm().to_string(), "");
+    /// format_eq!(Vee::plane().squared_norm(), "xx+yy+zz");
+    /// format_eq!(Vee::point().squared_norm(), "ww");
+    /// format_eq!(Vee::line().squared_norm(), "xx+yy+zz+(-Xx-Yy-Zz)I");
+    /// format_eq!(Vee::displacement().squared_norm(), "xx+yy+zz");
+    /// format_eq!(Vee::moment().squared_norm(), "");
     /// ```
     #[must_use]
     pub fn squared_norm(self) -> Self {
@@ -650,24 +678,24 @@ impl<B: Algebra> Display for Multivector<B> {
                 .filter_map(|sym| {
                     sym.map
                         .keys()
-                        .rfind(|sym| sym.starts_with('~'))
+                        .rfind(|sym| sym.ends_with("\u{0353}"))
                         .or_else(|| sym.map.keys().last())
                 })
-                .all(|sym| sym.starts_with('~'))
+                .all(|sym| sym.ends_with("\u{0353}"))
             {
                 let mut map = BTreeMap::<_, Polynomial>::new();
                 for (mut s, c) in p.map.clone() {
                     let key = s
                         .map
                         .keys()
-                        .rfind(|sym| sym.starts_with('~'))
+                        .rfind(|sym| sym.ends_with("\u{0353}"))
                         .unwrap()
                         .clone();
                     let pin = s.map.remove_entry(&key).unwrap();
                     assert!(map.entry(pin).or_default().map.insert(s, c).is_none());
                 }
-                let len = if map.len() % B::N == 0 {
-                    B::N
+                let len = if map.len() % B::N as usize == 0 {
+                    B::N as usize
                 } else {
                     map.len()
                 };
@@ -724,13 +752,13 @@ pub struct Polynomial {
 }
 
 impl Polynomial {
-    /// Adds `prefix` to all symbols.
+    /// Appends combining diacritical `mark` to all symbols.
     #[must_use]
     #[inline]
-    pub fn sym(self, prefix: &str) -> Self {
+    pub fn sym(self, mark: &str) -> Self {
         let map = BTreeMap::new();
         let map = self.map.into_iter().fold(map, |mut map, (s, c)| {
-            map.insert(s.sym(prefix), c);
+            map.insert(s.sym(mark), c);
             map
         });
         Self { map }
@@ -921,14 +949,14 @@ pub struct Monomial {
 }
 
 impl Monomial {
-    /// Adds `prefix` to all symbols.
+    /// Appends combining diacritical `mark` to all symbols.
     #[must_use]
     #[inline]
-    pub fn sym(self, prefix: &str) -> Self {
+    pub fn sym(self, mark: &str) -> Self {
         let map = BTreeMap::new();
         let map = self.map.into_iter().fold(map, |mut map, (mut s, e)| {
-            if !s.starts_with(prefix) {
-                s.insert_str(0, prefix);
+            if !s.ends_with(mark) {
+                s.push_str(mark);
             }
             map.insert(s, e);
             map
@@ -1040,6 +1068,10 @@ pub type PgaE3 = Multivector<pga::PgaE3>;
 pub type PgaE4 = Multivector<pga::PgaE4>;
 /// Multivector for Elliptic 5D PGA (experimental, no inverse).
 pub type PgaE5 = Multivector<pga::PgaE5>;
+/// Multivector for Elliptic 6D PGA (experimental, no inverse).
+pub type PgaE6 = Multivector<pga::PgaE6>;
+/// Multivector for Elliptic 7D PGA (experimental, no inverse).
+pub type PgaE7 = Multivector<pga::PgaE7>;
 
 /// Multivector for Hyperbolic 0D PGA.
 pub type PgaH0 = Multivector<pga::PgaH0>;
@@ -1053,6 +1085,10 @@ pub type PgaH3 = Multivector<pga::PgaH3>;
 pub type PgaH4 = Multivector<pga::PgaH4>;
 /// Multivector for Hyperbolic 5D PGA (experimental, no inverse).
 pub type PgaH5 = Multivector<pga::PgaH5>;
+/// Multivector for Hyperbolic 6D PGA (experimental, no inverse).
+pub type PgaH6 = Multivector<pga::PgaH6>;
+/// Multivector for Hyperbolic 7D PGA (experimental, no inverse).
+pub type PgaH7 = Multivector<pga::PgaH7>;
 
 /// Multivector for Parabolic (Euclidean) 0D PGA.
 pub type PgaP0 = Multivector<pga::PgaP0>;
@@ -1066,3 +1102,7 @@ pub type PgaP3 = Multivector<pga::PgaP3>;
 pub type PgaP4 = Multivector<pga::PgaP4>;
 /// Multivector for Parabolic (Euclidean) 5D PGA (experimental, no inverse).
 pub type PgaP5 = Multivector<pga::PgaP5>;
+/// Multivector for Parabolic (Euclidean) 6D PGA (experimental, no inverse).
+pub type PgaP6 = Multivector<pga::PgaP6>;
+/// Multivector for Parabolic (Euclidean) 7D PGA (experimental, no inverse).
+pub type PgaP7 = Multivector<pga::PgaP7>;
