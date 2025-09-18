@@ -25,7 +25,7 @@ coefficients.
   * Uniquely reduce symbolic multivector expressions.
   * Generate expressions in text form.
   * Define the metric-agnostic basis (i.e., elliptic, parabolic, hyperbolic) and the multivector
-    entities of the projective geometric algebra (PGA) for dimensions N < 6.
+    entities of the projective geometric algebra (PGA) for dimensions D = N + 1 < 8.
 
 ## Roadmap
 

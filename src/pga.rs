@@ -3,7 +3,7 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of
 // the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-//! Pistachio Flavor -- Projective Geometric Algebra (PGA)
+//! Planed-Based Pistachio Flavor -- Projective Geometric Algebra (PGA)
 
 use super::{Algebra, Choose, Multivector};
 use core::{
@@ -449,7 +449,9 @@ basis!(TAB5, LUT5, 5, 64, [
 ]);
 #[rustfmt::skip]
 basis!(TAB6, LUT6, 6, 128, [
+    // 1
     (v, e),
+    // 1
     (W, e0),
     // 6
     (x, e1),
@@ -585,8 +587,9 @@ basis!(TAB6, LUT6, 6, 128, [
     (Z, e021456),
     (Y, e013456),
     (X, e032456),
-
+    // 1
     (w, e123456),
+    // 1
     (V, e0123456),
 ]);
 #[rustfmt::skip]
@@ -2089,7 +2092,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     pub fn bias() -> Self {
         Self::e0()
     }
-    /// The multivector of normal $`v^4_0 \equiv x\e_1 + y\e_2 + z\e_3 + ð\e_4 + þ\e_5`$.
+    /// The multivector of normal $`v^4_0 \equiv x\e_1 + y\e_2 + z\e_3 + ð\e_4 + ø\e_5`$.
     #[must_use]
     #[inline]
     pub fn normal() -> Self {
@@ -2124,7 +2127,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of volume moment.
     ///
     /// ```math
-    /// v_\infty \equiv X\e_{01} + Y\e_{02} + Z\e_{03} + Ð\e_{40} + Þ\e_{05}
+    /// v_\infty \equiv X\e_{01} + Y\e_{02} + Z\e_{03} + Ð\e_{40} + Ø\e_{05}
     /// ```
     #[must_use]
     #[inline]
@@ -2186,7 +2189,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of line displacement.
     ///
     /// ```math
-    /// \ell_0 \equiv x\e_{2345} + y\e_{3145} + z\e_{1245} + ð\e_{1235} + þ\e_{1234}
+    /// \ell_0 \equiv x\e_{2345} + y\e_{3145} + z\e_{1245} + ð\e_{1235} + ø\e_{1234}
     /// ```
     #[must_use]
     #[inline]
@@ -2228,7 +2231,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of direction.
     ///
     /// ```math
-    /// P_\infty \equiv X\e_{03245} + Y\e_{01345} + Z\e_{02145} + Ð\e_{01235} + Þ\e_{01243}
+    /// P_\infty \equiv X\e_{03245} + Y\e_{01345} + Z\e_{02145} + Ð\e_{01235} + Ø\e_{01243}
     /// ```
     #[must_use]
     #[inline]
@@ -2918,13 +2921,13 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     pub fn pseudoscalar() -> Self {
         Self::e0123456()
     }
-    /// The multivector of bias $`v^5_\infty \equiv `$.
+    /// The multivector of bias $`v^5_\infty \equiv W\e_0`$.
     #[must_use]
     #[inline]
     pub fn bias() -> Self {
         Self::e0()
     }
-    /// The multivector of normal $`v^5_0 \equiv `$.
+    /// The multivector of normal $`v^5_0 \equiv x\e_1 + y\e_2 + z\e_3 + ð\e_4 + ø\e_5 + þ\e_6`$.
     #[must_use]
     #[inline]
     pub fn normal() -> Self {
@@ -2936,13 +2939,13 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     pub fn volume5() -> Self {
         Self::bias() + Self::normal()
     }
-    /// The multivector of $`4`$-volume moment $`v^4_\infty \equiv `$.
+    /// The multivector of $`4`$-volume moment $`v^4_\infty`$.
     #[must_use]
     #[inline]
     pub fn volume4_moment() -> Self {
         Self::e01() + Self::e02() + Self::e03() + Self::e40() + Self::e05() + Self::e60()
     }
-    /// The multivector of $`4`$-volume displacement $`v^4_0 \equiv `$.
+    /// The multivector of $`4`$-volume displacement $`v^4_0`$.
     #[must_use]
     #[inline]
     pub fn volume4_displacement() -> Self {
@@ -2968,7 +2971,7 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     pub fn volume4() -> Self {
         Self::volume4_moment() + Self::volume4_displacement()
     }
-    /// The multivector of volume moment $`v_\infty \equiv `$.
+    /// The multivector of volume moment $`v_\infty`$.
     #[must_use]
     #[inline]
     pub fn volume_moment() -> Self {
@@ -2988,7 +2991,7 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
             + Self::e064()
             + Self::e056()
     }
-    /// The multivector of volume displacement $`v_0 \equiv `$.
+    /// The multivector of volume displacement $`v_0`$.
     #[must_use]
     #[inline]
     pub fn volume_displacement() -> Self {
@@ -3019,7 +3022,7 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     pub fn volume() -> Self {
         Self::volume_moment() + Self::volume_displacement()
     }
-    /// The multivector of plane moment $`p_\infty \equiv `$.
+    /// The multivector of plane moment $`p_\infty`$.
     #[must_use]
     #[inline]
     pub fn plane_moment() -> Self {
@@ -3044,7 +3047,7 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
             + Self::e0356()
             + Self::e0465()
     }
-    /// The multivector of plane displacement $`p_0 \equiv `$.
+    /// The multivector of plane displacement $`p_0`$.
     #[must_use]
     #[inline]
     pub fn plane_displacement() -> Self {
@@ -3070,7 +3073,7 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     pub fn plane() -> Self {
         Self::plane_moment() + Self::plane_displacement()
     }
-    /// The multivector of line moment $`\ell_\infty \equiv `$.
+    /// The multivector of line moment $`\ell_\infty`$.
     #[must_use]
     #[inline]
     pub fn line_moment() -> Self {
@@ -3090,7 +3093,7 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
             + Self::e02456()
             + Self::e03456()
     }
-    /// The multivector of line displacement $`ell_0 \equiv `$.
+    /// The multivector of line displacement $`\ell_0`$.
     #[must_use]
     #[inline]
     pub fn line_displacement() -> Self {
@@ -3107,7 +3110,7 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     pub fn line() -> Self {
         Self::line_moment() + Self::line_displacement()
     }
-    /// The multivector of direction $`P_\infty \equiv `$.
+    /// The multivector of direction $`P_\infty`$.
     #[must_use]
     #[inline]
     pub fn direction() -> Self {
@@ -3118,7 +3121,7 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
             + Self::e013456()
             + Self::e032456()
     }
-    /// The multivector of weight $`P_0 \equiv `$.
+    /// The multivector of weight $`P_0`$.
     #[must_use]
     #[inline]
     pub fn weight() -> Self {
@@ -3161,7 +3164,8 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     pub fn bias() -> Self {
         Self::e0()
     }
-    /// The multivector of normal $`v^6_0 \equiv `$.
+    /// The multivector of normal
+    /// $`v^6_0 \equiv x\e_1 + y\e_2 + z\e_3 + ð\e_4 + ø\e_5 + þ\e_6 + œ\e_7`$.
     #[must_use]
     #[inline]
     pub fn normal() -> Self {
@@ -3173,7 +3177,7 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     pub fn volume6() -> Self {
         Self::bias() + Self::normal()
     }
-    /// The multivector of $`5`$-volume moment $`v^5_\infty \equiv `$.
+    /// The multivector of $`5`$-volume moment $`v^5_\infty`$.
     #[must_use]
     #[inline]
     pub fn volume5_moment() -> Self {
@@ -3185,7 +3189,7 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
             + Self::e06()
             + Self::e07()
     }
-    /// The multivector of $`5`$-volume displacement $`v^5_0 \equiv `$.
+    /// The multivector of $`5`$-volume displacement $`v^5_0`$.
     #[must_use]
     #[inline]
     pub fn volume5_displacement() -> Self {
@@ -3217,7 +3221,7 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     pub fn volume5() -> Self {
         Self::volume5_moment() + Self::volume5_displacement()
     }
-    /// The multivector of $`4`$-volume moment $`v^4_\infty \equiv `$.
+    /// The multivector of $`4`$-volume moment $`v^4_\infty`$.
     #[must_use]
     #[inline]
     pub fn volume4_moment() -> Self {
@@ -3243,7 +3247,7 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
             + Self::e057()
             + Self::e067()
     }
-    /// The multivector of $`4`$-volume displacement $`v^4_0 \equiv `$.
+    /// The multivector of $`4`$-volume displacement $`v^4_0`$.
     #[must_use]
     #[inline]
     pub fn volume4_displacement() -> Self {
@@ -3289,7 +3293,7 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     pub fn volume4() -> Self {
         Self::volume4_moment() + Self::volume4_displacement()
     }
-    /// The multivector of volume moment $`v_\infty \equiv `$.
+    /// The multivector of volume moment $`v_\infty`$.
     #[must_use]
     #[inline]
     pub fn volume_moment() -> Self {
@@ -3329,7 +3333,7 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
             + Self::e0467()
             + Self::e0567()
     }
-    /// The multivector of volume displacement $`v_0 \equiv `$.
+    /// The multivector of volume displacement $`v_0`$.
     #[must_use]
     #[inline]
     pub fn volume_displacement() -> Self {
@@ -3375,7 +3379,7 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     pub fn volume() -> Self {
         Self::volume_moment() + Self::volume_displacement()
     }
-    /// The multivector of plane moment $`p_\infty \equiv `$.
+    /// The multivector of plane moment $`p_\infty`$.
     #[must_use]
     #[inline]
     pub fn plane_moment() -> Self {
@@ -3415,7 +3419,7 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
             + Self::e03567()
             + Self::e04576()
     }
-    /// The multivector of plane displacement $`p_0 \equiv `$.
+    /// The multivector of plane displacement $`p_0`$.
     #[must_use]
     #[inline]
     pub fn plane_displacement() -> Self {
@@ -3447,7 +3451,7 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     pub fn plane() -> Self {
         Self::plane_moment() + Self::plane_displacement()
     }
-    /// The multivector of line moment $`\ell_\infty \equiv `$.
+    /// The multivector of line moment $`\ell_\infty`$.
     #[must_use]
     #[inline]
     pub fn line_moment() -> Self {
@@ -3473,7 +3477,7 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
             + Self::e024567()
             + Self::e034567()
     }
-    /// The multivector of line displacement $`ell_0 \equiv `$.
+    /// The multivector of line displacement $`\ell_0`$.
     #[must_use]
     #[inline]
     pub fn line_displacement() -> Self {
@@ -3492,7 +3496,7 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
         Self::line_moment() + Self::line_displacement()
     }
     // 7
-    /// The multivector of direction $`P_\infty \equiv `$.
+    /// The multivector of direction $`P_\infty`$.
     #[must_use]
     #[inline]
     pub fn direction() -> Self {
@@ -3504,7 +3508,7 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
             + Self::e0134567()
             + Self::e0324567()
     }
-    /// The multivector of weight $`P_0 \equiv `$.
+    /// The multivector of weight $`P_0`$.
     #[must_use]
     #[inline]
     pub fn weight() -> Self {

@@ -13,17 +13,27 @@
 //! dimensions $`D < 6`$.[^1] See the [examples](#examples) below where the symbolic expressions are
 //! generated in text form. The next releases will implement code forms (e.g., Rust code in various
 //! profiles based on SIMD using [`lav`] with and without generics or arbitrary precision types
-//! using [`rug`]). Currently, the Pistachio flavor -- Projective Geometric Algebra (PGA) -- is
-//! implemented for $`D \equiv N + 1 \le 8`$ in all three metrics, i.e., elliptic, hyperbolic, and
-//! parabolic (Euclidean).[^2] The 5D, 6D, and 7D PGAs (i.e., $`N = 5`$, $`N = 6`$, and $`N = 7`$)
-//! are incomplete as there are no inverses based on Study numbers but they provide
-//! dimension-agnostic insights regarding duality and the choice of basis blades.
+//! using [`rug`]). Currently, the planed-based pistachio flavor -- Projective Geometric Algebra
+//! (PGA) -- is implemented for $`D \equiv N + 1 \le 8`$ in all three metrics, i.e., elliptic,
+//! hyperbolic, and parabolic (Euclidean).[^2] The 5D, 6D, and 7D PGAs (i.e., $`N = 5`$, $`N = 6`$,
+//! and $`N = 7`$) are incomplete as there are no inverses based on Study numbers but they provide
+//! dimension-agnostic insights regarding duality and the choice of basis blades. The PGA is
+//! especially of interest for computer graphics, game engines, and physics simulations as it the
+//! most compact flavor (i.e., a one-up flavor) unifying the established but scattered frameworks,
+//! e.g., homogeneous coordinates, Plücker coordinates, (dual) quaternions, and screw theory. Even
+//! without any knowledge of geometric algebra, an API can be more intuitive as it unifies the
+//! positional and directional aspects of geometric entities (e.g., planes, lines, points) and the
+//! linear and angular aspects of rigid-body dynamics in a dimension-agnostic way with closed-form
+//! (i.e., non-iterative) solutions up to 4D (e.g., [`PgaP2`], [`PgaP3`], [`PgaP4`]).[^3]
 //!
 //! [^1]: S. De Keninck and M. Roelfs, “Normalization, square roots, and the exponential and
 //! logarithmic maps in geometric algebras of less than 6D”, [Mathematical Methods in the Applied
 //! Sciences 47, 1425–1441](https://doi.org/10.1002/mma.8639).
 //! [^2]: M. Roelfs and S. De Keninck, “Graded Symmetry Groups: Plane and Simple”, [Advances in
 //! Applied Clifford Algebras 33](https://doi.org/10.1007/s00006-023-01269-9).
+//! [^3]: L. Dorst and S. De Keninck, “Physical Geometry by Plane-Based Geometric Algebra”,
+//! [Advanced Computational Applications of Geometric Algebra,
+//! 43–76](https://doi.org/10.1007/978-3-031-55985-3_2).
 //!
 //! [`lav`]: https://docs.rs/lav
 //! [`rug`]: https://docs.rs/rug
@@ -136,8 +146,9 @@
 //! # Examples
 //!
 //! Generates the expression for rotating a plane in [`PgaP3`], i.e., Parabolic (Euclidean) 3D PGA.
-//! The [`Multivector::pin()`] method prefixes symbols of [`Multivector::plane()`] with `"~"` to
-//! distinguish them from the symbols of [`Multivector::rotator()`].
+//! The [`Multivector::pin()`] method pins symbols of [`Multivector::plane()`] with the *combining x
+//! below* (i.e., the Unicode *combining diacritical mark* `"◌͓"`) to distinguish them from the
+//! symbols of [`Multivector::rotator()`].
 //!
 //! ```
 //! use vee::{format_eq, PgaP3 as Vee};
@@ -326,7 +337,7 @@ impl<B: Algebra> Multivector<B> {
     {
         iter.into_iter().map(|(s, b)| ([[s]], b)).collect()
     }
-    /// Adds combining X below (i.e., `" ͓"`) to all symbols.
+    /// Adds Unicode *combining x below* (i.e., `"◌͓"`) to all symbols.
     ///
     /// Pins this multivector as being sandwiched by the reflection or projection operator.
     ///
@@ -336,7 +347,7 @@ impl<B: Algebra> Multivector<B> {
     pub fn pin(self) -> Self {
         self.sym("\u{0353}")
     }
-    /// Adds combining left arrowhead below (i.e., `" ͔"`) to all symbols.
+    /// Adds Unicode *combining left arrowhead below* (i.e., `"◌͔"`) to all symbols.
     ///
     /// Pins this multivector as left-hand side.
     ///
@@ -346,7 +357,7 @@ impl<B: Algebra> Multivector<B> {
     pub fn lhs(self) -> Self {
         self.sym("\u{0354}")
     }
-    /// Adds combining left arrowhead below (i.e., `" ͕"`) to all symbols.
+    /// Adds Unicode *combining left arrowhead below* (i.e., `"◌͕"`) to all symbols.
     ///
     /// Pins this multivector as right-hand side.
     ///
@@ -356,13 +367,15 @@ impl<B: Algebra> Multivector<B> {
     pub fn rhs(self) -> Self {
         self.sym("\u{0355}")
     }
-    /// Appends combining diacritical `mark` to all symbols.
+    /// Appends Unicode *combining diacritical mark* to all symbols.
+    ///
+    /// This example appends *combining double breve below* (i.e., `"◌͜◌"`) to plane $`p`$.
     ///
     /// ```
     /// use vee::{format_eq, PgaP3 as Vee};
     ///
     /// format_eq!(Vee::plane(), "We0+xe1+ye2+ze3");
-    /// format_eq!(Vee::plane().sym("\u{0338}"), "W̸e0+x̸e1+y̸e2+z̸e3");
+    /// format_eq!(Vee::plane().sym("\u{035c}"), "W͜e0+x͜e1+y͜e2+z͜e3");
     /// ```
     #[must_use]
     pub fn sym(mut self, mark: &str) -> Self {

@@ -1,7 +1,7 @@
-# Version 0.1.3 (2025-09-15)
+# Version 0.1.3 (2025-09-18)
 
   * Add projection operator. Supports rejection, i.e., projecting lower- onto higher-grade blade.
-  * Use Unicode Diacritical Marks instead of ~/L/R.
+  * Use Unicode *combining diacritical marks* instead of ~/L/R.
   * Define 6D/7D PGA blades.
 
 # Version 0.1.2 (2025-09-07)
