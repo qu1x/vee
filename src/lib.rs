@@ -18,7 +18,7 @@
 //! hyperbolic, and parabolic (Euclidean).[^2] The 5D, 6D, and 7D PGAs (i.e., $`N = 5`$, $`N = 6`$,
 //! and $`N = 7`$) are incomplete as there are no inverses based on Study numbers but they provide
 //! dimension-agnostic insights regarding duality and the choice of basis blades. The PGA is
-//! especially of interest for computer graphics, game engines, and physics simulations as it the
+//! especially of interest for computer graphics, game engines, and physics simulations as it is the
 //! most compact flavor (i.e., a one-up flavor) unifying the established but scattered frameworks,
 //! e.g., homogeneous coordinates, Plücker coordinates, (dual) quaternions, and screw theory. Even
 //! without any knowledge of geometric algebra, an API can be more intuitive as it unifies the
@@ -145,10 +145,11 @@
 //!
 //! # Examples
 //!
-//! Generates the expression for rotating a plane in [`PgaP3`], i.e., Parabolic (Euclidean) 3D PGA.
-//! The [`Multivector::pin()`] method pins symbols of [`Multivector::plane()`] with the *combining x
-//! below* (i.e., the Unicode *combining diacritical mark* `"◌͓"`) to distinguish them from the
-//! symbols of [`Multivector::rotator()`].
+//! Generates the expression for rotating a plane in [`PgaP3`], i.e., the type alias of
+//! [`Multivector`] parameterized for the Parabolic (Euclidean) 3D PGA. The [`PgaP3::pin()`] method
+//! pins symbols of [`PgaP3::plane()`] with the *combining x below* (i.e., the Unicode *combining
+//! diacritical mark* `"◌͓"`) to distinguish them from the symbols of
+//! [`PgaP3::rotator()`](struct.Multivector.html#method.rotator-1).
 //!
 //! ```
 //! use vee::{format_eq, PgaP3 as Vee};
@@ -163,7 +164,7 @@
 //!
 //! The symbols are assigned to basis blades such that lowercase symbols are dual to their
 //! corresponding uppercase symbols. For blades containing $`\e_0`$, uppercase symbols are used. The
-//! [`Multivector::swp()`] method swaps lowercase and uppercase symbols. This is useful for testing
+//! [`PgaP3::swp()`] method swaps lowercase and uppercase symbols. This is useful for testing
 //! duality equivalences.
 //!
 //! ```
