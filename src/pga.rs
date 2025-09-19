@@ -8,10 +8,9 @@
 use super::{Algebra, Choose, Multivector};
 use core::{
     cmp::Ordering,
-    fmt::{self, Debug, Display, Write},
+    fmt::{self, Debug, Display, Error, Write},
     ops::{Mul, Not},
 };
-use smartstring::alias::String;
 
 /// Basis blade of Elliptic 0D PGA.
 pub type PgaE0 = Pga<1, 0>;
@@ -104,22 +103,32 @@ impl<const M: i8, const N: u32> Pga<M, N> {
         }
     }
     /// Constructs Cayley table.
-    #[must_use]
-    pub fn table() -> String {
-        let mut tab = String::new();
-        for a in Self::basis() {
-            for b in Self::basis() {
-                let (s, c) = a * b;
-                let e = if s == 0 {
-                    "0".into()
+    ///
+    /// # Errors
+    ///
+    /// Fails in case of formatting errors.
+    pub fn table() -> Result<String, Error> {
+        let basis_len = Self::basis().len();
+        let blade_len = N as usize + 3;
+        let table_len = blade_len * basis_len.pow(2) + basis_len;
+        let mut table = String::with_capacity(table_len);
+        let mut blade = String::with_capacity(blade_len);
+        for row in Self::basis() {
+            for col in Self::basis() {
+                let (sig, mul) = row * col;
+                blade.clear();
+                if sig == 0 {
+                    write!(&mut blade, "0")?;
                 } else {
-                    format!("{}{}", if s > 0 { " " } else { "-" }, c)
-                };
-                write!(&mut tab, "{e:>0$}", N as usize + 3).unwrap();
+                    let sig = if sig > 0 { " " } else { "-" };
+                    write!(&mut blade, "{sig}{mul}")?;
+                }
+                write!(&mut table, "{blade:>blade_len$}")?;
             }
-            writeln!(&mut tab).unwrap();
+            writeln!(&mut table)?;
         }
-        tab
+        debug_assert_eq!(table.len(), table_len);
+        Ok(table)
     }
 }
 
@@ -1398,7 +1407,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// let simple_motor = Vee::plane().lhs() * Vee::plane().rhs();
     ///
     /// assert_eq!(simple_motor.basis_blades(), Vee::simple_motor().basis_blades());
-    /// format_eq!(format!("{simple_motor:#}"), [
+    /// format_eq!(simple_motor, [
     ///     "+1x͔x͕+1y͔y͕+1z͔z͕",
     ///     "+(+1W͔x͕-1W͕x͔)e01",
     ///     "+(+1W͔y͕-1W͕y͔)e02",
@@ -1502,7 +1511,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// let flector = Vee::plane().lhs() * Vee::motor().rhs();
     ///
     /// assert_eq!(flector.basis_blades(), Vee::flector().basis_blades());
-    /// format_eq!(format!("{flector:#}"), [
+    /// format_eq!(flector, [
     ///     "+(+1W͔v͕-1X͕x͔-1Y͕y͔-1Z͕z͔)e0",
     ///     "+(+1v͕x͔-1y͔z͕+1y͕z͔)e1",
     ///     "+(+1v͕y͔+1x͔z͕-1x͕z͔)e2",
@@ -3616,9 +3625,9 @@ fn mul() {
     for (pga, table) in tables {
         let path = Path::new("tests").join(pga).with_extension("ct");
         if let Ok(text) = read_to_string(&path) {
-            assert_eq!(table, text);
+            assert_eq!(table, Ok(text));
         } else {
-            write(&path, table).unwrap();
+            write(&path, table.unwrap()).unwrap();
         }
     }
 }
