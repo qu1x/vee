@@ -278,12 +278,7 @@ where
     #[must_use]
     #[inline]
     fn rev(self) -> (i8, Self) {
-        let sig = if self.grade().choose(2) & 1 == 0 {
-            1
-        } else {
-            -1
-        };
-        (sig, self)
+        (1 - (self.grade().choose(2) & 1) as i8 * 2, self)
     }
 }
 
