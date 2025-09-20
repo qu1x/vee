@@ -189,7 +189,7 @@ macro_rules! format_eq {
         pretty_assertions::assert_eq!(emitted, $literal);
     }};
     ($emitted:expr, [$($literal:literal),* $(,)?]) => {{
-        let emitted = format!("{:#}", $emitted);
+        let emitted = format!("{:+#}", $emitted);
         let mut literal = String::with_capacity(emitted.len());
         $(
             literal.push_str($literal);
@@ -671,10 +671,10 @@ impl<B: Algebra> Shr for Multivector<B> {
 
 impl<B: Algebra> Display for Multivector<B> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for (num, (b, p)) in self.map.iter().enumerate() {
+        for (i, (b, p)) in self.map.iter().enumerate() {
             let is_one = *b == B::default();
             let is_sum = p.map.len() > 1;
-            if (f.alternate() && !is_one && is_sum) || (!f.alternate() && num > 0) {
+            if (f.alternate() && !is_one && is_sum) || (!f.alternate() && i > 0) {
                 write!(f, "+")?;
             }
             if !is_one && is_sum {
@@ -708,16 +708,16 @@ impl<B: Algebra> Display for Multivector<B> {
                 } else {
                     map.len()
                 };
-                for (num, ((s, e), p)) in map
+                for (i, ((s, e), p)) in map
                     .iter()
                     .take(len)
                     .cycle()
-                    .skip(num)
+                    .skip(i)
                     .take(len)
-                    .chain(map.iter().skip(len).cycle().skip(num).take(len))
+                    .chain(map.iter().skip(len).cycle().skip(i).take(len))
                     .enumerate()
                 {
-                    if f.alternate() || num > 0 {
+                    if f.alternate() || i > 0 {
                         write!(f, "+")?;
                     }
                     write!(f, "[")?;
@@ -909,33 +909,18 @@ impl DivAssign<i32> for Polynomial {
 
 impl Display for Polynomial {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut iter = self.map.iter();
-        if !f.alternate() {
-            if let Some((s, c)) = iter.next() {
-                if !s.map.is_empty() && c.numer().abs() == 1 {
-                    if c.numer().is_negative() {
-                        write!(f, "-")?;
-                    }
-                } else {
-                    write!(f, "{c:+}")?;
-                }
-                Display::fmt(s, f)?;
-            }
-        }
-        iter.try_for_each(|(s, c)| {
-            if !f.alternate() && !s.map.is_empty() && c.numer().abs() == 1 {
+        self.map.iter().enumerate().try_for_each(|(i, (s, c))| {
+            if !f.sign_plus() && !s.map.is_empty() && c.numer().abs() == 1 {
                 if c.numer().is_negative() {
                     write!(f, "-")?;
-                } else {
+                } else if f.alternate() || i > 0 {
                     write!(f, "+")?;
                 }
             } else {
                 write!(f, "{c:+}")?;
             }
-            Display::fmt(s, f)?;
-            Ok(())
-        })?;
-        Ok(())
+            Display::fmt(s, f)
+        })
     }
 }
 
