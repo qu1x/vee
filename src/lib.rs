@@ -581,7 +581,7 @@ impl<B: Algebra> Div<i32> for Multivector<B> {
 
 impl<B: Algebra> DivAssign<i32> for Multivector<B> {
     fn div_assign(&mut self, other: i32) {
-        assert!(other != 0, "division by zero");
+        assert_ne!(other, 0, "division by zero");
         self.map.values_mut().for_each(|p| *p /= other);
     }
 }
@@ -913,7 +913,7 @@ impl Display for Polynomial {
         if !f.alternate() {
             if let Some((s, c)) = iter.next() {
                 if !s.map.is_empty() && c.numer().abs() == 1 {
-                    if *c.numer() < 1 {
+                    if c.numer().is_negative() {
                         write!(f, "-")?;
                     }
                 } else {
@@ -924,7 +924,7 @@ impl Display for Polynomial {
         }
         iter.try_for_each(|(s, c)| {
             if !f.alternate() && !s.map.is_empty() && c.numer().abs() == 1 {
-                if *c.numer() < 1 {
+                if c.numer().is_negative() {
                     write!(f, "-")?;
                 } else {
                     write!(f, "+")?;
