@@ -910,7 +910,7 @@ impl DivAssign<i32> for Polynomial {
 impl Display for Polynomial {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.map.iter().enumerate().try_for_each(|(i, (s, c))| {
-            if !f.sign_plus() && !s.map.is_empty() && c.numer().abs() == 1 {
+            if !f.sign_plus() && !s.map.is_empty() && c.numer().abs() == 1 && c.denom().abs() == 1 {
                 if c.numer().is_negative() {
                     write!(f, "-")?;
                 } else if f.alternate() || i > 0 {
