@@ -453,7 +453,7 @@ impl<B: Algebra> Multivector<B> {
     ///
     /// format_eq!(Vee::plane().squared_norm(), "xx+yy+zz");
     /// format_eq!(Vee::point().squared_norm(), "ww");
-    /// format_eq!(Vee::line().squared_norm(), "xx+yy+zz+(-Xx-Yy-Zz)I");
+    /// format_eq!(Vee::line().squared_norm(), "xx+yy+zz+(-2Xx-2Yy-2Zz)I");
     /// format_eq!(Vee::displacement().squared_norm(), "xx+yy+zz");
     /// format_eq!(Vee::moment().squared_norm(), "");
     /// ```
@@ -912,7 +912,7 @@ impl Display for Polynomial {
         let mut iter = self.map.iter();
         if !f.alternate() {
             if let Some((s, c)) = iter.next() {
-                if !s.map.is_empty() || c.numer().abs() == 1 {
+                if !s.map.is_empty() && c.numer().abs() == 1 {
                     if *c.numer() < 1 {
                         write!(f, "-")?;
                     }
@@ -923,7 +923,7 @@ impl Display for Polynomial {
             }
         }
         iter.try_for_each(|(s, c)| {
-            if !f.alternate() && (!s.map.is_empty() || c.numer().abs() == 1) {
+            if !f.alternate() && !s.map.is_empty() && c.numer().abs() == 1 {
                 if *c.numer() < 1 {
                     write!(f, "-")?;
                 } else {
