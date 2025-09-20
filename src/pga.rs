@@ -964,16 +964,16 @@ impl<const M: i8> Multivector<Pga<M, 1>> {
     ///
     /// assert_eq!(translator.basis_blades(), Vee::translator().basis_blades());
     /// format_eq!(translator, [
-    ///     "+1w͔w͕",
-    ///     "+(+1W͔w͕-1W͕w͔)I",
+    ///     "+w͔w͕",
+    ///     "+(+W͔w͕-W͕w͔)I",
     /// ]);
     ///
     /// let point = Vee::point().pin() << Vee::translator();
     ///
     /// assert_eq!(point.basis_blades(), Vee::point().basis_blades());
     /// format_eq!(point, [
-    ///     "+(+[+1vv]W͓+[+2Vv]w͓)e0",
-    ///     "+[+1vv]w͓e1",
+    ///     "+(+[+vv]W͓+[+2Vv]w͓)e0",
+    ///     "+[+vv]w͓e1",
     /// ]);
     /// ```
     #[must_use]
@@ -1033,9 +1033,9 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     ///
     /// assert_eq!(line.basis_blades(), Vee::line().basis_blades());
     /// format_eq!(line, [
-    ///     "+(+1X͔Y͕-1X͕Y͔)e0",
-    ///     "+(+1Y͔w͕-1Y͕w͔)e1",
-    ///     "+(-1X͔w͕+1X͕w͔)e2",
+    ///     "+(+X͔Y͕-X͕Y͔)e0",
+    ///     "+(+Y͔w͕-Y͕w͔)e1",
+    ///     "+(-X͔w͕+X͕w͔)e2",
     /// ]);
     /// ```
     #[must_use]
@@ -1064,9 +1064,9 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     ///
     /// assert_eq!(point.basis_blades(), Vee::point().basis_blades());
     /// format_eq!(point, [
-    ///     "+(+1x͔y͕-1x͕y͔)e12",
-    ///     "+(-1W͔y͕+1W͕y͔)e20",
-    ///     "+(+1W͔x͕-1W͕x͔)e01",
+    ///     "+(+x͔y͕-x͕y͔)e12",
+    ///     "+(-W͔y͕+W͕y͔)e20",
+    ///     "+(+W͔x͕-W͕x͔)e01",
     /// ]);
     /// ```
     #[must_use]
@@ -1083,8 +1083,8 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     ///
     /// assert_eq!(rotator.basis_blades(), Vee::rotator().basis_blades());
     /// format_eq!(rotator, [
-    ///     "+1x͔x͕+1y͔y͕",
-    ///     "+(+1x͔y͕-1x͕y͔)e12",
+    ///     "+x͔x͕+y͔y͕",
+    ///     "+(+x͔y͕-x͕y͔)e12",
     /// ]);
     /// ```
     #[must_use]
@@ -1101,9 +1101,9 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     ///
     /// assert_eq!(translator.basis_blades(), Vee::translator().basis_blades());
     /// format_eq!(translator, [
-    ///     "-1w͔w͕",
-    ///     "+(-1Y͔w͕+1Y͕w͔)e20",
-    ///     "+(+1X͔w͕-1X͕w͔)e01",
+    ///     "-w͔w͕",
+    ///     "+(-Y͔w͕+Y͕w͔)e20",
+    ///     "+(+X͔w͕-X͕w͔)e01",
     /// ]);
     /// ```
     #[must_use]
@@ -1120,19 +1120,19 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     ///
     /// assert_eq!(motor.basis_blades(), Vee::motor().basis_blades());
     /// format_eq!(motor, [
-    ///     "+1x͔x͕+1y͔y͕",
-    ///     "+(+1x͔y͕-1x͕y͔)e12",
-    ///     "+(-1W͔y͕+1W͕y͔)e20",
-    ///     "+(+1W͔x͕-1W͕x͔)e01",
+    ///     "+x͔x͕+y͔y͕",
+    ///     "+(+x͔y͕-x͕y͔)e12",
+    ///     "+(-W͔y͕+W͕y͔)e20",
+    ///     "+(+W͔x͕-W͕x͔)e01",
     /// ]);
     ///
     /// let point = Vee::point().pin() << Vee::motor();
     ///
     /// assert_eq!(point.basis_blades(), Vee::point().basis_blades());
     /// format_eq!(point, [
-    ///     "+(+[+1vv+1ww]w͓)e12",
-    ///     "+(+[+2vw]Y͓+[+2Xw-2Yv]w͓+[+1vv-1ww]X͓)e20",
-    ///     "+(+[+2Xv+2Yw]w͓+[-2vw]X͓+[+1vv-1ww]Y͓)e01",
+    ///     "+(+[+vv+ww]w͓)e12",
+    ///     "+(+[+2vw]Y͓+[+2Xw-2Yv]w͓+[+vv-ww]X͓)e20",
+    ///     "+(+[+2Xv+2Yw]w͓+[-2vw]X͓+[+vv-ww]Y͓)e01",
     /// ]);
     /// ```
     #[must_use]
@@ -1149,19 +1149,19 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     ///
     /// assert_eq!(flector.basis_blades(), Vee::flector().basis_blades());
     /// format_eq!(flector, [
-    ///     "+(+1W͔v͕+1X͕y͔-1Y͕x͔)e0",
-    ///     "+(+1v͕x͔-1w͕y͔)e1",
-    ///     "+(+1v͕y͔+1w͕x͔)e2",
-    ///     "+(+1W͔w͕+1X͕x͔+1Y͕y͔)I",
+    ///     "+(+W͔v͕+X͕y͔-Y͕x͔)e0",
+    ///     "+(+v͕x͔-w͕y͔)e1",
+    ///     "+(+v͕y͔+w͕x͔)e2",
+    ///     "+(+W͔w͕+X͕x͔+Y͕y͔)I",
     /// ]);
     ///
     /// let point = Vee::point().pin() << Vee::flector();
     ///
     /// assert_eq!(point.basis_blades(), Vee::point().basis_blades());
     /// format_eq!(point, [
-    ///     "+(+[-1xx-1yy]w͓)e12",
-    ///     "+(+[+2xy]Y͓+[+2Vy+2Wx]w͓+[+1xx-1yy]X͓)e20",
-    ///     "+(+[-2Vx+2Wy]w͓+[+2xy]X͓+[-1xx+1yy]Y͓)e01",
+    ///     "+(+[-xx-yy]w͓)e12",
+    ///     "+(+[+2xy]Y͓+[+2Vy+2Wx]w͓+[+xx-yy]X͓)e20",
+    ///     "+(+[-2Vx+2Wy]w͓+[+2xy]X͓+[-xx+yy]Y͓)e01",
     /// ]);
     /// ```
     #[must_use]
@@ -1203,7 +1203,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// assert_eq!(squared_norm.basis_blades(), Vee::norm().basis_blades());
     /// format_eq!(squared_norm, [
-    ///     "+1xx+1yy+1zz",
+    ///     "+xx+yy+zz",
     ///     "+(-2Xx-2Yy-2Zz)I",
     /// ]);
     /// ```
@@ -1233,10 +1233,10 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// assert_eq!(plane.basis_blades(), Vee::plane().basis_blades());
     /// format_eq!(plane, [
-    ///     "+(-1X͔X͕-1Y͔Y͕-1Z͔Z͕)e0",
-    ///     "+(+1X͔w͕-1Y͕z͔+1Z͕y͔)e1",
-    ///     "+(+1X͕z͔+1Y͔w͕-1Z͕x͔)e2",
-    ///     "+(-1X͕y͔+1Y͕x͔+1Z͔w͕)e3",
+    ///     "+(-X͔X͕-Y͔Y͕-Z͔Z͕)e0",
+    ///     "+(+X͔w͕-Y͕z͔+Z͕y͔)e1",
+    ///     "+(+X͕z͔+Y͔w͕-Z͕x͔)e2",
+    ///     "+(-X͕y͔+Y͕x͔+Z͔w͕)e3",
     /// ]);
     /// ```
     #[must_use]
@@ -1254,9 +1254,9 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// assert_eq!(displacement.basis_blades(), Vee::displacement().basis_blades());
     /// format_eq!(displacement, [
-    ///     "-1X͔w͕e23",
-    ///     "-1Y͔w͕e31",
-    ///     "-1Z͔w͕e12",
+    ///     "-X͔w͕e23",
+    ///     "-Y͔w͕e31",
+    ///     "-Z͔w͕e12",
     /// ]);
     ///
     /// // A line through the origin as the meet of two planes through the origin.
@@ -1264,9 +1264,9 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// assert_eq!(displacement.basis_blades(), Vee::displacement().basis_blades());
     /// format_eq!(displacement, [
-    ///     "+(+1y͔z͕-1y͕z͔)e23",
-    ///     "+(-1x͔z͕+1x͕z͔)e31",
-    ///     "+(+1x͔y͕-1x͕y͔)e12",
+    ///     "+(+y͔z͕-y͕z͔)e23",
+    ///     "+(-x͔z͕+x͕z͔)e31",
+    ///     "+(+x͔y͕-x͕y͔)e12",
     /// ]);
     /// ```
     #[must_use]
@@ -1290,12 +1290,12 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// assert_eq!(line.basis_blades(), Vee::line().basis_blades());
     /// format_eq!(line, [
-    ///     "+(+1Y͔Z͕-1Y͕Z͔)e01",
-    ///     "+(-1X͔Z͕+1X͕Z͔)e02",
-    ///     "+(+1X͔Y͕-1X͕Y͔)e03",
-    ///     "+(-1X͔w͕+1X͕w͔)e23",
-    ///     "+(-1Y͔w͕+1Y͕w͔)e31",
-    ///     "+(-1Z͔w͕+1Z͕w͔)e12",
+    ///     "+(+Y͔Z͕-Y͕Z͔)e01",
+    ///     "+(-X͔Z͕+X͕Z͔)e02",
+    ///     "+(+X͔Y͕-X͕Y͔)e03",
+    ///     "+(-X͔w͕+X͕w͔)e23",
+    ///     "+(-Y͔w͕+Y͕w͔)e31",
+    ///     "+(-Z͔w͕+Z͕w͔)e12",
     /// ]);
     ///
     /// // A line as the meet of two planes.
@@ -1303,12 +1303,12 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// assert_eq!(line.basis_blades(), Vee::line().basis_blades());
     /// format_eq!(line, [
-    ///     "+(+1W͔x͕-1W͕x͔)e01",
-    ///     "+(+1W͔y͕-1W͕y͔)e02",
-    ///     "+(+1W͔z͕-1W͕z͔)e03",
-    ///     "+(+1y͔z͕-1y͕z͔)e23",
-    ///     "+(-1x͔z͕+1x͕z͔)e31",
-    ///     "+(+1x͔y͕-1x͕y͔)e12",
+    ///     "+(+W͔x͕-W͕x͔)e01",
+    ///     "+(+W͔y͕-W͕y͔)e02",
+    ///     "+(+W͔z͕-W͕z͔)e03",
+    ///     "+(+y͔z͕-y͕z͔)e23",
+    ///     "+(-x͔z͕+x͕z͔)e31",
+    ///     "+(+x͔y͕-x͕y͔)e12",
     /// ]);
     /// ```
     #[must_use]
@@ -1338,10 +1338,10 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// assert_eq!(point.basis_blades(), Vee::point().basis_blades());
     /// format_eq!(point, [
-    ///     "+(+1x͔x͕+1y͔y͕+1z͔z͕)e123",
-    ///     "+(-1W͔x͕-1Y͕z͔+1Z͕y͔)e032",
-    ///     "+(-1W͔y͕+1X͕z͔-1Z͕x͔)e013",
-    ///     "+(-1W͔z͕-1X͕y͔+1Y͕x͔)e021",
+    ///     "+(+x͔x͕+y͔y͕+z͔z͕)e123",
+    ///     "+(-W͔x͕-Y͕z͔+Z͕y͔)e032",
+    ///     "+(-W͔y͕+X͕z͔-Z͕x͔)e013",
+    ///     "+(-W͔z͕-X͕y͔+Y͕x͔)e021",
     /// ]);
     /// ```
     #[must_use]
@@ -1358,20 +1358,20 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// assert_eq!(rotator.basis_blades(), Vee::rotator().basis_blades());
     /// format_eq!(rotator, [
-    ///     "+1x͔x͕+1y͔y͕+1z͔z͕",
-    ///     "+(+1y͔z͕-1y͕z͔)e23",
-    ///     "+(-1x͔z͕+1x͕z͔)e31",
-    ///     "+(+1x͔y͕-1x͕y͔)e12",
+    ///     "+x͔x͕+y͔y͕+z͔z͕",
+    ///     "+(+y͔z͕-y͕z͔)e23",
+    ///     "+(-x͔z͕+x͕z͔)e31",
+    ///     "+(+x͔y͕-x͕y͔)e12",
     /// ]);
     ///
     /// let rotator = Vee::displacement().lhs() * Vee::displacement().rhs();
     ///
     /// assert_eq!(rotator.basis_blades(), Vee::rotator().basis_blades());
     /// format_eq!(rotator, [
-    ///     "-1x͔x͕-1y͔y͕-1z͔z͕",
-    ///     "+(-1y͔z͕+1y͕z͔)e23",
-    ///     "+(+1x͔z͕-1x͕z͔)e31",
-    ///     "+(-1x͔y͕+1x͕y͔)e12",
+    ///     "-x͔x͕-y͔y͕-z͔z͕",
+    ///     "+(-y͔z͕+y͕z͔)e23",
+    ///     "+(+x͔z͕-x͕z͔)e31",
+    ///     "+(-x͔y͕+x͕y͔)e12",
     /// ]);
     /// ```
     #[must_use]
@@ -1388,10 +1388,10 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// assert_eq!(translator.basis_blades(), Vee::translator().basis_blades());
     /// format_eq!(translator, [
-    ///     "-1w͔w͕",
-    ///     "+(+1X͔w͕-1X͕w͔)e01",
-    ///     "+(+1Y͔w͕-1Y͕w͔)e02",
-    ///     "+(+1Z͔w͕-1Z͕w͔)e03",
+    ///     "-w͔w͕",
+    ///     "+(+X͔w͕-X͕w͔)e01",
+    ///     "+(+Y͔w͕-Y͕w͔)e02",
+    ///     "+(+Z͔w͕-Z͕w͔)e03",
     /// ]);
     /// ```
     #[must_use]
@@ -1408,13 +1408,13 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// assert_eq!(simple_motor.basis_blades(), Vee::simple_motor().basis_blades());
     /// format_eq!(simple_motor, [
-    ///     "+1x͔x͕+1y͔y͕+1z͔z͕",
-    ///     "+(+1W͔x͕-1W͕x͔)e01",
-    ///     "+(+1W͔y͕-1W͕y͔)e02",
-    ///     "+(+1W͔z͕-1W͕z͔)e03",
-    ///     "+(+1y͔z͕-1y͕z͔)e23",
-    ///     "+(-1x͔z͕+1x͕z͔)e31",
-    ///     "+(+1x͔y͕-1x͕y͔)e12",
+    ///     "+x͔x͕+y͔y͕+z͔z͕",
+    ///     "+(+W͔x͕-W͕x͔)e01",
+    ///     "+(+W͔y͕-W͕y͔)e02",
+    ///     "+(+W͔z͕-W͕z͔)e03",
+    ///     "+(+y͔z͕-y͕z͔)e23",
+    ///     "+(-x͔z͕+x͕z͔)e31",
+    ///     "+(+x͔y͕-x͕y͔)e12",
     /// ]);
     /// ```
     #[must_use]
@@ -1431,28 +1431,28 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// assert_eq!(motor.basis_blades(), Vee::motor().basis_blades());
     /// format_eq!(motor, [
-    ///     "-1x͔x͕-1y͔y͕-1z͔z͕",
-    ///     "+(-1Y͔z͕+1Y͕z͔+1Z͔y͕-1Z͕y͔)e01",
-    ///     "+(+1X͔z͕-1X͕z͔-1Z͔x͕+1Z͕x͔)e02",
-    ///     "+(-1X͔y͕+1X͕y͔+1Y͔x͕-1Y͕x͔)e03",
-    ///     "+(-1y͔z͕+1y͕z͔)e23",
-    ///     "+(+1x͔z͕-1x͕z͔)e31",
-    ///     "+(-1x͔y͕+1x͕y͔)e12",
-    ///     "+(+1X͔x͕+1X͕x͔+1Y͔y͕+1Y͕y͔+1Z͔z͕+1Z͕z͔)I",
+    ///     "-x͔x͕-y͔y͕-z͔z͕",
+    ///     "+(-Y͔z͕+Y͕z͔+Z͔y͕-Z͕y͔)e01",
+    ///     "+(+X͔z͕-X͕z͔-Z͔x͕+Z͕x͔)e02",
+    ///     "+(-X͔y͕+X͕y͔+Y͔x͕-Y͕x͔)e03",
+    ///     "+(-y͔z͕+y͕z͔)e23",
+    ///     "+(+x͔z͕-x͕z͔)e31",
+    ///     "+(-x͔y͕+x͕y͔)e12",
+    ///     "+(+X͔x͕+X͕x͔+Y͔y͕+Y͕y͔+Z͔z͕+Z͕z͔)I",
     /// ]);
     ///
     /// let motor = Vee::rotator().lhs() * Vee::translator().rhs();
     ///
     /// assert_eq!(motor.basis_blades(), Vee::motor().basis_blades());
     /// format_eq!(motor, [
-    ///     "+1v͔v͕",
-    ///     "+(+1X͕v͔+1Y͕z͔-1Z͕y͔)e01",
-    ///     "+(-1X͕z͔+1Y͕v͔+1Z͕x͔)e02",
-    ///     "+(+1X͕y͔-1Y͕x͔+1Z͕v͔)e03",
-    ///     "+1v͕x͔e23",
-    ///     "+1v͕y͔e31",
-    ///     "+1v͕z͔e12",
-    ///     "+(+1X͕x͔+1Y͕y͔+1Z͕z͔)I",
+    ///     "+v͔v͕",
+    ///     "+(+X͕v͔+Y͕z͔-Z͕y͔)e01",
+    ///     "+(-X͕z͔+Y͕v͔+Z͕x͔)e02",
+    ///     "+(+X͕y͔-Y͕x͔+Z͕v͔)e03",
+    ///     "+v͕x͔e23",
+    ///     "+v͕y͔e31",
+    ///     "+v͕z͔e12",
+    ///     "+(+X͕x͔+Y͕y͔+Z͕z͔)I",
     /// ]);
     /// ```
     #[must_use]
@@ -1469,10 +1469,10 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// assert_eq!(rotoreflector.basis_blades(), Vee::rotoreflector().basis_blades());
     /// format_eq!(rotoreflector, [
-    ///     "+(+1v͕x͔-1y͔z͕+1y͕z͔)e1",
-    ///     "+(+1v͕y͔+1x͔z͕-1x͕z͔)e2",
-    ///     "+(+1v͕z͔-1x͔y͕+1x͕y͔)e3",
-    ///     "+(+1x͔x͕+1y͔y͕+1z͔z͕)e123",
+    ///     "+(+v͕x͔-y͔z͕+y͕z͔)e1",
+    ///     "+(+v͕y͔+x͔z͕-x͕z͔)e2",
+    ///     "+(+v͕z͔-x͔y͕+x͕y͔)e3",
+    ///     "+(+x͔x͕+y͔y͕+z͔z͕)e123",
     /// ]);
     /// ```
     #[must_use]
@@ -1489,13 +1489,13 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// assert_eq!(transflector.basis_blades(), Vee::transflector().basis_blades());
     /// format_eq!(transflector, [
-    ///     "+(-1X͕x͔-1Y͕y͔-1Z͕z͔)e0",
-    ///     "+1v͕x͔e1",
-    ///     "+1v͕y͔e2",
-    ///     "+1v͕z͔e3",
-    ///     "+(-1Y͕z͔+1Z͕y͔)e032",
-    ///     "+(+1X͕z͔-1Z͕x͔)e013",
-    ///     "+(-1X͕y͔+1Y͕x͔)e021",
+    ///     "+(-X͕x͔-Y͕y͔-Z͕z͔)e0",
+    ///     "+v͕x͔e1",
+    ///     "+v͕y͔e2",
+    ///     "+v͕z͔e3",
+    ///     "+(-Y͕z͔+Z͕y͔)e032",
+    ///     "+(+X͕z͔-Z͕x͔)e013",
+    ///     "+(-X͕y͔+Y͕x͔)e021",
     /// ]);
     /// ```
     #[must_use]
@@ -1512,14 +1512,14 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///
     /// assert_eq!(flector.basis_blades(), Vee::flector().basis_blades());
     /// format_eq!(flector, [
-    ///     "+(+1W͔v͕-1X͕x͔-1Y͕y͔-1Z͕z͔)e0",
-    ///     "+(+1v͕x͔-1y͔z͕+1y͕z͔)e1",
-    ///     "+(+1v͕y͔+1x͔z͕-1x͕z͔)e2",
-    ///     "+(+1v͕z͔-1x͔y͕+1x͕y͔)e3",
-    ///     "+(+1x͔x͕+1y͔y͕+1z͔z͕)e123",
-    ///     "+(+1V͕x͔-1W͔x͕-1Y͕z͔+1Z͕y͔)e032",
-    ///     "+(+1V͕y͔-1W͔y͕+1X͕z͔-1Z͕x͔)e013",
-    ///     "+(+1V͕z͔-1W͔z͕-1X͕y͔+1Y͕x͔)e021",
+    ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔)e0",
+    ///     "+(+v͕x͔-y͔z͕+y͕z͔)e1",
+    ///     "+(+v͕y͔+x͔z͕-x͕z͔)e2",
+    ///     "+(+v͕z͔-x͔y͕+x͕y͔)e3",
+    ///     "+(+x͔x͕+y͔y͕+z͔z͕)e123",
+    ///     "+(+V͕x͔-W͔x͕-Y͕z͔+Z͕y͔)e032",
+    ///     "+(+V͕y͔-W͔y͕+X͕z͔-Z͕x͔)e013",
+    ///     "+(+V͕z͔-W͔z͕-X͕y͔+Y͕x͔)e021",
     /// ]);
     /// ```
     #[must_use]
@@ -1657,32 +1657,32 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// assert_eq!(single_rotator.basis_blades(), Vee::single_rotator().basis_blades());
     /// format_eq!(single_rotator, [
-    ///     "+1x͔x͕+1y͔y͕+1z͔z͕+1ð͔ð͕",
-    ///     "+(+1y͔z͕-1y͕z͔)e23",
-    ///     "+(-1x͔z͕+1x͕z͔)e31",
-    ///     "+(+1x͔y͕-1x͕y͔)e12",
-    ///     "+(-1x͔ð͕+1x͕ð͔)e41",
-    ///     "+(-1y͔ð͕+1y͕ð͔)e42",
-    ///     "+(-1z͔ð͕+1z͕ð͔)e43",
+    ///     "+x͔x͕+y͔y͕+z͔z͕+ð͔ð͕",
+    ///     "+(+y͔z͕-y͕z͔)e23",
+    ///     "+(-x͔z͕+x͕z͔)e31",
+    ///     "+(+x͔y͕-x͕y͔)e12",
+    ///     "+(-x͔ð͕+x͕ð͔)e41",
+    ///     "+(-y͔ð͕+y͕ð͔)e42",
+    ///     "+(-z͔ð͕+z͕ð͔)e43",
     /// ]);
     ///
     /// let single_rotator = Vee::line_displacement().lhs() * Vee::line_displacement().rhs();
     ///
     /// assert_eq!(single_rotator.basis_blades(), Vee::single_rotator().basis_blades());
     /// format_eq!(single_rotator, [
-    ///     "-1x͔x͕-1y͔y͕-1z͔z͕-1ð͔ð͕",
-    ///     "+(-1y͔z͕+1y͕z͔)e23",
-    ///     "+(+1x͔z͕-1x͕z͔)e31",
-    ///     "+(-1x͔y͕+1x͕y͔)e12",
-    ///     "+(-1x͔ð͕+1x͕ð͔)e41",
-    ///     "+(-1y͔ð͕+1y͕ð͔)e42",
-    ///     "+(-1z͔ð͕+1z͕ð͔)e43",
+    ///     "-x͔x͕-y͔y͕-z͔z͕-ð͔ð͕",
+    ///     "+(-y͔z͕+y͕z͔)e23",
+    ///     "+(+x͔z͕-x͕z͔)e31",
+    ///     "+(-x͔y͕+x͕y͔)e12",
+    ///     "+(-x͔ð͕+x͕ð͔)e41",
+    ///     "+(-y͔ð͕+y͕ð͔)e42",
+    ///     "+(-z͔ð͕+z͕ð͔)e43",
     /// ]);
     ///
     /// let squared_norm = Vee::single_rotator().squared_norm();
     /// assert_eq!(squared_norm.basis_blades(), (Vee::scalar() + Vee::weight()).basis_blades());
     /// format_eq!(squared_norm, [
-    ///     "+1aa+1bb+1cc+1dd+1ee+1ff+1vv",
+    ///     "+aa+bb+cc+dd+ee+ff+vv",
     ///     "+(+2ad+2be+2cf)e1234",
     /// ]);
     /// ```
@@ -1700,34 +1700,34 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// assert_eq!(double_rotator.basis_blades(), Vee::double_rotator().basis_blades());
     /// format_eq!(double_rotator, [
-    ///     "-1a͔a͕-1b͔b͕-1c͔c͕-1d͔d͕-1e͔e͕-1f͔f͕+1v͔v͕",
-    ///     "+(+1a͔v͕+1a͕v͔-1b͔c͕+1b͕c͔-1e͔f͕+1e͕f͔)e23",
-    ///     "+(+1a͔c͕-1a͕c͔+1b͔v͕+1b͕v͔+1d͔f͕-1d͕f͔)e31",
-    ///     "+(-1a͔b͕+1a͕b͔+1c͔v͕+1c͕v͔-1d͔e͕+1d͕e͔)e12",
-    ///     "+(-1b͔f͕+1b͕f͔+1c͔e͕-1c͕e͔+1d͔v͕+1d͕v͔)e41",
-    ///     "+(+1a͔f͕-1a͕f͔-1c͔d͕+1c͕d͔+1e͔v͕+1e͕v͔)e42",
-    ///     "+(-1a͔e͕+1a͕e͔+1b͔d͕-1b͕d͔+1f͔v͕+1f͕v͔)e43",
-    ///     "+(-1a͔d͕-1a͕d͔-1b͔e͕-1b͕e͔-1c͔f͕-1c͕f͔)e1234",
+    ///     "-a͔a͕-b͔b͕-c͔c͕-d͔d͕-e͔e͕-f͔f͕+v͔v͕",
+    ///     "+(+a͔v͕+a͕v͔-b͔c͕+b͕c͔-e͔f͕+e͕f͔)e23",
+    ///     "+(+a͔c͕-a͕c͔+b͔v͕+b͕v͔+d͔f͕-d͕f͔)e31",
+    ///     "+(-a͔b͕+a͕b͔+c͔v͕+c͕v͔-d͔e͕+d͕e͔)e12",
+    ///     "+(-b͔f͕+b͕f͔+c͔e͕-c͕e͔+d͔v͕+d͕v͔)e41",
+    ///     "+(+a͔f͕-a͕f͔-c͔d͕+c͕d͔+e͔v͕+e͕v͔)e42",
+    ///     "+(-a͔e͕+a͕e͔+b͔d͕-b͕d͔+f͔v͕+f͕v͔)e43",
+    ///     "+(-a͔d͕-a͕d͔-b͔e͕-b͕e͔-c͔f͕-c͕f͔)e1234",
     /// ]);
     ///
     /// let double_rotator = Vee::plane_displacement().lhs() * Vee::plane_displacement().rhs();
     ///
     /// assert_eq!(double_rotator.basis_blades(), Vee::double_rotator().basis_blades());
     /// format_eq!(double_rotator, [
-    ///     "-1a͔a͕-1b͔b͕-1c͔c͕-1d͔d͕-1e͔e͕-1f͔f͕",
-    ///     "+(-1b͔c͕+1b͕c͔-1e͔f͕+1e͕f͔)e23",
-    ///     "+(+1a͔c͕-1a͕c͔+1d͔f͕-1d͕f͔)e31",
-    ///     "+(-1a͔b͕+1a͕b͔-1d͔e͕+1d͕e͔)e12",
-    ///     "+(-1b͔f͕+1b͕f͔+1c͔e͕-1c͕e͔)e41",
-    ///     "+(+1a͔f͕-1a͕f͔-1c͔d͕+1c͕d͔)e42",
-    ///     "+(-1a͔e͕+1a͕e͔+1b͔d͕-1b͕d͔)e43",
-    ///     "+(-1a͔d͕-1a͕d͔-1b͔e͕-1b͕e͔-1c͔f͕-1c͕f͔)e1234",
+    ///     "-a͔a͕-b͔b͕-c͔c͕-d͔d͕-e͔e͕-f͔f͕",
+    ///     "+(-b͔c͕+b͕c͔-e͔f͕+e͕f͔)e23",
+    ///     "+(+a͔c͕-a͕c͔+d͔f͕-d͕f͔)e31",
+    ///     "+(-a͔b͕+a͕b͔-d͔e͕+d͕e͔)e12",
+    ///     "+(-b͔f͕+b͕f͔+c͔e͕-c͕e͔)e41",
+    ///     "+(+a͔f͕-a͕f͔-c͔d͕+c͕d͔)e42",
+    ///     "+(-a͔e͕+a͕e͔+b͔d͕-b͕d͔)e43",
+    ///     "+(-a͔d͕-a͕d͔-b͔e͕-b͕e͔-c͔f͕-c͕f͔)e1234",
     /// ]);
     ///
     /// let squared_norm = Vee::double_rotator().squared_norm();
     /// assert_eq!(squared_norm.basis_blades(), (Vee::scalar() + Vee::weight()).basis_blades());
     /// format_eq!(squared_norm, [
-    ///     "+1aa+1bb+1cc+1dd+1ee+1ff+1vv+1ww",
+    ///     "+aa+bb+cc+dd+ee+ff+vv+ww",
     ///     "+(+2ad+2be+2cf+2vw)e1234",
     /// ]);
     /// ```
@@ -1745,11 +1745,11 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// assert_eq!(translator.basis_blades(), Vee::translator().basis_blades());
     /// format_eq!(translator, [
-    ///     "+1w͔w͕",
-    ///     "+(-1X͔w͕+1X͕w͔)e01",
-    ///     "+(-1Y͔w͕+1Y͕w͔)e02",
-    ///     "+(-1Z͔w͕+1Z͕w͔)e03",
-    ///     "+(-1w͔Ð͕+1w͕Ð͔)e40",
+    ///     "+w͔w͕",
+    ///     "+(-X͔w͕+X͕w͔)e01",
+    ///     "+(-Y͔w͕+Y͕w͔)e02",
+    ///     "+(-Z͔w͕+Z͕w͔)e03",
+    ///     "+(-w͔Ð͕+w͕Ð͔)e40",
     /// ]);
     /// ```
     #[must_use]
@@ -1766,24 +1766,24 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// assert_eq!(simple_motor.basis_blades(), Vee::simple_motor().basis_blades());
     /// format_eq!(simple_motor, [
-    ///     "+1x͔x͕+1y͔y͕+1z͔z͕+1ð͔ð͕",
-    ///     "+(+1W͔x͕-1W͕x͔)e01",
-    ///     "+(+1W͔y͕-1W͕y͔)e02",
-    ///     "+(+1W͔z͕-1W͕z͔)e03",
-    ///     "+(-1W͔ð͕+1W͕ð͔)e40",
-    ///     "+(+1y͔z͕-1y͕z͔)e23",
-    ///     "+(-1x͔z͕+1x͕z͔)e31",
-    ///     "+(+1x͔y͕-1x͕y͔)e12",
-    ///     "+(-1x͔ð͕+1x͕ð͔)e41",
-    ///     "+(-1y͔ð͕+1y͕ð͔)e42",
-    ///     "+(-1z͔ð͕+1z͕ð͔)e43",
+    ///     "+x͔x͕+y͔y͕+z͔z͕+ð͔ð͕",
+    ///     "+(+W͔x͕-W͕x͔)e01",
+    ///     "+(+W͔y͕-W͕y͔)e02",
+    ///     "+(+W͔z͕-W͕z͔)e03",
+    ///     "+(-W͔ð͕+W͕ð͔)e40",
+    ///     "+(+y͔z͕-y͕z͔)e23",
+    ///     "+(-x͔z͕+x͕z͔)e31",
+    ///     "+(+x͔y͕-x͕y͔)e12",
+    ///     "+(-x͔ð͕+x͕ð͔)e41",
+    ///     "+(-y͔ð͕+y͕ð͔)e42",
+    ///     "+(-z͔ð͕+z͕ð͔)e43",
     /// ]);
     ///
     /// let squared_norm = Vee::simple_motor().squared_norm();
     /// assert_eq!(squared_norm.basis_blades(), Vee::norm().basis_blades());
     /// format_eq!(squared_norm, [
     ///     // Scalar condition.
-    ///     "+1aa+1bb+1cc+1dd+1ee+1ff+1vv",
+    ///     "+aa+bb+cc+dd+ee+ff+vv",
     ///     // Point condition.
     ///     "+(+2ad+2be+2cf)e1234", // Weight condition.
     ///     "+(-2Yf+2Ze-2aÐ)e0324", // Direction condition.
@@ -1797,15 +1797,15 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     /// assert_eq!(point.basis_blades(), (Vee::scalar() + Vee::point()).basis_blades());
     /// format_eq!(point, [
     ///     "+[+2ad+2be+2cf]w͓", // Vanishes with weight condition.
-    ///     "+(+[+1aa+1bb+1cc+1dd+1ee+1ff+1vv]w͓)e1234",
+    ///     "+(+[+aa+bb+cc+dd+ee+ff+vv]w͓)e1234",
     ///     "+(+[+2ac-2bv-2df]Z͓+[-2Xv-2Yc+2Zb-2dÐ]w͓+[+2bf-2ce-2dv]Ð͓\
-    ///        +[+1aa-1bb-1cc-1dd+1ee+1ff+1vv]X͓+[+2ab+2cv-2de]Y͓)e0324",
+    ///        +[+aa-bb-cc-dd+ee+ff+vv]X͓+[+2ab+2cv-2de]Y͓)e0324",
     ///     "+(+[+2Xc-2Yv-2Za-2eÐ]w͓+[-2af+2cd-2ev]Ð͓+[+2ab-2cv-2de]X͓\
-    ///        +[-1aa+1bb-1cc+1dd-1ee+1ff+1vv]Y͓+[+2av+2bc-2ef]Z͓)e0134",
+    ///        +[-aa+bb-cc+dd-ee+ff+vv]Y͓+[+2av+2bc-2ef]Z͓)e0134",
     ///     "+(+[+2ae-2bd-2fv]Ð͓+[+2ac+2bv-2df]X͓+[-2av+2bc-2ef]Y͓\
-    ///        +[-1aa-1bb+1cc+1dd+1ee-1ff+1vv]Z͓+[-2Xb+2Ya-2Zv-2fÐ]w͓)e0214",
+    ///        +[-aa-bb+cc+dd+ee-ff+vv]Z͓+[-2Xb+2Ya-2Zv-2fÐ]w͓)e0214",
     ///     "+(+[+2bf-2ce+2dv]X͓+[-2af+2cd+2ev]Y͓+[+2ae-2bd+2fv]Z͓\
-    ///        +[-2Xd-2Ye-2Zf+2vÐ]w͓+[+1aa+1bb+1cc-1dd-1ee-1ff+1vv]Ð͓)e0123",
+    ///        +[-2Xd-2Ye-2Zf+2vÐ]w͓+[+aa+bb+cc-dd-ee-ff+vv]Ð͓)e0123",
     /// ]);
     ///
     /// let line = Vee::line().pin() << Vee::simple_motor();
@@ -1817,12 +1817,12 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// assert_eq!(volume.basis_blades(), (Vee::pseudoscalar() + Vee::volume()).basis_blades());
     /// format_eq!(volume, [
-    ///     "+(+[+1aa+1bb+1cc+1dd+1ee+1ff+1vv]W͓\
+    ///     "+(+[+aa+bb+cc+dd+ee+ff+vv]W͓\
     ///        +[+2Xv-2Yc+2Zb-2dÐ]x͓+[+2Xc+2Yv-2Za-2eÐ]y͓+[-2Xb+2Ya+2Zv-2fÐ]z͓+[-2Xd-2Ye-2Zf-2vÐ]ð͓)e0",
-    ///     "+(+[+2ab+2cv-2de]y͓+[+2ac-2bv-2df]z͓+[+2bf-2ce-2dv]ð͓+[+1aa-1bb-1cc-1dd+1ee+1ff+1vv]x͓)e1",
-    ///     "+(+[+2av+2bc-2ef]z͓+[-2af+2cd-2ev]ð͓+[+2ab-2cv-2de]x͓+[-1aa+1bb-1cc+1dd-1ee+1ff+1vv]y͓)e2",
-    ///     "+(+[+2ae-2bd-2fv]ð͓+[+2ac+2bv-2df]x͓+[-2av+2bc-2ef]y͓+[-1aa-1bb+1cc+1dd+1ee-1ff+1vv]z͓)e3",
-    ///     "+(+[+2bf-2ce+2dv]x͓+[-2af+2cd+2ev]y͓+[+2ae-2bd+2fv]z͓+[+1aa+1bb+1cc-1dd-1ee-1ff+1vv]ð͓)e4",
+    ///     "+(+[+2ab+2cv-2de]y͓+[+2ac-2bv-2df]z͓+[+2bf-2ce-2dv]ð͓+[+aa-bb-cc-dd+ee+ff+vv]x͓)e1",
+    ///     "+(+[+2av+2bc-2ef]z͓+[-2af+2cd-2ev]ð͓+[+2ab-2cv-2de]x͓+[-aa+bb-cc+dd-ee+ff+vv]y͓)e2",
+    ///     "+(+[+2ae-2bd-2fv]ð͓+[+2ac+2bv-2df]x͓+[-2av+2bc-2ef]y͓+[-aa-bb+cc+dd+ee-ff+vv]z͓)e3",
+    ///     "+(+[+2bf-2ce+2dv]x͓+[-2af+2cd+2ev]y͓+[+2ae-2bd+2fv]z͓+[+aa+bb+cc-dd-ee-ff+vv]ð͓)e4",
     ///     // Vanishes with point condition.
     ///     "+(+[+2ad+2be+2cf]W͓+[-2Yf+2Ze-2aÐ]x͓+[+2Xf-2Zd-2bÐ]y͓+[-2Xe+2Yd-2cÐ]z͓+[-2Xa-2Yb-2Zc]ð͓)I",
     /// ]);
@@ -1841,42 +1841,42 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// assert_eq!(single_motor.basis_blades(), Vee::single_motor().basis_blades());
     /// format_eq!(single_motor, [
-    ///     "+1v͔v͕",
-    ///     "+(+1X͕v͔+1Y͕c͔-1Z͕b͔+1d͔Ð͕)e01",
-    ///     "+(-1X͕c͔+1Y͕v͔+1Z͕a͔+1e͔Ð͕)e02",
-    ///     "+(+1X͕b͔-1Y͕a͔+1Z͕v͔+1f͔Ð͕)e03",
-    ///     "+(-1X͕d͔-1Y͕e͔-1Z͕f͔+1v͔Ð͕)e40",
-    ///     "+1a͔v͕e23",
-    ///     "+1b͔v͕e31",
-    ///     "+1c͔v͕e12",
-    ///     "+1d͔v͕e41",
-    ///     "+1e͔v͕e42",
-    ///     "+1f͔v͕e43",
-    ///     "+(+1Y͕f͔-1Z͕e͔+1a͔Ð͕)e0324",
-    ///     "+(-1X͕f͔+1Z͕d͔+1b͔Ð͕)e0134",
-    ///     "+(+1X͕e͔-1Y͕d͔+1c͔Ð͕)e0214",
-    ///     "+(+1X͕a͔+1Y͕b͔+1Z͕c͔)e0123",
+    ///     "+v͔v͕",
+    ///     "+(+X͕v͔+Y͕c͔-Z͕b͔+d͔Ð͕)e01",
+    ///     "+(-X͕c͔+Y͕v͔+Z͕a͔+e͔Ð͕)e02",
+    ///     "+(+X͕b͔-Y͕a͔+Z͕v͔+f͔Ð͕)e03",
+    ///     "+(-X͕d͔-Y͕e͔-Z͕f͔+v͔Ð͕)e40",
+    ///     "+a͔v͕e23",
+    ///     "+b͔v͕e31",
+    ///     "+c͔v͕e12",
+    ///     "+d͔v͕e41",
+    ///     "+e͔v͕e42",
+    ///     "+f͔v͕e43",
+    ///     "+(+Y͕f͔-Z͕e͔+a͔Ð͕)e0324",
+    ///     "+(-X͕f͔+Z͕d͔+b͔Ð͕)e0134",
+    ///     "+(+X͕e͔-Y͕d͔+c͔Ð͕)e0214",
+    ///     "+(+X͕a͔+Y͕b͔+Z͕c͔)e0123",
     /// ]);
     ///
     /// let single_motor = Vee::line().lhs() * Vee::line().rhs();
     ///
     /// assert_eq!(single_motor.basis_blades(), Vee::single_motor().basis_blades());
     /// format_eq!(single_motor, [
-    ///     "-1x͔x͕-1y͔y͕-1z͔z͕-1ð͔ð͕",
-    ///     "+(-1B͔z͕+1B͕z͔+1C͔y͕-1C͕y͔+1D͔ð͕-1D͕ð͔)e01",
-    ///     "+(+1A͔z͕-1A͕z͔-1C͔x͕+1C͕x͔+1E͔ð͕-1E͕ð͔)e02",
-    ///     "+(-1A͔y͕+1A͕y͔+1B͔x͕-1B͕x͔+1F͔ð͕-1F͕ð͔)e03",
-    ///     "+(-1D͔x͕+1D͕x͔-1E͔y͕+1E͕y͔-1F͔z͕+1F͕z͔)e40",
-    ///     "+(-1y͔z͕+1y͕z͔)e23",
-    ///     "+(+1x͔z͕-1x͕z͔)e31",
-    ///     "+(-1x͔y͕+1x͕y͔)e12",
-    ///     "+(-1x͔ð͕+1x͕ð͔)e41",
-    ///     "+(-1y͔ð͕+1y͕ð͔)e42",
-    ///     "+(-1z͔ð͕+1z͕ð͔)e43",
-    ///     "+(+1A͔ð͕+1A͕ð͔-1E͔z͕-1E͕z͔+1F͔y͕+1F͕y͔)e0324",
-    ///     "+(+1B͔ð͕+1B͕ð͔+1D͔z͕+1D͕z͔-1F͔x͕-1F͕x͔)e0134",
-    ///     "+(+1C͔ð͕+1C͕ð͔-1D͔y͕-1D͕y͔+1E͔x͕+1E͕x͔)e0214",
-    ///     "+(+1A͔x͕+1A͕x͔+1B͔y͕+1B͕y͔+1C͔z͕+1C͕z͔)e0123",
+    ///     "-x͔x͕-y͔y͕-z͔z͕-ð͔ð͕",
+    ///     "+(-B͔z͕+B͕z͔+C͔y͕-C͕y͔+D͔ð͕-D͕ð͔)e01",
+    ///     "+(+A͔z͕-A͕z͔-C͔x͕+C͕x͔+E͔ð͕-E͕ð͔)e02",
+    ///     "+(-A͔y͕+A͕y͔+B͔x͕-B͕x͔+F͔ð͕-F͕ð͔)e03",
+    ///     "+(-D͔x͕+D͕x͔-E͔y͕+E͕y͔-F͔z͕+F͕z͔)e40",
+    ///     "+(-y͔z͕+y͕z͔)e23",
+    ///     "+(+x͔z͕-x͕z͔)e31",
+    ///     "+(-x͔y͕+x͕y͔)e12",
+    ///     "+(-x͔ð͕+x͕ð͔)e41",
+    ///     "+(-y͔ð͕+y͕ð͔)e42",
+    ///     "+(-z͔ð͕+z͕ð͔)e43",
+    ///     "+(+A͔ð͕+A͕ð͔-E͔z͕-E͕z͔+F͔y͕+F͕y͔)e0324",
+    ///     "+(+B͔ð͕+B͕ð͔+D͔z͕+D͕z͔-F͔x͕-F͕x͔)e0134",
+    ///     "+(+C͔ð͕+C͕ð͔-D͔y͕-D͕y͔+E͔x͕+E͕x͔)e0214",
+    ///     "+(+A͔x͕+A͕x͔+B͔y͕+B͕y͔+C͔z͕+C͕z͔)e0123",
     /// ]);
     /// ```
     #[must_use]
@@ -1893,44 +1893,44 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// assert_eq!(double_motor.basis_blades(), Vee::double_motor().basis_blades());
     /// format_eq!(double_motor, [
-    ///     "+1v͔v͕",
-    ///     "+(+1X͕v͔+1Y͕c͔-1Z͕b͔+1d͔Ð͕)e01",
-    ///     "+(-1X͕c͔+1Y͕v͔+1Z͕a͔+1e͔Ð͕)e02",
-    ///     "+(+1X͕b͔-1Y͕a͔+1Z͕v͔+1f͔Ð͕)e03",
-    ///     "+(-1X͕d͔-1Y͕e͔-1Z͕f͔+1v͔Ð͕)e40",
-    ///     "+1a͔v͕e23",
-    ///     "+1b͔v͕e31",
-    ///     "+1c͔v͕e12",
-    ///     "+1d͔v͕e41",
-    ///     "+1e͔v͕e42",
-    ///     "+1f͔v͕e43",
-    ///     "+1v͕w͔e1234",
-    ///     "+(+1X͕w͔+1Y͕f͔-1Z͕e͔+1a͔Ð͕)e0324",
-    ///     "+(-1X͕f͔+1Y͕w͔+1Z͕d͔+1b͔Ð͕)e0134",
-    ///     "+(+1X͕e͔-1Y͕d͔+1Z͕w͔+1c͔Ð͕)e0214",
-    ///     "+(+1X͕a͔+1Y͕b͔+1Z͕c͔-1w͔Ð͕)e0123",
+    ///     "+v͔v͕",
+    ///     "+(+X͕v͔+Y͕c͔-Z͕b͔+d͔Ð͕)e01",
+    ///     "+(-X͕c͔+Y͕v͔+Z͕a͔+e͔Ð͕)e02",
+    ///     "+(+X͕b͔-Y͕a͔+Z͕v͔+f͔Ð͕)e03",
+    ///     "+(-X͕d͔-Y͕e͔-Z͕f͔+v͔Ð͕)e40",
+    ///     "+a͔v͕e23",
+    ///     "+b͔v͕e31",
+    ///     "+c͔v͕e12",
+    ///     "+d͔v͕e41",
+    ///     "+e͔v͕e42",
+    ///     "+f͔v͕e43",
+    ///     "+v͕w͔e1234",
+    ///     "+(+X͕w͔+Y͕f͔-Z͕e͔+a͔Ð͕)e0324",
+    ///     "+(-X͕f͔+Y͕w͔+Z͕d͔+b͔Ð͕)e0134",
+    ///     "+(+X͕e͔-Y͕d͔+Z͕w͔+c͔Ð͕)e0214",
+    ///     "+(+X͕a͔+Y͕b͔+Z͕c͔-w͔Ð͕)e0123",
     /// ]);
     ///
     /// let double_motor = Vee::plane().lhs() * Vee::plane().rhs();
     ///
     /// assert_eq!(double_motor.basis_blades(), Vee::double_motor().basis_blades());
     /// format_eq!(double_motor, [
-    ///     "-1a͔a͕-1b͔b͕-1c͔c͕-1d͔d͕-1e͔e͕-1f͔f͕",
-    ///     "+(-1Y͔c͕+1Y͕c͔+1Z͔b͕-1Z͕b͔+1d͔Ð͕-1d͕Ð͔)e01",
-    ///     "+(+1X͔c͕-1X͕c͔-1Z͔a͕+1Z͕a͔+1e͔Ð͕-1e͕Ð͔)e02",
-    ///     "+(-1X͔b͕+1X͕b͔+1Y͔a͕-1Y͕a͔+1f͔Ð͕-1f͕Ð͔)e03",
-    ///     "+(+1X͔d͕-1X͕d͔+1Y͔e͕-1Y͕e͔+1Z͔f͕-1Z͕f͔)e40",
-    ///     "+(-1b͔c͕+1b͕c͔-1e͔f͕+1e͕f͔)e23",
-    ///     "+(+1a͔c͕-1a͕c͔+1d͔f͕-1d͕f͔)e31",
-    ///     "+(-1a͔b͕+1a͕b͔-1d͔e͕+1d͕e͔)e12",
-    ///     "+(-1b͔f͕+1b͕f͔+1c͔e͕-1c͕e͔)e41",
-    ///     "+(+1a͔f͕-1a͕f͔-1c͔d͕+1c͕d͔)e42",
-    ///     "+(-1a͔e͕+1a͕e͔+1b͔d͕-1b͕d͔)e43",
-    ///     "+(-1a͔d͕-1a͕d͔-1b͔e͕-1b͕e͔-1c͔f͕-1c͕f͔)e1234",
-    ///     "+(+1Y͔f͕+1Y͕f͔-1Z͔e͕-1Z͕e͔+1a͔Ð͕+1a͕Ð͔)e0324",
-    ///     "+(-1X͔f͕-1X͕f͔+1Z͔d͕+1Z͕d͔+1b͔Ð͕+1b͕Ð͔)e0134",
-    ///     "+(+1X͔e͕+1X͕e͔-1Y͔d͕-1Y͕d͔+1c͔Ð͕+1c͕Ð͔)e0214",
-    ///     "+(+1X͔a͕+1X͕a͔+1Y͔b͕+1Y͕b͔+1Z͔c͕+1Z͕c͔)e0123",
+    ///     "-a͔a͕-b͔b͕-c͔c͕-d͔d͕-e͔e͕-f͔f͕",
+    ///     "+(-Y͔c͕+Y͕c͔+Z͔b͕-Z͕b͔+d͔Ð͕-d͕Ð͔)e01",
+    ///     "+(+X͔c͕-X͕c͔-Z͔a͕+Z͕a͔+e͔Ð͕-e͕Ð͔)e02",
+    ///     "+(-X͔b͕+X͕b͔+Y͔a͕-Y͕a͔+f͔Ð͕-f͕Ð͔)e03",
+    ///     "+(+X͔d͕-X͕d͔+Y͔e͕-Y͕e͔+Z͔f͕-Z͕f͔)e40",
+    ///     "+(-b͔c͕+b͕c͔-e͔f͕+e͕f͔)e23",
+    ///     "+(+a͔c͕-a͕c͔+d͔f͕-d͕f͔)e31",
+    ///     "+(-a͔b͕+a͕b͔-d͔e͕+d͕e͔)e12",
+    ///     "+(-b͔f͕+b͕f͔+c͔e͕-c͕e͔)e41",
+    ///     "+(+a͔f͕-a͕f͔-c͔d͕+c͕d͔)e42",
+    ///     "+(-a͔e͕+a͕e͔+b͔d͕-b͕d͔)e43",
+    ///     "+(-a͔d͕-a͕d͔-b͔e͕-b͕e͔-c͔f͕-c͕f͔)e1234",
+    ///     "+(+Y͔f͕+Y͕f͔-Z͔e͕-Z͕e͔+a͔Ð͕+a͕Ð͔)e0324",
+    ///     "+(-X͔f͕-X͕f͔+Z͔d͕+Z͕d͔+b͔Ð͕+b͕Ð͔)e0134",
+    ///     "+(+X͔e͕+X͕e͔-Y͔d͕-Y͕d͔+c͔Ð͕+c͕Ð͔)e0214",
+    ///     "+(+X͔a͕+X͕a͔+Y͔b͕+Y͕b͔+Z͔c͕+Z͕c͔)e0123",
     /// ]);
     /// ```
     #[must_use]
@@ -1947,14 +1947,14 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// assert_eq!(rotoreflector.basis_blades(), Vee::rotoreflector().basis_blades());
     /// format_eq!(rotoreflector, [
-    ///     "+(+1b͕z͔-1c͕y͔+1d͕ð͔+1v͕x͔)e1",
-    ///     "+(-1a͕z͔+1c͕x͔+1e͕ð͔+1v͕y͔)e2",
-    ///     "+(+1a͕y͔-1b͕x͔+1f͕ð͔+1v͕z͔)e3",
-    ///     "+(-1d͕x͔-1e͕y͔-1f͕z͔+1v͕ð͔)e4",
-    ///     "+(+1a͕ð͔+1e͕z͔-1f͕y͔)e234",
-    ///     "+(+1b͕ð͔-1d͕z͔+1f͕x͔)e314",
-    ///     "+(+1c͕ð͔+1d͕y͔-1e͕x͔)e124",
-    ///     "+(+1a͕x͔+1b͕y͔+1c͕z͔)e123",
+    ///     "+(+b͕z͔-c͕y͔+d͕ð͔+v͕x͔)e1",
+    ///     "+(-a͕z͔+c͕x͔+e͕ð͔+v͕y͔)e2",
+    ///     "+(+a͕y͔-b͕x͔+f͕ð͔+v͕z͔)e3",
+    ///     "+(-d͕x͔-e͕y͔-f͕z͔+v͕ð͔)e4",
+    ///     "+(+a͕ð͔+e͕z͔-f͕y͔)e234",
+    ///     "+(+b͕ð͔-d͕z͔+f͕x͔)e314",
+    ///     "+(+c͕ð͔+d͕y͔-e͕x͔)e124",
+    ///     "+(+a͕x͔+b͕y͔+c͕z͔)e123",
     /// ]);
     ///
     /// let squared_norm = Vee::rotoreflector().squared_norm();
@@ -1990,17 +1990,17 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// assert_eq!(transflector.basis_blades(), Vee::transflector().basis_blades());
     /// format_eq!(transflector, [
-    ///     "+(-1X͕x͔-1Y͕y͔-1Z͕z͔+1Ð͕ð͔)e0",
-    ///     "+1v͕x͔e1",
-    ///     "+1v͕y͔e2",
-    ///     "+1v͕z͔e3",
-    ///     "+1v͕ð͔e4",
-    ///     "+(+1X͕ð͔+1x͔Ð͕)e014",
-    ///     "+(+1Y͕ð͔+1y͔Ð͕)e024",
-    ///     "+(+1Z͕ð͔+1z͔Ð͕)e034",
-    ///     "+(-1Y͕z͔+1Z͕y͔)e032",
-    ///     "+(+1X͕z͔-1Z͕x͔)e013",
-    ///     "+(-1X͕y͔+1Y͕x͔)e021",
+    ///     "+(-X͕x͔-Y͕y͔-Z͕z͔+Ð͕ð͔)e0",
+    ///     "+v͕x͔e1",
+    ///     "+v͕y͔e2",
+    ///     "+v͕z͔e3",
+    ///     "+v͕ð͔e4",
+    ///     "+(+X͕ð͔+x͔Ð͕)e014",
+    ///     "+(+Y͕ð͔+y͔Ð͕)e024",
+    ///     "+(+Z͕ð͔+z͔Ð͕)e034",
+    ///     "+(-Y͕z͔+Z͕y͔)e032",
+    ///     "+(+X͕z͔-Z͕x͔)e013",
+    ///     "+(-X͕y͔+Y͕x͔)e021",
     /// ]);
     /// ```
     #[must_use]
@@ -2017,22 +2017,22 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// assert_eq!(flector.basis_blades(), Vee::flector().basis_blades());
     /// format_eq!(flector, [
-    ///     "+(+1W͔v͕-1X͕x͔-1Y͕y͔-1Z͕z͔+1Ð͕ð͔)e0",
-    ///     "+(+1b͕z͔-1c͕y͔+1d͕ð͔+1v͕x͔)e1",
-    ///     "+(-1a͕z͔+1c͕x͔+1e͕ð͔+1v͕y͔)e2",
-    ///     "+(+1a͕y͔-1b͕x͔+1f͕ð͔+1v͕z͔)e3",
-    ///     "+(-1d͕x͔-1e͕y͔-1f͕z͔+1v͕ð͔)e4",
-    ///     "+(+1a͕ð͔+1e͕z͔-1f͕y͔)e234",
-    ///     "+(+1b͕ð͔-1d͕z͔+1f͕x͔)e314",
-    ///     "+(+1c͕ð͔+1d͕y͔-1e͕x͔)e124",
-    ///     "+(+1a͕x͔+1b͕y͔+1c͕z͔)e123",
-    ///     "+(-1W͔d͕+1X͕ð͔+1Y͕z͔-1Z͕y͔+1x͔Ð͕)e014",
-    ///     "+(-1W͔e͕-1X͕z͔+1Y͕ð͔+1Z͕x͔+1y͔Ð͕)e024",
-    ///     "+(-1W͔f͕+1X͕y͔-1Y͕x͔+1Z͕ð͔+1z͔Ð͕)e034",
-    ///     "+(-1W͔a͕-1X͕ð͔-1Y͕z͔+1Z͕y͔+1x͔Ð͕)e032",
-    ///     "+(-1W͔b͕+1X͕z͔-1Y͕ð͔-1Z͕x͔+1y͔Ð͕)e013",
-    ///     "+(-1W͔c͕-1X͕y͔+1Y͕x͔-1Z͕ð͔+1z͔Ð͕)e021",
-    ///     "+(+1X͕x͔+1Y͕y͔+1Z͕z͔+1Ð͕ð͔)I",
+    ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔+Ð͕ð͔)e0",
+    ///     "+(+b͕z͔-c͕y͔+d͕ð͔+v͕x͔)e1",
+    ///     "+(-a͕z͔+c͕x͔+e͕ð͔+v͕y͔)e2",
+    ///     "+(+a͕y͔-b͕x͔+f͕ð͔+v͕z͔)e3",
+    ///     "+(-d͕x͔-e͕y͔-f͕z͔+v͕ð͔)e4",
+    ///     "+(+a͕ð͔+e͕z͔-f͕y͔)e234",
+    ///     "+(+b͕ð͔-d͕z͔+f͕x͔)e314",
+    ///     "+(+c͕ð͔+d͕y͔-e͕x͔)e124",
+    ///     "+(+a͕x͔+b͕y͔+c͕z͔)e123",
+    ///     "+(-W͔d͕+X͕ð͔+Y͕z͔-Z͕y͔+x͔Ð͕)e014",
+    ///     "+(-W͔e͕-X͕z͔+Y͕ð͔+Z͕x͔+y͔Ð͕)e024",
+    ///     "+(-W͔f͕+X͕y͔-Y͕x͔+Z͕ð͔+z͔Ð͕)e034",
+    ///     "+(-W͔a͕-X͕ð͔-Y͕z͔+Z͕y͔+x͔Ð͕)e032",
+    ///     "+(-W͔b͕+X͕z͔-Y͕ð͔-Z͕x͔+y͔Ð͕)e013",
+    ///     "+(-W͔c͕-X͕y͔+Y͕x͔-Z͕ð͔+z͔Ð͕)e021",
+    ///     "+(+X͕x͔+Y͕y͔+Z͕z͔+Ð͕ð͔)I",
     /// ]);
     /// ```
     #[must_use]
@@ -2077,7 +2077,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// assert_eq!(quadvector_squared_norm.basis_blades(),
     ///     (Vee::scalar() + Vee::line_moment()).basis_blades());
     /// format_eq!(quadvector_squared_norm, [
-    ///     "+1xx+1yy+1zz+1ðð+1øø",
+    ///     "+xx+yy+zz+ðð+øø",
     ///     "+(+2Dø-2Gð-2Jx)e0145",
     ///     "+(+2Eø-2Hð-2Jy)e0245",
     ///     "+(+2Fø-2Ið-2Jz)e0345",
@@ -2262,34 +2262,34 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// assert_eq!(single_rotator.basis_blades(), Vee::single_rotator().basis_blades());
     /// format_eq!(single_rotator, [
-    ///     "+1x͔x͕+1y͔y͕+1z͔z͕+1ð͔ð͕+1ø͔ø͕",
-    ///     "+(+1y͔z͕-1y͕z͔)e23",
-    ///     "+(-1x͔z͕+1x͕z͔)e31",
-    ///     "+(+1x͔y͕-1x͕y͔)e12",
-    ///     "+(-1x͔ð͕+1x͕ð͔)e41",
-    ///     "+(-1y͔ð͕+1y͕ð͔)e42",
-    ///     "+(-1z͔ð͕+1z͕ð͔)e43",
-    ///     "+(+1x͔ø͕-1x͕ø͔)e15",
-    ///     "+(+1y͔ø͕-1y͕ø͔)e25",
-    ///     "+(+1z͔ø͕-1z͕ø͔)e35",
-    ///     "+(+1ð͔ø͕-1ð͕ø͔)e45",
+    ///     "+x͔x͕+y͔y͕+z͔z͕+ð͔ð͕+ø͔ø͕",
+    ///     "+(+y͔z͕-y͕z͔)e23",
+    ///     "+(-x͔z͕+x͕z͔)e31",
+    ///     "+(+x͔y͕-x͕y͔)e12",
+    ///     "+(-x͔ð͕+x͕ð͔)e41",
+    ///     "+(-y͔ð͕+y͕ð͔)e42",
+    ///     "+(-z͔ð͕+z͕ð͔)e43",
+    ///     "+(+x͔ø͕-x͕ø͔)e15",
+    ///     "+(+y͔ø͕-y͕ø͔)e25",
+    ///     "+(+z͔ø͕-z͕ø͔)e35",
+    ///     "+(+ð͔ø͕-ð͕ø͔)e45",
     /// ]);
     ///
     /// let single_rotator = Vee::line_displacement().lhs() * Vee::line_displacement().rhs();
     ///
     /// assert_eq!(single_rotator.basis_blades(), Vee::single_rotator().basis_blades());
     /// format_eq!(single_rotator, [
-    ///     "+1x͔x͕+1y͔y͕+1z͔z͕+1ð͔ð͕+1ø͔ø͕",
-    ///     "+(+1y͔z͕-1y͕z͔)e23",
-    ///     "+(-1x͔z͕+1x͕z͔)e31",
-    ///     "+(+1x͔y͕-1x͕y͔)e12",
-    ///     "+(+1x͔ð͕-1x͕ð͔)e41",
-    ///     "+(+1y͔ð͕-1y͕ð͔)e42",
-    ///     "+(+1z͔ð͕-1z͕ð͔)e43",
-    ///     "+(+1x͔ø͕-1x͕ø͔)e15",
-    ///     "+(+1y͔ø͕-1y͕ø͔)e25",
-    ///     "+(+1z͔ø͕-1z͕ø͔)e35",
-    ///     "+(-1ð͔ø͕+1ð͕ø͔)e45",
+    ///     "+x͔x͕+y͔y͕+z͔z͕+ð͔ð͕+ø͔ø͕",
+    ///     "+(+y͔z͕-y͕z͔)e23",
+    ///     "+(-x͔z͕+x͕z͔)e31",
+    ///     "+(+x͔y͕-x͕y͔)e12",
+    ///     "+(+x͔ð͕-x͕ð͔)e41",
+    ///     "+(+y͔ð͕-y͕ð͔)e42",
+    ///     "+(+z͔ð͕-z͕ð͔)e43",
+    ///     "+(+x͔ø͕-x͕ø͔)e15",
+    ///     "+(+y͔ø͕-y͕ø͔)e25",
+    ///     "+(+z͔ø͕-z͕ø͔)e35",
+    ///     "+(-ð͔ø͕+ð͕ø͔)e45",
     /// ]);
     /// ```
     #[must_use]
@@ -2306,66 +2306,66 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// assert_eq!(double_rotator.basis_blades(), Vee::double_rotator().basis_blades());
     /// format_eq!(double_rotator, [
-    ///     "-1a͔a͕-1b͔b͕-1c͔c͕-1d͔d͕-1e͔e͕-1f͔f͕-1g͔g͕-1h͔h͕-1i͔i͕-1j͔j͕+1v͔v͕",
-    ///     "+(+1a͔v͕+1a͕v͔-1b͔c͕+1b͕c͔-1e͔f͕+1e͕f͔-1h͔i͕+1h͕i͔)e23",
-    ///     "+(+1a͔c͕-1a͕c͔+1b͔v͕+1b͕v͔+1d͔f͕-1d͕f͔+1g͔i͕-1g͕i͔)e31",
-    ///     "+(-1a͔b͕+1a͕b͔+1c͔v͕+1c͕v͔-1d͔e͕+1d͕e͔-1g͔h͕+1g͕h͔)e12",
-    ///     "+(-1b͔f͕+1b͕f͔+1c͔e͕-1c͕e͔+1d͔v͕+1d͕v͔+1g͔j͕-1g͕j͔)e41",
-    ///     "+(+1a͔f͕-1a͕f͔-1c͔d͕+1c͕d͔+1e͔v͕+1e͕v͔+1h͔j͕-1h͕j͔)e42",
-    ///     "+(-1a͔e͕+1a͕e͔+1b͔d͕-1b͕d͔+1f͔v͕+1f͕v͔+1i͔j͕-1i͕j͔)e43",
-    ///     "+(-1b͔i͕+1b͕i͔+1c͔h͕-1c͕h͔-1d͔j͕+1d͕j͔+1g͔v͕+1g͕v͔)e15",
-    ///     "+(+1a͔i͕-1a͕i͔-1c͔g͕+1c͕g͔-1e͔j͕+1e͕j͔+1h͔v͕+1h͕v͔)e25",
-    ///     "+(-1a͔h͕+1a͕h͔+1b͔g͕-1b͕g͔-1f͔j͕+1f͕j͔+1i͔v͕+1i͕v͔)e35",
-    ///     "+(+1d͔g͕-1d͕g͔+1e͔h͕-1e͕h͔+1f͔i͕-1f͕i͔+1j͔v͕+1j͕v͔)e45",
-    ///     "+(+1a͔j͕+1a͕j͔+1e͔i͕+1e͕i͔-1f͔h͕-1f͕h͔)e2345",
-    ///     "+(+1b͔j͕+1b͕j͔-1d͔i͕-1d͕i͔+1f͔g͕+1f͕g͔)e3145",
-    ///     "+(+1c͔j͕+1c͕j͔+1d͔h͕+1d͕h͔-1e͔g͕-1e͕g͔)e1245",
-    ///     "+(+1a͔g͕+1a͕g͔+1b͔h͕+1b͕h͔+1c͔i͕+1c͕i͔)e1235",
-    ///     "+(-1a͔d͕-1a͕d͔-1b͔e͕-1b͕e͔-1c͔f͕-1c͕f͔)e1234",
+    ///     "-a͔a͕-b͔b͕-c͔c͕-d͔d͕-e͔e͕-f͔f͕-g͔g͕-h͔h͕-i͔i͕-j͔j͕+v͔v͕",
+    ///     "+(+a͔v͕+a͕v͔-b͔c͕+b͕c͔-e͔f͕+e͕f͔-h͔i͕+h͕i͔)e23",
+    ///     "+(+a͔c͕-a͕c͔+b͔v͕+b͕v͔+d͔f͕-d͕f͔+g͔i͕-g͕i͔)e31",
+    ///     "+(-a͔b͕+a͕b͔+c͔v͕+c͕v͔-d͔e͕+d͕e͔-g͔h͕+g͕h͔)e12",
+    ///     "+(-b͔f͕+b͕f͔+c͔e͕-c͕e͔+d͔v͕+d͕v͔+g͔j͕-g͕j͔)e41",
+    ///     "+(+a͔f͕-a͕f͔-c͔d͕+c͕d͔+e͔v͕+e͕v͔+h͔j͕-h͕j͔)e42",
+    ///     "+(-a͔e͕+a͕e͔+b͔d͕-b͕d͔+f͔v͕+f͕v͔+i͔j͕-i͕j͔)e43",
+    ///     "+(-b͔i͕+b͕i͔+c͔h͕-c͕h͔-d͔j͕+d͕j͔+g͔v͕+g͕v͔)e15",
+    ///     "+(+a͔i͕-a͕i͔-c͔g͕+c͕g͔-e͔j͕+e͕j͔+h͔v͕+h͕v͔)e25",
+    ///     "+(-a͔h͕+a͕h͔+b͔g͕-b͕g͔-f͔j͕+f͕j͔+i͔v͕+i͕v͔)e35",
+    ///     "+(+d͔g͕-d͕g͔+e͔h͕-e͕h͔+f͔i͕-f͕i͔+j͔v͕+j͕v͔)e45",
+    ///     "+(+a͔j͕+a͕j͔+e͔i͕+e͕i͔-f͔h͕-f͕h͔)e2345",
+    ///     "+(+b͔j͕+b͕j͔-d͔i͕-d͕i͔+f͔g͕+f͕g͔)e3145",
+    ///     "+(+c͔j͕+c͕j͔+d͔h͕+d͕h͔-e͔g͕-e͕g͔)e1245",
+    ///     "+(+a͔g͕+a͕g͔+b͔h͕+b͕h͔+c͔i͕+c͕i͔)e1235",
+    ///     "+(-a͔d͕-a͕d͔-b͔e͕-b͕e͔-c͔f͕-c͕f͔)e1234",
     /// ]);
     ///
     /// let double_rotator = Vee::volume_displacement().lhs() * Vee::volume_displacement().rhs();
     ///
     /// assert_eq!(double_rotator.basis_blades(), Vee::double_rotator().basis_blades());
     /// format_eq!(double_rotator, [
-    ///     "-1a͔a͕-1b͔b͕-1c͔c͕-1d͔d͕-1e͔e͕-1f͔f͕-1g͔g͕-1h͔h͕-1i͔i͕-1j͔j͕",
-    ///     "+(-1b͔c͕+1b͕c͔-1e͔f͕+1e͕f͔-1h͔i͕+1h͕i͔)e23",
-    ///     "+(+1a͔c͕-1a͕c͔+1d͔f͕-1d͕f͔+1g͔i͕-1g͕i͔)e31",
-    ///     "+(-1a͔b͕+1a͕b͔-1d͔e͕+1d͕e͔-1g͔h͕+1g͕h͔)e12",
-    ///     "+(-1b͔f͕+1b͕f͔+1c͔e͕-1c͕e͔+1g͔j͕-1g͕j͔)e41",
-    ///     "+(+1a͔f͕-1a͕f͔-1c͔d͕+1c͕d͔+1h͔j͕-1h͕j͔)e42",
-    ///     "+(-1a͔e͕+1a͕e͔+1b͔d͕-1b͕d͔+1i͔j͕-1i͕j͔)e43",
-    ///     "+(-1b͔i͕+1b͕i͔+1c͔h͕-1c͕h͔-1d͔j͕+1d͕j͔)e15",
-    ///     "+(+1a͔i͕-1a͕i͔-1c͔g͕+1c͕g͔-1e͔j͕+1e͕j͔)e25",
-    ///     "+(-1a͔h͕+1a͕h͔+1b͔g͕-1b͕g͔-1f͔j͕+1f͕j͔)e35",
-    ///     "+(+1d͔g͕-1d͕g͔+1e͔h͕-1e͕h͔+1f͔i͕-1f͕i͔)e45",
-    ///     "+(+1a͔j͕+1a͕j͔+1e͔i͕+1e͕i͔-1f͔h͕-1f͕h͔)e2345",
-    ///     "+(+1b͔j͕+1b͕j͔-1d͔i͕-1d͕i͔+1f͔g͕+1f͕g͔)e3145",
-    ///     "+(+1c͔j͕+1c͕j͔+1d͔h͕+1d͕h͔-1e͔g͕-1e͕g͔)e1245",
-    ///     "+(+1a͔g͕+1a͕g͔+1b͔h͕+1b͕h͔+1c͔i͕+1c͕i͔)e1235",
-    ///     "+(-1a͔d͕-1a͕d͔-1b͔e͕-1b͕e͔-1c͔f͕-1c͕f͔)e1234",
+    ///     "-a͔a͕-b͔b͕-c͔c͕-d͔d͕-e͔e͕-f͔f͕-g͔g͕-h͔h͕-i͔i͕-j͔j͕",
+    ///     "+(-b͔c͕+b͕c͔-e͔f͕+e͕f͔-h͔i͕+h͕i͔)e23",
+    ///     "+(+a͔c͕-a͕c͔+d͔f͕-d͕f͔+g͔i͕-g͕i͔)e31",
+    ///     "+(-a͔b͕+a͕b͔-d͔e͕+d͕e͔-g͔h͕+g͕h͔)e12",
+    ///     "+(-b͔f͕+b͕f͔+c͔e͕-c͕e͔+g͔j͕-g͕j͔)e41",
+    ///     "+(+a͔f͕-a͕f͔-c͔d͕+c͕d͔+h͔j͕-h͕j͔)e42",
+    ///     "+(-a͔e͕+a͕e͔+b͔d͕-b͕d͔+i͔j͕-i͕j͔)e43",
+    ///     "+(-b͔i͕+b͕i͔+c͔h͕-c͕h͔-d͔j͕+d͕j͔)e15",
+    ///     "+(+a͔i͕-a͕i͔-c͔g͕+c͕g͔-e͔j͕+e͕j͔)e25",
+    ///     "+(-a͔h͕+a͕h͔+b͔g͕-b͕g͔-f͔j͕+f͕j͔)e35",
+    ///     "+(+d͔g͕-d͕g͔+e͔h͕-e͕h͔+f͔i͕-f͕i͔)e45",
+    ///     "+(+a͔j͕+a͕j͔+e͔i͕+e͕i͔-f͔h͕-f͕h͔)e2345",
+    ///     "+(+b͔j͕+b͕j͔-d͔i͕-d͕i͔+f͔g͕+f͕g͔)e3145",
+    ///     "+(+c͔j͕+c͕j͔+d͔h͕+d͕h͔-e͔g͕-e͕g͔)e1245",
+    ///     "+(+a͔g͕+a͕g͔+b͔h͕+b͕h͔+c͔i͕+c͕i͔)e1235",
+    ///     "+(-a͔d͕-a͕d͔-b͔e͕-b͕e͔-c͔f͕-c͕f͔)e1234",
     /// ]);
     ///
     /// let double_rotator = Vee::plane_displacement().lhs() * Vee::plane_displacement().rhs();
     ///
     /// assert_eq!(double_rotator.basis_blades(), Vee::double_rotator().basis_blades());
     /// format_eq!(double_rotator, [
-    ///     "-1a͔a͕-1b͔b͕-1c͔c͕-1d͔d͕-1e͔e͕-1f͔f͕-1g͔g͕-1h͔h͕-1i͔i͕-1j͔j͕",
-    ///     "+(+1b͔c͕-1b͕c͔+1f͔g͕-1f͕g͔-1i͔j͕+1i͕j͔)e23",
-    ///     "+(+1a͔c͕-1a͕c͔+1e͔g͕-1e͕g͔+1h͔j͕-1h͕j͔)e31",
-    ///     "+(+1a͔b͕-1a͕b͔+1e͔f͕-1e͕f͔-1h͔i͕+1h͕i͔)e12",
-    ///     "+(-1a͔d͕+1a͕d͔+1f͔j͕-1f͕j͔+1g͔i͕-1g͕i͔)e41",
-    ///     "+(+1b͔d͕-1b͕d͔+1e͔j͕-1e͕j͔-1g͔h͕+1g͕h͔)e42",
-    ///     "+(-1c͔d͕+1c͕d͔-1e͔i͕+1e͕i͔-1f͔h͕+1f͕h͔)e43",
-    ///     "+(-1b͔j͕+1b͕j͔-1c͔i͕+1c͕i͔+1d͔e͕-1d͕e͔)e15",
-    ///     "+(-1a͔j͕+1a͕j͔+1c͔h͕-1c͕h͔-1d͔f͕+1d͕f͔)e25",
-    ///     "+(+1a͔i͕-1a͕i͔+1b͔h͕-1b͕h͔+1d͔g͕-1d͕g͔)e35",
-    ///     "+(+1a͔e͕-1a͕e͔+1b͔f͕-1b͕f͔+1c͔g͕-1c͕g͔)e45",
-    ///     "+(-1b͔g͕-1b͕g͔+1c͔f͕+1c͕f͔+1d͔h͕+1d͕h͔)e2345",
-    ///     "+(-1a͔g͕-1a͕g͔+1c͔e͕+1c͕e͔+1d͔i͕+1d͕i͔)e3145",
-    ///     "+(-1a͔f͕-1a͕f͔+1b͔e͕+1b͕e͔+1d͔j͕+1d͕j͔)e1245",
-    ///     "+(-1a͔h͕-1a͕h͔+1b͔i͕+1b͕i͔-1c͔j͕-1c͕j͔)e1235",
-    ///     "+(-1e͔h͕-1e͕h͔+1f͔i͕+1f͕i͔-1g͔j͕-1g͕j͔)e1234",
+    ///     "-a͔a͕-b͔b͕-c͔c͕-d͔d͕-e͔e͕-f͔f͕-g͔g͕-h͔h͕-i͔i͕-j͔j͕",
+    ///     "+(+b͔c͕-b͕c͔+f͔g͕-f͕g͔-i͔j͕+i͕j͔)e23",
+    ///     "+(+a͔c͕-a͕c͔+e͔g͕-e͕g͔+h͔j͕-h͕j͔)e31",
+    ///     "+(+a͔b͕-a͕b͔+e͔f͕-e͕f͔-h͔i͕+h͕i͔)e12",
+    ///     "+(-a͔d͕+a͕d͔+f͔j͕-f͕j͔+g͔i͕-g͕i͔)e41",
+    ///     "+(+b͔d͕-b͕d͔+e͔j͕-e͕j͔-g͔h͕+g͕h͔)e42",
+    ///     "+(-c͔d͕+c͕d͔-e͔i͕+e͕i͔-f͔h͕+f͕h͔)e43",
+    ///     "+(-b͔j͕+b͕j͔-c͔i͕+c͕i͔+d͔e͕-d͕e͔)e15",
+    ///     "+(-a͔j͕+a͕j͔+c͔h͕-c͕h͔-d͔f͕+d͕f͔)e25",
+    ///     "+(+a͔i͕-a͕i͔+b͔h͕-b͕h͔+d͔g͕-d͕g͔)e35",
+    ///     "+(+a͔e͕-a͕e͔+b͔f͕-b͕f͔+c͔g͕-c͕g͔)e45",
+    ///     "+(-b͔g͕-b͕g͔+c͔f͕+c͕f͔+d͔h͕+d͕h͔)e2345",
+    ///     "+(-a͔g͕-a͕g͔+c͔e͕+c͕e͔+d͔i͕+d͕i͔)e3145",
+    ///     "+(-a͔f͕-a͕f͔+b͔e͕+b͕e͔+d͔j͕+d͕j͔)e1245",
+    ///     "+(-a͔h͕-a͕h͔+b͔i͕+b͕i͔-c͔j͕-c͕j͔)e1235",
+    ///     "+(-e͔h͕-e͕h͔+f͔i͕+f͕i͔-g͔j͕-g͕j͔)e1234",
     /// ]);
     /// ```
     #[must_use]
@@ -2382,12 +2382,12 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// assert_eq!(translator.basis_blades(), Vee::translator().basis_blades());
     /// format_eq!(translator, [
-    ///     "+1w͔w͕",
-    ///     "+(-1X͔w͕+1X͕w͔)e01",
-    ///     "+(-1Y͔w͕+1Y͕w͔)e02",
-    ///     "+(-1Z͔w͕+1Z͕w͔)e03",
-    ///     "+(-1w͔Ð͕+1w͕Ð͔)e40",
-    ///     "+(+1w͔Ø͕-1w͕Ø͔)e05",
+    ///     "+w͔w͕",
+    ///     "+(-X͔w͕+X͕w͔)e01",
+    ///     "+(-Y͔w͕+Y͕w͔)e02",
+    ///     "+(-Z͔w͕+Z͕w͔)e03",
+    ///     "+(-w͔Ð͕+w͕Ð͔)e40",
+    ///     "+(+w͔Ø͕-w͕Ø͔)e05",
     /// ]);
     /// ```
     #[must_use]
@@ -2404,22 +2404,22 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// assert_eq!(simple_single_motor.basis_blades(), Vee::simple_single_motor().basis_blades());
     /// format_eq!(simple_single_motor, [
-    ///     "+1x͔x͕+1y͔y͕+1z͔z͕+1ð͔ð͕+1ø͔ø͕",
-    ///     "+(+1W͔x͕-1W͕x͔)e01",
-    ///     "+(+1W͔y͕-1W͕y͔)e02",
-    ///     "+(+1W͔z͕-1W͕z͔)e03",
-    ///     "+(-1W͔ð͕+1W͕ð͔)e40",
-    ///     "+(+1W͔ø͕-1W͕ø͔)e05",
-    ///     "+(+1y͔z͕-1y͕z͔)e23",
-    ///     "+(-1x͔z͕+1x͕z͔)e31",
-    ///     "+(+1x͔y͕-1x͕y͔)e12",
-    ///     "+(-1x͔ð͕+1x͕ð͔)e41",
-    ///     "+(-1y͔ð͕+1y͕ð͔)e42",
-    ///     "+(-1z͔ð͕+1z͕ð͔)e43",
-    ///     "+(+1x͔ø͕-1x͕ø͔)e15",
-    ///     "+(+1y͔ø͕-1y͕ø͔)e25",
-    ///     "+(+1z͔ø͕-1z͕ø͔)e35",
-    ///     "+(+1ð͔ø͕-1ð͕ø͔)e45",
+    ///     "+x͔x͕+y͔y͕+z͔z͕+ð͔ð͕+ø͔ø͕",
+    ///     "+(+W͔x͕-W͕x͔)e01",
+    ///     "+(+W͔y͕-W͕y͔)e02",
+    ///     "+(+W͔z͕-W͕z͔)e03",
+    ///     "+(-W͔ð͕+W͕ð͔)e40",
+    ///     "+(+W͔ø͕-W͕ø͔)e05",
+    ///     "+(+y͔z͕-y͕z͔)e23",
+    ///     "+(-x͔z͕+x͕z͔)e31",
+    ///     "+(+x͔y͕-x͕y͔)e12",
+    ///     "+(-x͔ð͕+x͕ð͔)e41",
+    ///     "+(-y͔ð͕+y͕ð͔)e42",
+    ///     "+(-z͔ð͕+z͕ð͔)e43",
+    ///     "+(+x͔ø͕-x͕ø͔)e15",
+    ///     "+(+y͔ø͕-y͕ø͔)e25",
+    ///     "+(+z͔ø͕-z͕ø͔)e35",
+    ///     "+(+ð͔ø͕-ð͕ø͔)e45",
     /// ]);
     /// ```
     #[must_use]
@@ -2436,64 +2436,64 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// assert_eq!(single_motor.basis_blades(), Vee::single_motor().basis_blades());
     /// format_eq!(single_motor, [
-    ///     "+1v͔v͕",
-    ///     "+(+1X͕v͔+1Y͕c͔-1Z͕b͔+1d͔Ð͕+1g͔Ø͕)e01",
-    ///     "+(-1X͕c͔+1Y͕v͔+1Z͕a͔+1e͔Ð͕+1h͔Ø͕)e02",
-    ///     "+(+1X͕b͔-1Y͕a͔+1Z͕v͔+1f͔Ð͕+1i͔Ø͕)e03",
-    ///     "+(-1X͕d͔-1Y͕e͔-1Z͕f͔-1j͔Ø͕+1v͔Ð͕)e40",
-    ///     "+(-1X͕g͔-1Y͕h͔-1Z͕i͔+1j͔Ð͕+1v͔Ø͕)e05",
-    ///     "+1a͔v͕e23",
-    ///     "+1b͔v͕e31",
-    ///     "+1c͔v͕e12",
-    ///     "+1d͔v͕e41",
-    ///     "+1e͔v͕e42",
-    ///     "+1f͔v͕e43",
-    ///     "+1g͔v͕e15",
-    ///     "+1h͔v͕e25",
-    ///     "+1i͔v͕e35",
-    ///     "+1j͔v͕e45",
-    ///     "+(+1X͕j͔-1d͔Ø͕+1g͔Ð͕)e0145",
-    ///     "+(+1Y͕j͔-1e͔Ø͕+1h͔Ð͕)e0245",
-    ///     "+(+1Z͕j͔-1f͔Ø͕+1i͔Ð͕)e0345",
-    ///     "+(-1Y͕i͔+1Z͕h͔-1a͔Ø͕)e0325",
-    ///     "+(+1X͕i͔-1Z͕g͔-1b͔Ø͕)e0135",
-    ///     "+(-1X͕h͔+1Y͕g͔-1c͔Ø͕)e0215",
-    ///     "+(+1Y͕f͔-1Z͕e͔+1a͔Ð͕)e0324",
-    ///     "+(-1X͕f͔+1Z͕d͔+1b͔Ð͕)e0134",
-    ///     "+(+1X͕e͔-1Y͕d͔+1c͔Ð͕)e0214",
-    ///     "+(+1X͕a͔+1Y͕b͔+1Z͕c͔)e0123",
+    ///     "+v͔v͕",
+    ///     "+(+X͕v͔+Y͕c͔-Z͕b͔+d͔Ð͕+g͔Ø͕)e01",
+    ///     "+(-X͕c͔+Y͕v͔+Z͕a͔+e͔Ð͕+h͔Ø͕)e02",
+    ///     "+(+X͕b͔-Y͕a͔+Z͕v͔+f͔Ð͕+i͔Ø͕)e03",
+    ///     "+(-X͕d͔-Y͕e͔-Z͕f͔-j͔Ø͕+v͔Ð͕)e40",
+    ///     "+(-X͕g͔-Y͕h͔-Z͕i͔+j͔Ð͕+v͔Ø͕)e05",
+    ///     "+a͔v͕e23",
+    ///     "+b͔v͕e31",
+    ///     "+c͔v͕e12",
+    ///     "+d͔v͕e41",
+    ///     "+e͔v͕e42",
+    ///     "+f͔v͕e43",
+    ///     "+g͔v͕e15",
+    ///     "+h͔v͕e25",
+    ///     "+i͔v͕e35",
+    ///     "+j͔v͕e45",
+    ///     "+(+X͕j͔-d͔Ø͕+g͔Ð͕)e0145",
+    ///     "+(+Y͕j͔-e͔Ø͕+h͔Ð͕)e0245",
+    ///     "+(+Z͕j͔-f͔Ø͕+i͔Ð͕)e0345",
+    ///     "+(-Y͕i͔+Z͕h͔-a͔Ø͕)e0325",
+    ///     "+(+X͕i͔-Z͕g͔-b͔Ø͕)e0135",
+    ///     "+(-X͕h͔+Y͕g͔-c͔Ø͕)e0215",
+    ///     "+(+Y͕f͔-Z͕e͔+a͔Ð͕)e0324",
+    ///     "+(-X͕f͔+Z͕d͔+b͔Ð͕)e0134",
+    ///     "+(+X͕e͔-Y͕d͔+c͔Ð͕)e0214",
+    ///     "+(+X͕a͔+Y͕b͔+Z͕c͔)e0123",
     /// ]);
     ///
     /// let single_motor = Vee::line().lhs() * Vee::line().rhs();
     ///
     /// assert_eq!(single_motor.basis_blades(), Vee::single_motor().basis_blades());
     /// format_eq!(single_motor, [
-    ///     "+1x͔x͕+1y͔y͕+1z͔z͕+1ð͔ð͕+1ø͔ø͕",
-    ///     "+(+1B͔z͕-1B͕z͔-1C͔y͕+1C͕y͔-1D͔ð͕+1D͕ð͔-1G͔ø͕+1G͕ø͔)e01",
-    ///     "+(-1A͔z͕+1A͕z͔+1C͔x͕-1C͕x͔-1E͔ð͕+1E͕ð͔-1H͔ø͕+1H͕ø͔)e02",
-    ///     "+(+1A͔y͕-1A͕y͔-1B͔x͕+1B͕x͔-1F͔ð͕+1F͕ð͔-1I͔ø͕+1I͕ø͔)e03",
-    ///     "+(+1D͔x͕-1D͕x͔+1E͔y͕-1E͕y͔+1F͔z͕-1F͕z͔+1J͔ø͕-1J͕ø͔)e40",
-    ///     "+(+1G͔x͕-1G͕x͔+1H͔y͕-1H͕y͔+1I͔z͕-1I͕z͔-1J͔ð͕+1J͕ð͔)e05",
-    ///     "+(+1y͔z͕-1y͕z͔)e23",
-    ///     "+(-1x͔z͕+1x͕z͔)e31",
-    ///     "+(+1x͔y͕-1x͕y͔)e12",
-    ///     "+(+1x͔ð͕-1x͕ð͔)e41",
-    ///     "+(+1y͔ð͕-1y͕ð͔)e42",
-    ///     "+(+1z͔ð͕-1z͕ð͔)e43",
-    ///     "+(+1x͔ø͕-1x͕ø͔)e15",
-    ///     "+(+1y͔ø͕-1y͕ø͔)e25",
-    ///     "+(+1z͔ø͕-1z͕ø͔)e35",
-    ///     "+(-1ð͔ø͕+1ð͕ø͔)e45",
-    ///     "+(+1D͔ø͕+1D͕ø͔-1G͔ð͕-1G͕ð͔-1J͔x͕-1J͕x͔)e0145",
-    ///     "+(+1E͔ø͕+1E͕ø͔-1H͔ð͕-1H͕ð͔-1J͔y͕-1J͕y͔)e0245",
-    ///     "+(+1F͔ø͕+1F͕ø͔-1I͔ð͕-1I͕ð͔-1J͔z͕-1J͕z͔)e0345",
-    ///     "+(+1A͔ø͕+1A͕ø͔-1H͔z͕-1H͕z͔+1I͔y͕+1I͕y͔)e0325",
-    ///     "+(+1B͔ø͕+1B͕ø͔+1G͔z͕+1G͕z͔-1I͔x͕-1I͕x͔)e0135",
-    ///     "+(+1C͔ø͕+1C͕ø͔-1G͔y͕-1G͕y͔+1H͔x͕+1H͕x͔)e0215",
-    ///     "+(-1A͔ð͕-1A͕ð͔+1E͔z͕+1E͕z͔-1F͔y͕-1F͕y͔)e0324",
-    ///     "+(-1B͔ð͕-1B͕ð͔-1D͔z͕-1D͕z͔+1F͔x͕+1F͕x͔)e0134",
-    ///     "+(-1C͔ð͕-1C͕ð͔+1D͔y͕+1D͕y͔-1E͔x͕-1E͕x͔)e0214",
-    ///     "+(-1A͔x͕-1A͕x͔-1B͔y͕-1B͕y͔-1C͔z͕-1C͕z͔)e0123",
+    ///     "+x͔x͕+y͔y͕+z͔z͕+ð͔ð͕+ø͔ø͕",
+    ///     "+(+B͔z͕-B͕z͔-C͔y͕+C͕y͔-D͔ð͕+D͕ð͔-G͔ø͕+G͕ø͔)e01",
+    ///     "+(-A͔z͕+A͕z͔+C͔x͕-C͕x͔-E͔ð͕+E͕ð͔-H͔ø͕+H͕ø͔)e02",
+    ///     "+(+A͔y͕-A͕y͔-B͔x͕+B͕x͔-F͔ð͕+F͕ð͔-I͔ø͕+I͕ø͔)e03",
+    ///     "+(+D͔x͕-D͕x͔+E͔y͕-E͕y͔+F͔z͕-F͕z͔+J͔ø͕-J͕ø͔)e40",
+    ///     "+(+G͔x͕-G͕x͔+H͔y͕-H͕y͔+I͔z͕-I͕z͔-J͔ð͕+J͕ð͔)e05",
+    ///     "+(+y͔z͕-y͕z͔)e23",
+    ///     "+(-x͔z͕+x͕z͔)e31",
+    ///     "+(+x͔y͕-x͕y͔)e12",
+    ///     "+(+x͔ð͕-x͕ð͔)e41",
+    ///     "+(+y͔ð͕-y͕ð͔)e42",
+    ///     "+(+z͔ð͕-z͕ð͔)e43",
+    ///     "+(+x͔ø͕-x͕ø͔)e15",
+    ///     "+(+y͔ø͕-y͕ø͔)e25",
+    ///     "+(+z͔ø͕-z͕ø͔)e35",
+    ///     "+(-ð͔ø͕+ð͕ø͔)e45",
+    ///     "+(+D͔ø͕+D͕ø͔-G͔ð͕-G͕ð͔-J͔x͕-J͕x͔)e0145",
+    ///     "+(+E͔ø͕+E͕ø͔-H͔ð͕-H͕ð͔-J͔y͕-J͕y͔)e0245",
+    ///     "+(+F͔ø͕+F͕ø͔-I͔ð͕-I͕ð͔-J͔z͕-J͕z͔)e0345",
+    ///     "+(+A͔ø͕+A͕ø͔-H͔z͕-H͕z͔+I͔y͕+I͕y͔)e0325",
+    ///     "+(+B͔ø͕+B͕ø͔+G͔z͕+G͕z͔-I͔x͕-I͕x͔)e0135",
+    ///     "+(+C͔ø͕+C͕ø͔-G͔y͕-G͕y͔+H͔x͕+H͕x͔)e0215",
+    ///     "+(-A͔ð͕-A͕ð͔+E͔z͕+E͕z͔-F͔y͕-F͕y͔)e0324",
+    ///     "+(-B͔ð͕-B͕ð͔-D͔z͕-D͕z͔+F͔x͕+F͕x͔)e0134",
+    ///     "+(-C͔ð͕-C͕ð͔+D͔y͕+D͕y͔-E͔x͕-E͕x͔)e0214",
+    ///     "+(-A͔x͕-A͕x͔-B͔y͕-B͕y͔-C͔z͕-C͕z͔)e0123",
     /// ]);
     /// ```
     #[must_use]
@@ -2510,37 +2510,37 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// assert_eq!(simple_double_motor.basis_blades(), Vee::simple_double_motor().basis_blades());
     /// format_eq!(simple_double_motor, [
-    ///     "-1a͔a͕-1b͔b͕-1c͔c͕-1d͔d͕-1e͔e͕-1f͔f͕-1g͔g͕-1h͔h͕-1i͔i͕-1j͔j͕",
-    ///     "+(-1Y͔c͕+1Y͕c͔+1Z͔b͕-1Z͕b͔+1d͔Ð͕-1d͕Ð͔+1g͔Ø͕-1g͕Ø͔)e01",
-    ///     "+(+1X͔c͕-1X͕c͔-1Z͔a͕+1Z͕a͔+1e͔Ð͕-1e͕Ð͔+1h͔Ø͕-1h͕Ø͔)e02",
-    ///     "+(-1X͔b͕+1X͕b͔+1Y͔a͕-1Y͕a͔+1f͔Ð͕-1f͕Ð͔+1i͔Ø͕-1i͕Ø͔)e03",
-    ///     "+(+1X͔d͕-1X͕d͔+1Y͔e͕-1Y͕e͔+1Z͔f͕-1Z͕f͔-1j͔Ø͕+1j͕Ø͔)e40",
-    ///     "+(+1X͔g͕-1X͕g͔+1Y͔h͕-1Y͕h͔+1Z͔i͕-1Z͕i͔+1j͔Ð͕-1j͕Ð͔)e05",
-    ///     "+(-1b͔c͕+1b͕c͔-1e͔f͕+1e͕f͔-1h͔i͕+1h͕i͔)e23",
-    ///     "+(+1a͔c͕-1a͕c͔+1d͔f͕-1d͕f͔+1g͔i͕-1g͕i͔)e31",
-    ///     "+(-1a͔b͕+1a͕b͔-1d͔e͕+1d͕e͔-1g͔h͕+1g͕h͔)e12",
-    ///     "+(-1b͔f͕+1b͕f͔+1c͔e͕-1c͕e͔+1g͔j͕-1g͕j͔)e41",
-    ///     "+(+1a͔f͕-1a͕f͔-1c͔d͕+1c͕d͔+1h͔j͕-1h͕j͔)e42",
-    ///     "+(-1a͔e͕+1a͕e͔+1b͔d͕-1b͕d͔+1i͔j͕-1i͕j͔)e43",
-    ///     "+(-1b͔i͕+1b͕i͔+1c͔h͕-1c͕h͔-1d͔j͕+1d͕j͔)e15",
-    ///     "+(+1a͔i͕-1a͕i͔-1c͔g͕+1c͕g͔-1e͔j͕+1e͕j͔)e25",
-    ///     "+(-1a͔h͕+1a͕h͔+1b͔g͕-1b͕g͔-1f͔j͕+1f͕j͔)e35",
-    ///     "+(+1d͔g͕-1d͕g͔+1e͔h͕-1e͕h͔+1f͔i͕-1f͕i͔)e45",
-    ///     "+(+1a͔j͕+1a͕j͔+1e͔i͕+1e͕i͔-1f͔h͕-1f͕h͔)e2345",
-    ///     "+(+1b͔j͕+1b͕j͔-1d͔i͕-1d͕i͔+1f͔g͕+1f͕g͔)e3145",
-    ///     "+(+1c͔j͕+1c͕j͔+1d͔h͕+1d͕h͔-1e͔g͕-1e͕g͔)e1245",
-    ///     "+(+1a͔g͕+1a͕g͔+1b͔h͕+1b͕h͔+1c͔i͕+1c͕i͔)e1235",
-    ///     "+(-1a͔d͕-1a͕d͔-1b͔e͕-1b͕e͔-1c͔f͕-1c͕f͔)e1234",
-    ///     "+(+1X͔j͕+1X͕j͔-1d͔Ø͕-1d͕Ø͔+1g͔Ð͕+1g͕Ð͔)e0145",
-    ///     "+(+1Y͔j͕+1Y͕j͔-1e͔Ø͕-1e͕Ø͔+1h͔Ð͕+1h͕Ð͔)e0245",
-    ///     "+(+1Z͔j͕+1Z͕j͔-1f͔Ø͕-1f͕Ø͔+1i͔Ð͕+1i͕Ð͔)e0345",
-    ///     "+(-1Y͔i͕-1Y͕i͔+1Z͔h͕+1Z͕h͔-1a͔Ø͕-1a͕Ø͔)e0325",
-    ///     "+(+1X͔i͕+1X͕i͔-1Z͔g͕-1Z͕g͔-1b͔Ø͕-1b͕Ø͔)e0135",
-    ///     "+(-1X͔h͕-1X͕h͔+1Y͔g͕+1Y͕g͔-1c͔Ø͕-1c͕Ø͔)e0215",
-    ///     "+(+1Y͔f͕+1Y͕f͔-1Z͔e͕-1Z͕e͔+1a͔Ð͕+1a͕Ð͔)e0324",
-    ///     "+(-1X͔f͕-1X͕f͔+1Z͔d͕+1Z͕d͔+1b͔Ð͕+1b͕Ð͔)e0134",
-    ///     "+(+1X͔e͕+1X͕e͔-1Y͔d͕-1Y͕d͔+1c͔Ð͕+1c͕Ð͔)e0214",
-    ///     "+(+1X͔a͕+1X͕a͔+1Y͔b͕+1Y͕b͔+1Z͔c͕+1Z͕c͔)e0123",
+    ///     "-a͔a͕-b͔b͕-c͔c͕-d͔d͕-e͔e͕-f͔f͕-g͔g͕-h͔h͕-i͔i͕-j͔j͕",
+    ///     "+(-Y͔c͕+Y͕c͔+Z͔b͕-Z͕b͔+d͔Ð͕-d͕Ð͔+g͔Ø͕-g͕Ø͔)e01",
+    ///     "+(+X͔c͕-X͕c͔-Z͔a͕+Z͕a͔+e͔Ð͕-e͕Ð͔+h͔Ø͕-h͕Ø͔)e02",
+    ///     "+(-X͔b͕+X͕b͔+Y͔a͕-Y͕a͔+f͔Ð͕-f͕Ð͔+i͔Ø͕-i͕Ø͔)e03",
+    ///     "+(+X͔d͕-X͕d͔+Y͔e͕-Y͕e͔+Z͔f͕-Z͕f͔-j͔Ø͕+j͕Ø͔)e40",
+    ///     "+(+X͔g͕-X͕g͔+Y͔h͕-Y͕h͔+Z͔i͕-Z͕i͔+j͔Ð͕-j͕Ð͔)e05",
+    ///     "+(-b͔c͕+b͕c͔-e͔f͕+e͕f͔-h͔i͕+h͕i͔)e23",
+    ///     "+(+a͔c͕-a͕c͔+d͔f͕-d͕f͔+g͔i͕-g͕i͔)e31",
+    ///     "+(-a͔b͕+a͕b͔-d͔e͕+d͕e͔-g͔h͕+g͕h͔)e12",
+    ///     "+(-b͔f͕+b͕f͔+c͔e͕-c͕e͔+g͔j͕-g͕j͔)e41",
+    ///     "+(+a͔f͕-a͕f͔-c͔d͕+c͕d͔+h͔j͕-h͕j͔)e42",
+    ///     "+(-a͔e͕+a͕e͔+b͔d͕-b͕d͔+i͔j͕-i͕j͔)e43",
+    ///     "+(-b͔i͕+b͕i͔+c͔h͕-c͕h͔-d͔j͕+d͕j͔)e15",
+    ///     "+(+a͔i͕-a͕i͔-c͔g͕+c͕g͔-e͔j͕+e͕j͔)e25",
+    ///     "+(-a͔h͕+a͕h͔+b͔g͕-b͕g͔-f͔j͕+f͕j͔)e35",
+    ///     "+(+d͔g͕-d͕g͔+e͔h͕-e͕h͔+f͔i͕-f͕i͔)e45",
+    ///     "+(+a͔j͕+a͕j͔+e͔i͕+e͕i͔-f͔h͕-f͕h͔)e2345",
+    ///     "+(+b͔j͕+b͕j͔-d͔i͕-d͕i͔+f͔g͕+f͕g͔)e3145",
+    ///     "+(+c͔j͕+c͕j͔+d͔h͕+d͕h͔-e͔g͕-e͕g͔)e1245",
+    ///     "+(+a͔g͕+a͕g͔+b͔h͕+b͕h͔+c͔i͕+c͕i͔)e1235",
+    ///     "+(-a͔d͕-a͕d͔-b͔e͕-b͕e͔-c͔f͕-c͕f͔)e1234",
+    ///     "+(+X͔j͕+X͕j͔-d͔Ø͕-d͕Ø͔+g͔Ð͕+g͕Ð͔)e0145",
+    ///     "+(+Y͔j͕+Y͕j͔-e͔Ø͕-e͕Ø͔+h͔Ð͕+h͕Ð͔)e0245",
+    ///     "+(+Z͔j͕+Z͕j͔-f͔Ø͕-f͕Ø͔+i͔Ð͕+i͕Ð͔)e0345",
+    ///     "+(-Y͔i͕-Y͕i͔+Z͔h͕+Z͕h͔-a͔Ø͕-a͕Ø͔)e0325",
+    ///     "+(+X͔i͕+X͕i͔-Z͔g͕-Z͕g͔-b͔Ø͕-b͕Ø͔)e0135",
+    ///     "+(-X͔h͕-X͕h͔+Y͔g͕+Y͕g͔-c͔Ø͕-c͕Ø͔)e0215",
+    ///     "+(+Y͔f͕+Y͕f͔-Z͔e͕-Z͕e͔+a͔Ð͕+a͕Ð͔)e0324",
+    ///     "+(-X͔f͕-X͕f͔+Z͔d͕+Z͕d͔+b͔Ð͕+b͕Ð͔)e0134",
+    ///     "+(+X͔e͕+X͕e͔-Y͔d͕-Y͕d͔+c͔Ð͕+c͕Ð͔)e0214",
+    ///     "+(+X͔a͕+X͕a͔+Y͔b͕+Y͕b͔+Z͔c͕+Z͕c͔)e0123",
     /// ]);
     /// ```
     #[must_use]
@@ -2557,76 +2557,76 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// assert_eq!(double_motor.basis_blades(), Vee::double_motor().basis_blades());
     /// format_eq!(double_motor, [
-    ///     "+1v͔v͕",
-    ///     "+(+1X͕v͔+1Y͕c͔-1Z͕b͔+1d͔Ð͕+1g͔Ø͕)e01",
-    ///     "+(-1X͕c͔+1Y͕v͔+1Z͕a͔+1e͔Ð͕+1h͔Ø͕)e02",
-    ///     "+(+1X͕b͔-1Y͕a͔+1Z͕v͔+1f͔Ð͕+1i͔Ø͕)e03",
-    ///     "+(-1X͕d͔-1Y͕e͔-1Z͕f͔-1j͔Ø͕+1v͔Ð͕)e40",
-    ///     "+(-1X͕g͔-1Y͕h͔-1Z͕i͔+1j͔Ð͕+1v͔Ø͕)e05",
-    ///     "+1a͔v͕e23",
-    ///     "+1b͔v͕e31",
-    ///     "+1c͔v͕e12",
-    ///     "+1d͔v͕e41",
-    ///     "+1e͔v͕e42",
-    ///     "+1f͔v͕e43",
-    ///     "+1g͔v͕e15",
-    ///     "+1h͔v͕e25",
-    ///     "+1i͔v͕e35",
-    ///     "+1j͔v͕e45",
-    ///     "+1v͕x͔e2345",
-    ///     "+1v͕y͔e3145",
-    ///     "+1v͕z͔e1245",
-    ///     "+1v͕ð͔e1235",
-    ///     "+1v͕ø͔e1234",
-    ///     "+(+1X͕j͔+1Y͕z͔-1Z͕y͔-1d͔Ø͕+1g͔Ð͕)e0145",
-    ///     "+(-1X͕z͔+1Y͕j͔+1Z͕x͔-1e͔Ø͕+1h͔Ð͕)e0245",
-    ///     "+(+1X͕y͔-1Y͕x͔+1Z͕j͔-1f͔Ø͕+1i͔Ð͕)e0345",
-    ///     "+(+1X͕ð͔-1Y͕i͔+1Z͕h͔-1a͔Ø͕-1x͔Ð͕)e0325",
-    ///     "+(+1X͕i͔+1Y͕ð͔-1Z͕g͔-1b͔Ø͕-1y͔Ð͕)e0135",
-    ///     "+(-1X͕h͔+1Y͕g͔+1Z͕ð͔-1c͔Ø͕-1z͔Ð͕)e0215",
-    ///     "+(+1X͕ø͔+1Y͕f͔-1Z͕e͔+1a͔Ð͕-1x͔Ø͕)e0324",
-    ///     "+(-1X͕f͔+1Y͕ø͔+1Z͕d͔+1b͔Ð͕-1y͔Ø͕)e0134",
-    ///     "+(+1X͕e͔-1Y͕d͔+1Z͕ø͔+1c͔Ð͕-1z͔Ø͕)e0214",
-    ///     "+(+1X͕a͔+1Y͕b͔+1Z͕c͔-1Ð͕ø͔+1Ø͕ð͔)e0123",
-    ///     "+(+1X͕x͔+1Y͕y͔+1Z͕z͔+1Ð͕ð͔+1Ø͕ø͔)I",
+    ///     "+v͔v͕",
+    ///     "+(+X͕v͔+Y͕c͔-Z͕b͔+d͔Ð͕+g͔Ø͕)e01",
+    ///     "+(-X͕c͔+Y͕v͔+Z͕a͔+e͔Ð͕+h͔Ø͕)e02",
+    ///     "+(+X͕b͔-Y͕a͔+Z͕v͔+f͔Ð͕+i͔Ø͕)e03",
+    ///     "+(-X͕d͔-Y͕e͔-Z͕f͔-j͔Ø͕+v͔Ð͕)e40",
+    ///     "+(-X͕g͔-Y͕h͔-Z͕i͔+j͔Ð͕+v͔Ø͕)e05",
+    ///     "+a͔v͕e23",
+    ///     "+b͔v͕e31",
+    ///     "+c͔v͕e12",
+    ///     "+d͔v͕e41",
+    ///     "+e͔v͕e42",
+    ///     "+f͔v͕e43",
+    ///     "+g͔v͕e15",
+    ///     "+h͔v͕e25",
+    ///     "+i͔v͕e35",
+    ///     "+j͔v͕e45",
+    ///     "+v͕x͔e2345",
+    ///     "+v͕y͔e3145",
+    ///     "+v͕z͔e1245",
+    ///     "+v͕ð͔e1235",
+    ///     "+v͕ø͔e1234",
+    ///     "+(+X͕j͔+Y͕z͔-Z͕y͔-d͔Ø͕+g͔Ð͕)e0145",
+    ///     "+(-X͕z͔+Y͕j͔+Z͕x͔-e͔Ø͕+h͔Ð͕)e0245",
+    ///     "+(+X͕y͔-Y͕x͔+Z͕j͔-f͔Ø͕+i͔Ð͕)e0345",
+    ///     "+(+X͕ð͔-Y͕i͔+Z͕h͔-a͔Ø͕-x͔Ð͕)e0325",
+    ///     "+(+X͕i͔+Y͕ð͔-Z͕g͔-b͔Ø͕-y͔Ð͕)e0135",
+    ///     "+(-X͕h͔+Y͕g͔+Z͕ð͔-c͔Ø͕-z͔Ð͕)e0215",
+    ///     "+(+X͕ø͔+Y͕f͔-Z͕e͔+a͔Ð͕-x͔Ø͕)e0324",
+    ///     "+(-X͕f͔+Y͕ø͔+Z͕d͔+b͔Ð͕-y͔Ø͕)e0134",
+    ///     "+(+X͕e͔-Y͕d͔+Z͕ø͔+c͔Ð͕-z͔Ø͕)e0214",
+    ///     "+(+X͕a͔+Y͕b͔+Z͕c͔-Ð͕ø͔+Ø͕ð͔)e0123",
+    ///     "+(+X͕x͔+Y͕y͔+Z͕z͔+Ð͕ð͔+Ø͕ø͔)I",
     /// ]);
     ///
     /// let double_motor = Vee::plane().lhs() * Vee::plane().rhs();
     ///
     /// assert_eq!(double_motor.basis_blades(), Vee::double_motor().basis_blades());
     /// format_eq!(double_motor, [
-    ///     "-1a͔a͕-1b͔b͕-1c͔c͕-1d͔d͕-1e͔e͕-1f͔f͕-1g͔g͕-1h͔h͕-1i͔i͕-1j͔j͕",
-    ///     "+(-1B͔g͕+1B͕g͔+1C͔f͕-1C͕f͔+1D͔h͕-1D͕h͔+1F͔c͕-1F͕c͔-1G͔b͕+1G͕b͔+1H͔d͕-1H͕d͔)e01",
-    ///     "+(-1A͔g͕+1A͕g͔+1C͔e͕-1C͕e͔+1D͔i͕-1D͕i͔+1E͔c͕-1E͕c͔-1G͔a͕+1G͕a͔+1I͔d͕-1I͕d͔)e02",
-    ///     "+(-1A͔f͕+1A͕f͔+1B͔e͕-1B͕e͔+1D͔j͕-1D͕j͔+1E͔b͕-1E͕b͔-1F͔a͕+1F͕a͔+1J͔d͕-1J͕d͔)e03",
-    ///     "+(-1A͔h͕+1A͕h͔+1B͔i͕-1B͕i͔-1C͔j͕+1C͕j͔-1H͔a͕+1H͕a͔+1I͔b͕-1I͕b͔-1J͔c͕+1J͕c͔)e40",
-    ///     "+(-1E͔h͕+1E͕h͔+1F͔i͕-1F͕i͔-1G͔j͕+1G͕j͔-1H͔e͕+1H͕e͔+1I͔f͕-1I͕f͔-1J͔g͕+1J͕g͔)e05",
-    ///     "+(+1b͔c͕-1b͕c͔+1f͔g͕-1f͕g͔-1i͔j͕+1i͕j͔)e23",
-    ///     "+(+1a͔c͕-1a͕c͔+1e͔g͕-1e͕g͔+1h͔j͕-1h͕j͔)e31",
-    ///     "+(+1a͔b͕-1a͕b͔+1e͔f͕-1e͕f͔-1h͔i͕+1h͕i͔)e12",
-    ///     "+(-1a͔d͕+1a͕d͔+1f͔j͕-1f͕j͔+1g͔i͕-1g͕i͔)e41",
-    ///     "+(+1b͔d͕-1b͕d͔+1e͔j͕-1e͕j͔-1g͔h͕+1g͕h͔)e42",
-    ///     "+(-1c͔d͕+1c͕d͔-1e͔i͕+1e͕i͔-1f͔h͕+1f͕h͔)e43",
-    ///     "+(-1b͔j͕+1b͕j͔-1c͔i͕+1c͕i͔+1d͔e͕-1d͕e͔)e15",
-    ///     "+(-1a͔j͕+1a͕j͔+1c͔h͕-1c͕h͔-1d͔f͕+1d͕f͔)e25",
-    ///     "+(+1a͔i͕-1a͕i͔+1b͔h͕-1b͕h͔+1d͔g͕-1d͕g͔)e35",
-    ///     "+(+1a͔e͕-1a͕e͔+1b͔f͕-1b͕f͔+1c͔g͕-1c͕g͔)e45",
-    ///     "+(-1b͔g͕-1b͕g͔+1c͔f͕+1c͕f͔+1d͔h͕+1d͕h͔)e2345",
-    ///     "+(-1a͔g͕-1a͕g͔+1c͔e͕+1c͕e͔+1d͔i͕+1d͕i͔)e3145",
-    ///     "+(-1a͔f͕-1a͕f͔+1b͔e͕+1b͕e͔+1d͔j͕+1d͕j͔)e1245",
-    ///     "+(-1a͔h͕-1a͕h͔+1b͔i͕+1b͕i͔-1c͔j͕-1c͕j͔)e1235",
-    ///     "+(-1e͔h͕-1e͕h͔+1f͔i͕+1f͕i͔-1g͔j͕-1g͕j͔)e1234",
-    ///     "+(-1B͔c͕-1B͕c͔+1C͔b͕+1C͕b͔-1F͔g͕-1F͕g͔+1G͔f͕+1G͕f͔+1I͔j͕+1I͕j͔-1J͔i͕-1J͕i͔)e0145",
-    ///     "+(-1A͔c͕-1A͕c͔+1C͔a͕+1C͕a͔-1E͔g͕-1E͕g͔+1G͔e͕+1G͕e͔-1H͔j͕-1H͕j͔+1J͔h͕+1J͕h͔)e0245",
-    ///     "+(-1A͔b͕-1A͕b͔+1B͔a͕+1B͕a͔-1E͔f͕-1E͕f͔+1F͔e͕+1F͕e͔+1H͔i͕+1H͕i͔-1I͔h͕-1I͕h͔)e0345",
-    ///     "+(+1A͔d͕+1A͕d͔-1D͔a͕-1D͕a͔-1F͔j͕-1F͕j͔-1G͔i͕-1G͕i͔+1I͔g͕+1I͕g͔+1J͔f͕+1J͕f͔)e0325",
-    ///     "+(-1B͔d͕-1B͕d͔+1D͔b͕+1D͕b͔-1E͔j͕-1E͕j͔+1G͔h͕+1G͕h͔-1H͔g͕-1H͕g͔+1J͔e͕+1J͕e͔)e0135",
-    ///     "+(+1C͔d͕+1C͕d͔-1D͔c͕-1D͕c͔+1E͔i͕+1E͕i͔+1F͔h͕+1F͕h͔-1H͔f͕-1H͕f͔-1I͔e͕-1I͕e͔)e0215",
-    ///     "+(+1B͔j͕+1B͕j͔+1C͔i͕+1C͕i͔-1D͔e͕-1D͕e͔+1E͔d͕+1E͕d͔-1I͔c͕-1I͕c͔-1J͔b͕-1J͕b͔)e0324",
-    ///     "+(+1A͔j͕+1A͕j͔-1C͔h͕-1C͕h͔+1D͔f͕+1D͕f͔-1F͔d͕-1F͕d͔+1H͔c͕+1H͕c͔-1J͔a͕-1J͕a͔)e0134",
-    ///     "+(-1A͔i͕-1A͕i͔-1B͔h͕-1B͕h͔-1D͔g͕-1D͕g͔+1G͔d͕+1G͕d͔+1H͔b͕+1H͕b͔+1I͔a͕+1I͕a͔)e0214",
-    ///     "+(-1A͔e͕-1A͕e͔-1B͔f͕-1B͕f͔-1C͔g͕-1C͕g͔+1E͔a͕+1E͕a͔+1F͔b͕+1F͕b͔+1G͔c͕+1G͕c͔)e0123",
-    ///     "+(-1A͔a͕+1A͕a͔-1B͔b͕+1B͕b͔-1C͔c͕+1C͕c͔-1D͔d͕+1D͕d͔-1E͔e͕+1E͕e͔-1F͔f͕+1F͕f͔-1G͔g͕+1G͕g͔-1H͔h͕+1H͕h͔-1I͔i͕+1I͕i͔-1J͔j͕+1J͕j͔)I",
+    ///     "-a͔a͕-b͔b͕-c͔c͕-d͔d͕-e͔e͕-f͔f͕-g͔g͕-h͔h͕-i͔i͕-j͔j͕",
+    ///     "+(-B͔g͕+B͕g͔+C͔f͕-C͕f͔+D͔h͕-D͕h͔+F͔c͕-F͕c͔-G͔b͕+G͕b͔+H͔d͕-H͕d͔)e01",
+    ///     "+(-A͔g͕+A͕g͔+C͔e͕-C͕e͔+D͔i͕-D͕i͔+E͔c͕-E͕c͔-G͔a͕+G͕a͔+I͔d͕-I͕d͔)e02",
+    ///     "+(-A͔f͕+A͕f͔+B͔e͕-B͕e͔+D͔j͕-D͕j͔+E͔b͕-E͕b͔-F͔a͕+F͕a͔+J͔d͕-J͕d͔)e03",
+    ///     "+(-A͔h͕+A͕h͔+B͔i͕-B͕i͔-C͔j͕+C͕j͔-H͔a͕+H͕a͔+I͔b͕-I͕b͔-J͔c͕+J͕c͔)e40",
+    ///     "+(-E͔h͕+E͕h͔+F͔i͕-F͕i͔-G͔j͕+G͕j͔-H͔e͕+H͕e͔+I͔f͕-I͕f͔-J͔g͕+J͕g͔)e05",
+    ///     "+(+b͔c͕-b͕c͔+f͔g͕-f͕g͔-i͔j͕+i͕j͔)e23",
+    ///     "+(+a͔c͕-a͕c͔+e͔g͕-e͕g͔+h͔j͕-h͕j͔)e31",
+    ///     "+(+a͔b͕-a͕b͔+e͔f͕-e͕f͔-h͔i͕+h͕i͔)e12",
+    ///     "+(-a͔d͕+a͕d͔+f͔j͕-f͕j͔+g͔i͕-g͕i͔)e41",
+    ///     "+(+b͔d͕-b͕d͔+e͔j͕-e͕j͔-g͔h͕+g͕h͔)e42",
+    ///     "+(-c͔d͕+c͕d͔-e͔i͕+e͕i͔-f͔h͕+f͕h͔)e43",
+    ///     "+(-b͔j͕+b͕j͔-c͔i͕+c͕i͔+d͔e͕-d͕e͔)e15",
+    ///     "+(-a͔j͕+a͕j͔+c͔h͕-c͕h͔-d͔f͕+d͕f͔)e25",
+    ///     "+(+a͔i͕-a͕i͔+b͔h͕-b͕h͔+d͔g͕-d͕g͔)e35",
+    ///     "+(+a͔e͕-a͕e͔+b͔f͕-b͕f͔+c͔g͕-c͕g͔)e45",
+    ///     "+(-b͔g͕-b͕g͔+c͔f͕+c͕f͔+d͔h͕+d͕h͔)e2345",
+    ///     "+(-a͔g͕-a͕g͔+c͔e͕+c͕e͔+d͔i͕+d͕i͔)e3145",
+    ///     "+(-a͔f͕-a͕f͔+b͔e͕+b͕e͔+d͔j͕+d͕j͔)e1245",
+    ///     "+(-a͔h͕-a͕h͔+b͔i͕+b͕i͔-c͔j͕-c͕j͔)e1235",
+    ///     "+(-e͔h͕-e͕h͔+f͔i͕+f͕i͔-g͔j͕-g͕j͔)e1234",
+    ///     "+(-B͔c͕-B͕c͔+C͔b͕+C͕b͔-F͔g͕-F͕g͔+G͔f͕+G͕f͔+I͔j͕+I͕j͔-J͔i͕-J͕i͔)e0145",
+    ///     "+(-A͔c͕-A͕c͔+C͔a͕+C͕a͔-E͔g͕-E͕g͔+G͔e͕+G͕e͔-H͔j͕-H͕j͔+J͔h͕+J͕h͔)e0245",
+    ///     "+(-A͔b͕-A͕b͔+B͔a͕+B͕a͔-E͔f͕-E͕f͔+F͔e͕+F͕e͔+H͔i͕+H͕i͔-I͔h͕-I͕h͔)e0345",
+    ///     "+(+A͔d͕+A͕d͔-D͔a͕-D͕a͔-F͔j͕-F͕j͔-G͔i͕-G͕i͔+I͔g͕+I͕g͔+J͔f͕+J͕f͔)e0325",
+    ///     "+(-B͔d͕-B͕d͔+D͔b͕+D͕b͔-E͔j͕-E͕j͔+G͔h͕+G͕h͔-H͔g͕-H͕g͔+J͔e͕+J͕e͔)e0135",
+    ///     "+(+C͔d͕+C͕d͔-D͔c͕-D͕c͔+E͔i͕+E͕i͔+F͔h͕+F͕h͔-H͔f͕-H͕f͔-I͔e͕-I͕e͔)e0215",
+    ///     "+(+B͔j͕+B͕j͔+C͔i͕+C͕i͔-D͔e͕-D͕e͔+E͔d͕+E͕d͔-I͔c͕-I͕c͔-J͔b͕-J͕b͔)e0324",
+    ///     "+(+A͔j͕+A͕j͔-C͔h͕-C͕h͔+D͔f͕+D͕f͔-F͔d͕-F͕d͔+H͔c͕+H͕c͔-J͔a͕-J͕a͔)e0134",
+    ///     "+(-A͔i͕-A͕i͔-B͔h͕-B͕h͔-D͔g͕-D͕g͔+G͔d͕+G͕d͔+H͔b͕+H͕b͔+I͔a͕+I͕a͔)e0214",
+    ///     "+(-A͔e͕-A͕e͔-B͔f͕-B͕f͔-C͔g͕-C͕g͔+E͔a͕+E͕a͔+F͔b͕+F͕b͔+G͔c͕+G͕c͔)e0123",
+    ///     "+(-A͔a͕+A͕a͔-B͔b͕+B͕b͔-C͔c͕+C͕c͔-D͔d͕+D͕d͔-E͔e͕+E͕e͔-F͔f͕+F͕f͔-G͔g͕+G͕g͔-H͔h͕+H͕h͔-I͔i͕+I͕i͔-J͔j͕+J͕j͔)I",
     /// ]);
     /// ```
     #[must_use]
@@ -2643,21 +2643,21 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// assert_eq!(single_rotoreflector.basis_blades(), Vee::single_rotoreflector().basis_blades());
     /// format_eq!(single_rotoreflector, [
-    ///     "+(+1b͕z͔-1c͕y͔+1d͕ð͔-1g͕ø͔+1v͕x͔)e1",
-    ///     "+(-1a͕z͔+1c͕x͔+1e͕ð͔-1h͕ø͔+1v͕y͔)e2",
-    ///     "+(+1a͕y͔-1b͕x͔+1f͕ð͔-1i͕ø͔+1v͕z͔)e3",
-    ///     "+(-1d͕x͔-1e͕y͔-1f͕z͔-1j͕ø͔+1v͕ð͔)e4",
-    ///     "+(+1g͕x͔+1h͕y͔+1i͕z͔+1j͕ð͔+1v͕ø͔)e5",
-    ///     "+(+1a͕ð͔+1e͕z͔-1f͕y͔)e234",
-    ///     "+(-1b͕ð͔+1d͕z͔-1f͕x͔)e134",
-    ///     "+(+1c͕ð͔+1d͕y͔-1e͕x͔)e124",
-    ///     "+(+1a͕x͔+1b͕y͔+1c͕z͔)e123",
-    ///     "+(-1a͕ø͔+1h͕z͔-1i͕y͔)e253",
-    ///     "+(+1b͕ø͔+1g͕z͔-1i͕x͔)e315",
-    ///     "+(-1c͕ø͔+1g͕y͔-1h͕x͔)e152",
-    ///     "+(-1d͕ø͔-1g͕ð͔+1j͕x͔)e145",
-    ///     "+(-1e͕ø͔-1h͕ð͔+1j͕y͔)e245",
-    ///     "+(-1f͕ø͔-1i͕ð͔+1j͕z͔)e345",
+    ///     "+(+b͕z͔-c͕y͔+d͕ð͔-g͕ø͔+v͕x͔)e1",
+    ///     "+(-a͕z͔+c͕x͔+e͕ð͔-h͕ø͔+v͕y͔)e2",
+    ///     "+(+a͕y͔-b͕x͔+f͕ð͔-i͕ø͔+v͕z͔)e3",
+    ///     "+(-d͕x͔-e͕y͔-f͕z͔-j͕ø͔+v͕ð͔)e4",
+    ///     "+(+g͕x͔+h͕y͔+i͕z͔+j͕ð͔+v͕ø͔)e5",
+    ///     "+(+a͕ð͔+e͕z͔-f͕y͔)e234",
+    ///     "+(-b͕ð͔+d͕z͔-f͕x͔)e134",
+    ///     "+(+c͕ð͔+d͕y͔-e͕x͔)e124",
+    ///     "+(+a͕x͔+b͕y͔+c͕z͔)e123",
+    ///     "+(-a͕ø͔+h͕z͔-i͕y͔)e253",
+    ///     "+(+b͕ø͔+g͕z͔-i͕x͔)e315",
+    ///     "+(-c͕ø͔+g͕y͔-h͕x͔)e152",
+    ///     "+(-d͕ø͔-g͕ð͔+j͕x͔)e145",
+    ///     "+(-e͕ø͔-h͕ð͔+j͕y͔)e245",
+    ///     "+(-f͕ø͔-i͕ð͔+j͕z͔)e345",
     /// ]);
     /// ```
     #[must_use]
@@ -2674,22 +2674,22 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// assert_eq!(double_rotoreflector.basis_blades(), Vee::double_rotoreflector().basis_blades());
     /// format_eq!(double_rotoreflector, [
-    ///     "+(+1b͕z͔-1c͕y͔+1d͕ð͔-1g͕ø͔+1v͕x͔)e1",
-    ///     "+(-1a͕z͔+1c͕x͔+1e͕ð͔-1h͕ø͔+1v͕y͔)e2",
-    ///     "+(+1a͕y͔-1b͕x͔+1f͕ð͔-1i͕ø͔+1v͕z͔)e3",
-    ///     "+(-1d͕x͔-1e͕y͔-1f͕z͔-1j͕ø͔+1v͕ð͔)e4",
-    ///     "+(+1g͕x͔+1h͕y͔+1i͕z͔+1j͕ð͔+1v͕ø͔)e5",
-    ///     "+(+1a͕ð͔+1e͕z͔-1f͕y͔+1x͔ø͕-1x͕ø͔)e234",
-    ///     "+(-1b͕ð͔+1d͕z͔-1f͕x͔-1y͔ø͕+1y͕ø͔)e134",
-    ///     "+(+1c͕ð͔+1d͕y͔-1e͕x͔+1z͔ø͕-1z͕ø͔)e124",
-    ///     "+(+1a͕x͔+1b͕y͔+1c͕z͔-1ð͔ø͕-1ð͕ø͔)e123",
-    ///     "+(-1a͕ø͔+1h͕z͔-1i͕y͔-1x͔ð͕-1x͕ð͔)e253",
-    ///     "+(+1b͕ø͔+1g͕z͔-1i͕x͔+1y͔ð͕+1y͕ð͔)e315",
-    ///     "+(-1c͕ø͔+1g͕y͔-1h͕x͔-1z͔ð͕-1z͕ð͔)e152",
-    ///     "+(-1d͕ø͔-1g͕ð͔+1j͕x͔-1y͔z͕+1y͕z͔)e145",
-    ///     "+(-1e͕ø͔-1h͕ð͔+1j͕y͔+1x͔z͕-1x͕z͔)e245",
-    ///     "+(-1f͕ø͔-1i͕ð͔+1j͕z͔-1x͔y͕+1x͕y͔)e345",
-    ///     "+(+1x͔x͕+1y͔y͕+1z͔z͕-1ð͔ð͕+1ø͔ø͕)e12345",
+    ///     "+(+b͕z͔-c͕y͔+d͕ð͔-g͕ø͔+v͕x͔)e1",
+    ///     "+(-a͕z͔+c͕x͔+e͕ð͔-h͕ø͔+v͕y͔)e2",
+    ///     "+(+a͕y͔-b͕x͔+f͕ð͔-i͕ø͔+v͕z͔)e3",
+    ///     "+(-d͕x͔-e͕y͔-f͕z͔-j͕ø͔+v͕ð͔)e4",
+    ///     "+(+g͕x͔+h͕y͔+i͕z͔+j͕ð͔+v͕ø͔)e5",
+    ///     "+(+a͕ð͔+e͕z͔-f͕y͔+x͔ø͕-x͕ø͔)e234",
+    ///     "+(-b͕ð͔+d͕z͔-f͕x͔-y͔ø͕+y͕ø͔)e134",
+    ///     "+(+c͕ð͔+d͕y͔-e͕x͔+z͔ø͕-z͕ø͔)e124",
+    ///     "+(+a͕x͔+b͕y͔+c͕z͔-ð͔ø͕-ð͕ø͔)e123",
+    ///     "+(-a͕ø͔+h͕z͔-i͕y͔-x͔ð͕-x͕ð͔)e253",
+    ///     "+(+b͕ø͔+g͕z͔-i͕x͔+y͔ð͕+y͕ð͔)e315",
+    ///     "+(-c͕ø͔+g͕y͔-h͕x͔-z͔ð͕-z͕ð͔)e152",
+    ///     "+(-d͕ø͔-g͕ð͔+j͕x͔-y͔z͕+y͕z͔)e145",
+    ///     "+(-e͕ø͔-h͕ð͔+j͕y͔+x͔z͕-x͕z͔)e245",
+    ///     "+(-f͕ø͔-i͕ð͔+j͕z͔-x͔y͕+x͕y͔)e345",
+    ///     "+(+x͔x͕+y͔y͕+z͔z͕-ð͔ð͕+ø͔ø͕)e12345",
     /// ]);
     /// ```
     #[must_use]
@@ -2706,22 +2706,22 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// assert_eq!(transflector.basis_blades(), Vee::transflector().basis_blades());
     /// format_eq!(transflector, [
-    ///     "+(-1X͕x͔-1Y͕y͔-1Z͕z͔+1Ð͕ð͔-1Ø͕ø͔)e0",
-    ///     "+1v͕x͔e1",
-    ///     "+1v͕y͔e2",
-    ///     "+1v͕z͔e3",
-    ///     "+1v͕ð͔e4",
-    ///     "+1v͕ø͔e5",
-    ///     "+(+1X͕ø͔-1x͔Ø͕)e015",
-    ///     "+(-1Y͕ø͔+1y͔Ø͕)e052",
-    ///     "+(+1Z͕ø͔-1z͔Ø͕)e035",
-    ///     "+(+1Ð͕ø͔+1Ø͕ð͔)e054",
-    ///     "+(+1X͕ð͔+1x͔Ð͕)e014",
-    ///     "+(-1Y͕ð͔-1y͔Ð͕)e042",
-    ///     "+(+1Z͕ð͔+1z͔Ð͕)e034",
-    ///     "+(-1Y͕z͔+1Z͕y͔)e032",
-    ///     "+(+1X͕z͔-1Z͕x͔)e013",
-    ///     "+(-1X͕y͔+1Y͕x͔)e021",
+    ///     "+(-X͕x͔-Y͕y͔-Z͕z͔+Ð͕ð͔-Ø͕ø͔)e0",
+    ///     "+v͕x͔e1",
+    ///     "+v͕y͔e2",
+    ///     "+v͕z͔e3",
+    ///     "+v͕ð͔e4",
+    ///     "+v͕ø͔e5",
+    ///     "+(+X͕ø͔-x͔Ø͕)e015",
+    ///     "+(-Y͕ø͔+y͔Ø͕)e052",
+    ///     "+(+Z͕ø͔-z͔Ø͕)e035",
+    ///     "+(+Ð͕ø͔+Ø͕ð͔)e054",
+    ///     "+(+X͕ð͔+x͔Ð͕)e014",
+    ///     "+(-Y͕ð͔-y͔Ð͕)e042",
+    ///     "+(+Z͕ð͔+z͔Ð͕)e034",
+    ///     "+(-Y͕z͔+Z͕y͔)e032",
+    ///     "+(+X͕z͔-Z͕x͔)e013",
+    ///     "+(-X͕y͔+Y͕x͔)e021",
     /// ]);
     /// ```
     #[must_use]
@@ -2739,32 +2739,32 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// assert_eq!(simple_single_flector.basis_blades(),
     ///     Vee::simple_single_flector().basis_blades());
     /// format_eq!(simple_single_flector, [
-    ///     "+(+1W͔v͕-1X͕x͔-1Y͕y͔-1Z͕z͔+1Ð͕ð͔-1Ø͕ø͔)e0",
-    ///     "+(+1b͕z͔-1c͕y͔+1d͕ð͔-1g͕ø͔+1v͕x͔)e1",
-    ///     "+(-1a͕z͔+1c͕x͔+1e͕ð͔-1h͕ø͔+1v͕y͔)e2",
-    ///     "+(+1a͕y͔-1b͕x͔+1f͕ð͔-1i͕ø͔+1v͕z͔)e3",
-    ///     "+(-1d͕x͔-1e͕y͔-1f͕z͔-1j͕ø͔+1v͕ð͔)e4",
-    ///     "+(+1g͕x͔+1h͕y͔+1i͕z͔+1j͕ð͔+1v͕ø͔)e5",
-    ///     "+(+1W͔g͕+1X͕ø͔-1x͔Ø͕)e015",
-    ///     "+(-1W͔h͕-1Y͕ø͔+1y͔Ø͕)e052",
-    ///     "+(+1W͔i͕+1Z͕ø͔-1z͔Ø͕)e035",
-    ///     "+(-1W͔j͕+1Ð͕ø͔+1Ø͕ð͔)e054",
-    ///     "+(-1W͔d͕+1X͕ð͔+1x͔Ð͕)e014",
-    ///     "+(+1W͔e͕-1Y͕ð͔-1y͔Ð͕)e042",
-    ///     "+(-1W͔f͕+1Z͕ð͔+1z͔Ð͕)e034",
-    ///     "+(-1W͔a͕-1Y͕z͔+1Z͕y͔)e032",
-    ///     "+(-1W͔b͕+1X͕z͔-1Z͕x͔)e013",
-    ///     "+(-1W͔c͕-1X͕y͔+1Y͕x͔)e021",
-    ///     "+(+1a͕ð͔+1e͕z͔-1f͕y͔)e234",
-    ///     "+(-1b͕ð͔+1d͕z͔-1f͕x͔)e134",
-    ///     "+(+1c͕ð͔+1d͕y͔-1e͕x͔)e124",
-    ///     "+(+1a͕x͔+1b͕y͔+1c͕z͔)e123",
-    ///     "+(-1a͕ø͔+1h͕z͔-1i͕y͔)e253",
-    ///     "+(+1b͕ø͔+1g͕z͔-1i͕x͔)e315",
-    ///     "+(-1c͕ø͔+1g͕y͔-1h͕x͔)e152",
-    ///     "+(-1d͕ø͔-1g͕ð͔+1j͕x͔)e145",
-    ///     "+(-1e͕ø͔-1h͕ð͔+1j͕y͔)e245",
-    ///     "+(-1f͕ø͔-1i͕ð͔+1j͕z͔)e345",
+    ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔+Ð͕ð͔-Ø͕ø͔)e0",
+    ///     "+(+b͕z͔-c͕y͔+d͕ð͔-g͕ø͔+v͕x͔)e1",
+    ///     "+(-a͕z͔+c͕x͔+e͕ð͔-h͕ø͔+v͕y͔)e2",
+    ///     "+(+a͕y͔-b͕x͔+f͕ð͔-i͕ø͔+v͕z͔)e3",
+    ///     "+(-d͕x͔-e͕y͔-f͕z͔-j͕ø͔+v͕ð͔)e4",
+    ///     "+(+g͕x͔+h͕y͔+i͕z͔+j͕ð͔+v͕ø͔)e5",
+    ///     "+(+W͔g͕+X͕ø͔-x͔Ø͕)e015",
+    ///     "+(-W͔h͕-Y͕ø͔+y͔Ø͕)e052",
+    ///     "+(+W͔i͕+Z͕ø͔-z͔Ø͕)e035",
+    ///     "+(-W͔j͕+Ð͕ø͔+Ø͕ð͔)e054",
+    ///     "+(-W͔d͕+X͕ð͔+x͔Ð͕)e014",
+    ///     "+(+W͔e͕-Y͕ð͔-y͔Ð͕)e042",
+    ///     "+(-W͔f͕+Z͕ð͔+z͔Ð͕)e034",
+    ///     "+(-W͔a͕-Y͕z͔+Z͕y͔)e032",
+    ///     "+(-W͔b͕+X͕z͔-Z͕x͔)e013",
+    ///     "+(-W͔c͕-X͕y͔+Y͕x͔)e021",
+    ///     "+(+a͕ð͔+e͕z͔-f͕y͔)e234",
+    ///     "+(-b͕ð͔+d͕z͔-f͕x͔)e134",
+    ///     "+(+c͕ð͔+d͕y͔-e͕x͔)e124",
+    ///     "+(+a͕x͔+b͕y͔+c͕z͔)e123",
+    ///     "+(-a͕ø͔+h͕z͔-i͕y͔)e253",
+    ///     "+(+b͕ø͔+g͕z͔-i͕x͔)e315",
+    ///     "+(-c͕ø͔+g͕y͔-h͕x͔)e152",
+    ///     "+(-d͕ø͔-g͕ð͔+j͕x͔)e145",
+    ///     "+(-e͕ø͔-h͕ð͔+j͕y͔)e245",
+    ///     "+(-f͕ø͔-i͕ð͔+j͕z͔)e345",
     /// ]);
     /// ```
     #[must_use]
@@ -2781,37 +2781,37 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// assert_eq!(single_flector.basis_blades(), Vee::single_flector().basis_blades());
     /// format_eq!(single_flector, [
-    ///     "+(+1W͔v͕-1X͕x͔-1Y͕y͔-1Z͕z͔+1Ð͕ð͔-1Ø͕ø͔)e0",
-    ///     "+(+1b͕z͔-1c͕y͔+1d͕ð͔-1g͕ø͔+1v͕x͔)e1",
-    ///     "+(-1a͕z͔+1c͕x͔+1e͕ð͔-1h͕ø͔+1v͕y͔)e2",
-    ///     "+(+1a͕y͔-1b͕x͔+1f͕ð͔-1i͕ø͔+1v͕z͔)e3",
-    ///     "+(-1d͕x͔-1e͕y͔-1f͕z͔-1j͕ø͔+1v͕ð͔)e4",
-    ///     "+(+1g͕x͔+1h͕y͔+1i͕z͔+1j͕ð͔+1v͕ø͔)e5",
-    ///     "+(+1A͕ð͔+1E͕z͔-1F͕y͔+1W͔g͕+1X͕ø͔-1x͔Ø͕)e015",
-    ///     "+(-1B͕ð͔+1D͕z͔-1F͕x͔-1W͔h͕-1Y͕ø͔+1y͔Ø͕)e052",
-    ///     "+(+1C͕ð͔+1D͕y͔-1E͕x͔+1W͔i͕+1Z͕ø͔-1z͔Ø͕)e035",
-    ///     "+(+1A͕x͔+1B͕y͔+1C͕z͔-1W͔j͕+1Ð͕ø͔+1Ø͕ð͔)e054",
-    ///     "+(-1A͕ø͔+1H͕z͔-1I͕y͔-1W͔d͕+1X͕ð͔+1x͔Ð͕)e014",
-    ///     "+(+1B͕ø͔+1G͕z͔-1I͕x͔+1W͔e͕-1Y͕ð͔-1y͔Ð͕)e042",
-    ///     "+(-1C͕ø͔+1G͕y͔-1H͕x͔-1W͔f͕+1Z͕ð͔+1z͔Ð͕)e034",
-    ///     "+(-1D͕ø͔-1G͕ð͔+1J͕x͔-1W͔a͕-1Y͕z͔+1Z͕y͔)e032",
-    ///     "+(-1E͕ø͔-1H͕ð͔+1J͕y͔-1W͔b͕+1X͕z͔-1Z͕x͔)e013",
-    ///     "+(-1F͕ø͔-1I͕ð͔+1J͕z͔-1W͔c͕-1X͕y͔+1Y͕x͔)e021",
-    ///     "+(+1a͕ð͔+1e͕z͔-1f͕y͔)e234",
-    ///     "+(-1b͕ð͔+1d͕z͔-1f͕x͔)e134",
-    ///     "+(+1c͕ð͔+1d͕y͔-1e͕x͔)e124",
-    ///     "+(+1a͕x͔+1b͕y͔+1c͕z͔)e123",
-    ///     "+(-1a͕ø͔+1h͕z͔-1i͕y͔)e253",
-    ///     "+(+1b͕ø͔+1g͕z͔-1i͕x͔)e315",
-    ///     "+(-1c͕ø͔+1g͕y͔-1h͕x͔)e152",
-    ///     "+(-1d͕ø͔-1g͕ð͔+1j͕x͔)e145",
-    ///     "+(-1e͕ø͔-1h͕ð͔+1j͕y͔)e245",
-    ///     "+(-1f͕ø͔-1i͕ð͔+1j͕z͔)e345",
-    ///     "+(-1B͕z͔+1C͕y͔-1D͕ð͔+1G͕ø͔)e03245",
-    ///     "+(+1A͕z͔-1C͕x͔-1E͕ð͔+1H͕ø͔)e01345",
-    ///     "+(-1A͕y͔+1B͕x͔-1F͕ð͔+1I͕ø͔)e02145",
-    ///     "+(+1D͕x͔+1E͕y͔+1F͕z͔+1J͕ø͔)e01235",
-    ///     "+(-1G͕x͔-1H͕y͔-1I͕z͔-1J͕ð͔)e01243",
+    ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔+Ð͕ð͔-Ø͕ø͔)e0",
+    ///     "+(+b͕z͔-c͕y͔+d͕ð͔-g͕ø͔+v͕x͔)e1",
+    ///     "+(-a͕z͔+c͕x͔+e͕ð͔-h͕ø͔+v͕y͔)e2",
+    ///     "+(+a͕y͔-b͕x͔+f͕ð͔-i͕ø͔+v͕z͔)e3",
+    ///     "+(-d͕x͔-e͕y͔-f͕z͔-j͕ø͔+v͕ð͔)e4",
+    ///     "+(+g͕x͔+h͕y͔+i͕z͔+j͕ð͔+v͕ø͔)e5",
+    ///     "+(+A͕ð͔+E͕z͔-F͕y͔+W͔g͕+X͕ø͔-x͔Ø͕)e015",
+    ///     "+(-B͕ð͔+D͕z͔-F͕x͔-W͔h͕-Y͕ø͔+y͔Ø͕)e052",
+    ///     "+(+C͕ð͔+D͕y͔-E͕x͔+W͔i͕+Z͕ø͔-z͔Ø͕)e035",
+    ///     "+(+A͕x͔+B͕y͔+C͕z͔-W͔j͕+Ð͕ø͔+Ø͕ð͔)e054",
+    ///     "+(-A͕ø͔+H͕z͔-I͕y͔-W͔d͕+X͕ð͔+x͔Ð͕)e014",
+    ///     "+(+B͕ø͔+G͕z͔-I͕x͔+W͔e͕-Y͕ð͔-y͔Ð͕)e042",
+    ///     "+(-C͕ø͔+G͕y͔-H͕x͔-W͔f͕+Z͕ð͔+z͔Ð͕)e034",
+    ///     "+(-D͕ø͔-G͕ð͔+J͕x͔-W͔a͕-Y͕z͔+Z͕y͔)e032",
+    ///     "+(-E͕ø͔-H͕ð͔+J͕y͔-W͔b͕+X͕z͔-Z͕x͔)e013",
+    ///     "+(-F͕ø͔-I͕ð͔+J͕z͔-W͔c͕-X͕y͔+Y͕x͔)e021",
+    ///     "+(+a͕ð͔+e͕z͔-f͕y͔)e234",
+    ///     "+(-b͕ð͔+d͕z͔-f͕x͔)e134",
+    ///     "+(+c͕ð͔+d͕y͔-e͕x͔)e124",
+    ///     "+(+a͕x͔+b͕y͔+c͕z͔)e123",
+    ///     "+(-a͕ø͔+h͕z͔-i͕y͔)e253",
+    ///     "+(+b͕ø͔+g͕z͔-i͕x͔)e315",
+    ///     "+(-c͕ø͔+g͕y͔-h͕x͔)e152",
+    ///     "+(-d͕ø͔-g͕ð͔+j͕x͔)e145",
+    ///     "+(-e͕ø͔-h͕ð͔+j͕y͔)e245",
+    ///     "+(-f͕ø͔-i͕ð͔+j͕z͔)e345",
+    ///     "+(-B͕z͔+C͕y͔-D͕ð͔+G͕ø͔)e03245",
+    ///     "+(+A͕z͔-C͕x͔-E͕ð͔+H͕ø͔)e01345",
+    ///     "+(-A͕y͔+B͕x͔-F͕ð͔+I͕ø͔)e02145",
+    ///     "+(+D͕x͔+E͕y͔+F͕z͔+J͕ø͔)e01235",
+    ///     "+(-G͕x͔-H͕y͔-I͕z͔-J͕ð͔)e01243",
     /// ]);
     /// ```
     #[must_use]
@@ -2828,76 +2828,76 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// assert_eq!(double_flector.basis_blades(), Vee::double_flector().basis_blades());
     /// format_eq!(double_flector, [
-    ///     "+(+1W͔v͕-1X͕x͔-1Y͕y͔-1Z͕z͔+1Ð͕ð͔-1Ø͕ø͔)e0",
-    ///     "+(+1b͕z͔-1c͕y͔+1d͕ð͔-1g͕ø͔+1v͕x͔)e1",
-    ///     "+(-1a͕z͔+1c͕x͔+1e͕ð͔-1h͕ø͔+1v͕y͔)e2",
-    ///     "+(+1a͕y͔-1b͕x͔+1f͕ð͔-1i͕ø͔+1v͕z͔)e3",
-    ///     "+(-1d͕x͔-1e͕y͔-1f͕z͔-1j͕ø͔+1v͕ð͔)e4",
-    ///     "+(+1g͕x͔+1h͕y͔+1i͕z͔+1j͕ð͔+1v͕ø͔)e5",
-    ///     "+(+1A͕ð͔+1E͕z͔-1F͕y͔+1W͔g͕+1X͕ø͔-1x͔Ø͕)e015",
-    ///     "+(-1B͕ð͔+1D͕z͔-1F͕x͔-1W͔h͕-1Y͕ø͔+1y͔Ø͕)e052",
-    ///     "+(+1C͕ð͔+1D͕y͔-1E͕x͔+1W͔i͕+1Z͕ø͔-1z͔Ø͕)e035",
-    ///     "+(+1A͕x͔+1B͕y͔+1C͕z͔-1W͔j͕+1Ð͕ø͔+1Ø͕ð͔)e054",
-    ///     "+(-1A͕ø͔+1H͕z͔-1I͕y͔-1W͔d͕+1X͕ð͔+1x͔Ð͕)e014",
-    ///     "+(+1B͕ø͔+1G͕z͔-1I͕x͔+1W͔e͕-1Y͕ð͔-1y͔Ð͕)e042",
-    ///     "+(-1C͕ø͔+1G͕y͔-1H͕x͔-1W͔f͕+1Z͕ð͔+1z͔Ð͕)e034",
-    ///     "+(-1D͕ø͔-1G͕ð͔+1J͕x͔-1W͔a͕-1Y͕z͔+1Z͕y͔)e032",
-    ///     "+(-1E͕ø͔-1H͕ð͔+1J͕y͔-1W͔b͕+1X͕z͔-1Z͕x͔)e013",
-    ///     "+(-1F͕ø͔-1I͕ð͔+1J͕z͔-1W͔c͕-1X͕y͔+1Y͕x͔)e021",
-    ///     "+(+1a͕ð͔+1e͕z͔-1f͕y͔+1x͔ø͕-1x͕ø͔)e234",
-    ///     "+(-1b͕ð͔+1d͕z͔-1f͕x͔-1y͔ø͕+1y͕ø͔)e134",
-    ///     "+(+1c͕ð͔+1d͕y͔-1e͕x͔+1z͔ø͕-1z͕ø͔)e124",
-    ///     "+(+1a͕x͔+1b͕y͔+1c͕z͔-1ð͔ø͕-1ð͕ø͔)e123",
-    ///     "+(-1a͕ø͔+1h͕z͔-1i͕y͔-1x͔ð͕-1x͕ð͔)e253",
-    ///     "+(+1b͕ø͔+1g͕z͔-1i͕x͔+1y͔ð͕+1y͕ð͔)e315",
-    ///     "+(-1c͕ø͔+1g͕y͔-1h͕x͔-1z͔ð͕-1z͕ð͔)e152",
-    ///     "+(-1d͕ø͔-1g͕ð͔+1j͕x͔-1y͔z͕+1y͕z͔)e145",
-    ///     "+(-1e͕ø͔-1h͕ð͔+1j͕y͔+1x͔z͕-1x͕z͔)e245",
-    ///     "+(-1f͕ø͔-1i͕ð͔+1j͕z͔-1x͔y͕+1x͕y͔)e345",
-    ///     "+(+1x͔x͕+1y͔y͕+1z͔z͕-1ð͔ð͕+1ø͔ø͕)e12345",
-    ///     "+(-1B͕z͔+1C͕y͔-1D͕ð͔+1G͕ø͔-1W͔x͕)e03245",
-    ///     "+(+1A͕z͔-1C͕x͔-1E͕ð͔+1H͕ø͔-1W͔y͕)e01345",
-    ///     "+(-1A͕y͔+1B͕x͔-1F͕ð͔+1I͕ø͔-1W͔z͕)e02145",
-    ///     "+(+1D͕x͔+1E͕y͔+1F͕z͔+1J͕ø͔+1W͔ð͕)e01235",
-    ///     "+(-1G͕x͔-1H͕y͔-1I͕z͔-1J͕ð͔-1W͔ø͕)e01243",
+    ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔+Ð͕ð͔-Ø͕ø͔)e0",
+    ///     "+(+b͕z͔-c͕y͔+d͕ð͔-g͕ø͔+v͕x͔)e1",
+    ///     "+(-a͕z͔+c͕x͔+e͕ð͔-h͕ø͔+v͕y͔)e2",
+    ///     "+(+a͕y͔-b͕x͔+f͕ð͔-i͕ø͔+v͕z͔)e3",
+    ///     "+(-d͕x͔-e͕y͔-f͕z͔-j͕ø͔+v͕ð͔)e4",
+    ///     "+(+g͕x͔+h͕y͔+i͕z͔+j͕ð͔+v͕ø͔)e5",
+    ///     "+(+A͕ð͔+E͕z͔-F͕y͔+W͔g͕+X͕ø͔-x͔Ø͕)e015",
+    ///     "+(-B͕ð͔+D͕z͔-F͕x͔-W͔h͕-Y͕ø͔+y͔Ø͕)e052",
+    ///     "+(+C͕ð͔+D͕y͔-E͕x͔+W͔i͕+Z͕ø͔-z͔Ø͕)e035",
+    ///     "+(+A͕x͔+B͕y͔+C͕z͔-W͔j͕+Ð͕ø͔+Ø͕ð͔)e054",
+    ///     "+(-A͕ø͔+H͕z͔-I͕y͔-W͔d͕+X͕ð͔+x͔Ð͕)e014",
+    ///     "+(+B͕ø͔+G͕z͔-I͕x͔+W͔e͕-Y͕ð͔-y͔Ð͕)e042",
+    ///     "+(-C͕ø͔+G͕y͔-H͕x͔-W͔f͕+Z͕ð͔+z͔Ð͕)e034",
+    ///     "+(-D͕ø͔-G͕ð͔+J͕x͔-W͔a͕-Y͕z͔+Z͕y͔)e032",
+    ///     "+(-E͕ø͔-H͕ð͔+J͕y͔-W͔b͕+X͕z͔-Z͕x͔)e013",
+    ///     "+(-F͕ø͔-I͕ð͔+J͕z͔-W͔c͕-X͕y͔+Y͕x͔)e021",
+    ///     "+(+a͕ð͔+e͕z͔-f͕y͔+x͔ø͕-x͕ø͔)e234",
+    ///     "+(-b͕ð͔+d͕z͔-f͕x͔-y͔ø͕+y͕ø͔)e134",
+    ///     "+(+c͕ð͔+d͕y͔-e͕x͔+z͔ø͕-z͕ø͔)e124",
+    ///     "+(+a͕x͔+b͕y͔+c͕z͔-ð͔ø͕-ð͕ø͔)e123",
+    ///     "+(-a͕ø͔+h͕z͔-i͕y͔-x͔ð͕-x͕ð͔)e253",
+    ///     "+(+b͕ø͔+g͕z͔-i͕x͔+y͔ð͕+y͕ð͔)e315",
+    ///     "+(-c͕ø͔+g͕y͔-h͕x͔-z͔ð͕-z͕ð͔)e152",
+    ///     "+(-d͕ø͔-g͕ð͔+j͕x͔-y͔z͕+y͕z͔)e145",
+    ///     "+(-e͕ø͔-h͕ð͔+j͕y͔+x͔z͕-x͕z͔)e245",
+    ///     "+(-f͕ø͔-i͕ð͔+j͕z͔-x͔y͕+x͕y͔)e345",
+    ///     "+(+x͔x͕+y͔y͕+z͔z͕-ð͔ð͕+ø͔ø͕)e12345",
+    ///     "+(-B͕z͔+C͕y͔-D͕ð͔+G͕ø͔-W͔x͕)e03245",
+    ///     "+(+A͕z͔-C͕x͔-E͕ð͔+H͕ø͔-W͔y͕)e01345",
+    ///     "+(-A͕y͔+B͕x͔-F͕ð͔+I͕ø͔-W͔z͕)e02145",
+    ///     "+(+D͕x͔+E͕y͔+F͕z͔+J͕ø͔+W͔ð͕)e01235",
+    ///     "+(-G͕x͔-H͕y͔-I͕z͔-J͕ð͔-W͔ø͕)e01243",
     /// ]);
     ///
     /// let double_flector = Vee::volume4().lhs() * Vee::double_motor().rhs();
     ///
     /// assert_eq!(double_flector.basis_blades(), Vee::double_flector().basis_blades());
     /// format_eq!(double_flector, [
-    ///     "+(+1W͔v͕-1X͕x͔-1Y͕y͔-1Z͕z͔+1Ð͕ð͔-1Ø͕ø͔)e0",
-    ///     "+(+1b͕z͔-1c͕y͔+1d͕ð͔-1g͕ø͔+1v͕x͔)e1",
-    ///     "+(-1a͕z͔+1c͕x͔+1e͕ð͔-1h͕ø͔+1v͕y͔)e2",
-    ///     "+(+1a͕y͔-1b͕x͔+1f͕ð͔-1i͕ø͔+1v͕z͔)e3",
-    ///     "+(-1d͕x͔-1e͕y͔-1f͕z͔-1j͕ø͔+1v͕ð͔)e4",
-    ///     "+(+1g͕x͔+1h͕y͔+1i͕z͔+1j͕ð͔+1v͕ø͔)e5",
-    ///     "+(+1A͕ð͔+1E͕z͔-1F͕y͔+1W͔g͕+1X͕ø͔-1x͔Ø͕)e015",
-    ///     "+(-1B͕ð͔+1D͕z͔-1F͕x͔-1W͔h͕-1Y͕ø͔+1y͔Ø͕)e052",
-    ///     "+(+1C͕ð͔+1D͕y͔-1E͕x͔+1W͔i͕+1Z͕ø͔-1z͔Ø͕)e035",
-    ///     "+(+1A͕x͔+1B͕y͔+1C͕z͔-1W͔j͕+1Ð͕ø͔+1Ø͕ð͔)e054",
-    ///     "+(-1A͕ø͔+1H͕z͔-1I͕y͔-1W͔d͕+1X͕ð͔+1x͔Ð͕)e014",
-    ///     "+(+1B͕ø͔+1G͕z͔-1I͕x͔+1W͔e͕-1Y͕ð͔-1y͔Ð͕)e042",
-    ///     "+(-1C͕ø͔+1G͕y͔-1H͕x͔-1W͔f͕+1Z͕ð͔+1z͔Ð͕)e034",
-    ///     "+(-1D͕ø͔-1G͕ð͔+1J͕x͔-1W͔a͕-1Y͕z͔+1Z͕y͔)e032",
-    ///     "+(-1E͕ø͔-1H͕ð͔+1J͕y͔-1W͔b͕+1X͕z͔-1Z͕x͔)e013",
-    ///     "+(-1F͕ø͔-1I͕ð͔+1J͕z͔-1W͔c͕-1X͕y͔+1Y͕x͔)e021",
-    ///     "+(+1a͕ð͔+1e͕z͔-1f͕y͔+1x͔ø͕-1x͕ø͔)e234",
-    ///     "+(-1b͕ð͔+1d͕z͔-1f͕x͔-1y͔ø͕+1y͕ø͔)e134",
-    ///     "+(+1c͕ð͔+1d͕y͔-1e͕x͔+1z͔ø͕-1z͕ø͔)e124",
-    ///     "+(+1a͕x͔+1b͕y͔+1c͕z͔-1ð͔ø͕-1ð͕ø͔)e123",
-    ///     "+(-1a͕ø͔+1h͕z͔-1i͕y͔-1x͔ð͕-1x͕ð͔)e253",
-    ///     "+(+1b͕ø͔+1g͕z͔-1i͕x͔+1y͔ð͕+1y͕ð͔)e315",
-    ///     "+(-1c͕ø͔+1g͕y͔-1h͕x͔-1z͔ð͕-1z͕ð͔)e152",
-    ///     "+(-1d͕ø͔-1g͕ð͔+1j͕x͔-1y͔z͕+1y͕z͔)e145",
-    ///     "+(-1e͕ø͔-1h͕ð͔+1j͕y͔+1x͔z͕-1x͕z͔)e245",
-    ///     "+(-1f͕ø͔-1i͕ð͔+1j͕z͔-1x͔y͕+1x͕y͔)e345",
-    ///     "+(+1x͔x͕+1y͔y͕+1z͔z͕-1ð͔ð͕+1ø͔ø͕)e12345",
-    ///     "+(-1B͕z͔+1C͕y͔-1D͕ð͔+1G͕ø͔+1V͕x͔-1W͔x͕)e03245",
-    ///     "+(+1A͕z͔-1C͕x͔-1E͕ð͔+1H͕ø͔+1V͕y͔-1W͔y͕)e01345",
-    ///     "+(-1A͕y͔+1B͕x͔-1F͕ð͔+1I͕ø͔+1V͕z͔-1W͔z͕)e02145",
-    ///     "+(+1D͕x͔+1E͕y͔+1F͕z͔+1J͕ø͔+1V͕ð͔+1W͔ð͕)e01235",
-    ///     "+(-1G͕x͔-1H͕y͔-1I͕z͔-1J͕ð͔+1V͕ø͔-1W͔ø͕)e01243",
+    ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔+Ð͕ð͔-Ø͕ø͔)e0",
+    ///     "+(+b͕z͔-c͕y͔+d͕ð͔-g͕ø͔+v͕x͔)e1",
+    ///     "+(-a͕z͔+c͕x͔+e͕ð͔-h͕ø͔+v͕y͔)e2",
+    ///     "+(+a͕y͔-b͕x͔+f͕ð͔-i͕ø͔+v͕z͔)e3",
+    ///     "+(-d͕x͔-e͕y͔-f͕z͔-j͕ø͔+v͕ð͔)e4",
+    ///     "+(+g͕x͔+h͕y͔+i͕z͔+j͕ð͔+v͕ø͔)e5",
+    ///     "+(+A͕ð͔+E͕z͔-F͕y͔+W͔g͕+X͕ø͔-x͔Ø͕)e015",
+    ///     "+(-B͕ð͔+D͕z͔-F͕x͔-W͔h͕-Y͕ø͔+y͔Ø͕)e052",
+    ///     "+(+C͕ð͔+D͕y͔-E͕x͔+W͔i͕+Z͕ø͔-z͔Ø͕)e035",
+    ///     "+(+A͕x͔+B͕y͔+C͕z͔-W͔j͕+Ð͕ø͔+Ø͕ð͔)e054",
+    ///     "+(-A͕ø͔+H͕z͔-I͕y͔-W͔d͕+X͕ð͔+x͔Ð͕)e014",
+    ///     "+(+B͕ø͔+G͕z͔-I͕x͔+W͔e͕-Y͕ð͔-y͔Ð͕)e042",
+    ///     "+(-C͕ø͔+G͕y͔-H͕x͔-W͔f͕+Z͕ð͔+z͔Ð͕)e034",
+    ///     "+(-D͕ø͔-G͕ð͔+J͕x͔-W͔a͕-Y͕z͔+Z͕y͔)e032",
+    ///     "+(-E͕ø͔-H͕ð͔+J͕y͔-W͔b͕+X͕z͔-Z͕x͔)e013",
+    ///     "+(-F͕ø͔-I͕ð͔+J͕z͔-W͔c͕-X͕y͔+Y͕x͔)e021",
+    ///     "+(+a͕ð͔+e͕z͔-f͕y͔+x͔ø͕-x͕ø͔)e234",
+    ///     "+(-b͕ð͔+d͕z͔-f͕x͔-y͔ø͕+y͕ø͔)e134",
+    ///     "+(+c͕ð͔+d͕y͔-e͕x͔+z͔ø͕-z͕ø͔)e124",
+    ///     "+(+a͕x͔+b͕y͔+c͕z͔-ð͔ø͕-ð͕ø͔)e123",
+    ///     "+(-a͕ø͔+h͕z͔-i͕y͔-x͔ð͕-x͕ð͔)e253",
+    ///     "+(+b͕ø͔+g͕z͔-i͕x͔+y͔ð͕+y͕ð͔)e315",
+    ///     "+(-c͕ø͔+g͕y͔-h͕x͔-z͔ð͕-z͕ð͔)e152",
+    ///     "+(-d͕ø͔-g͕ð͔+j͕x͔-y͔z͕+y͕z͔)e145",
+    ///     "+(-e͕ø͔-h͕ð͔+j͕y͔+x͔z͕-x͕z͔)e245",
+    ///     "+(-f͕ø͔-i͕ð͔+j͕z͔-x͔y͕+x͕y͔)e345",
+    ///     "+(+x͔x͕+y͔y͕+z͔z͕-ð͔ð͕+ø͔ø͕)e12345",
+    ///     "+(-B͕z͔+C͕y͔-D͕ð͔+G͕ø͔+V͕x͔-W͔x͕)e03245",
+    ///     "+(+A͕z͔-C͕x͔-E͕ð͔+H͕ø͔+V͕y͔-W͔y͕)e01345",
+    ///     "+(-A͕y͔+B͕x͔-F͕ð͔+I͕ø͔+V͕z͔-W͔z͕)e02145",
+    ///     "+(+D͕x͔+E͕y͔+F͕z͔+J͕ø͔+V͕ð͔+W͔ð͕)e01235",
+    ///     "+(-G͕x͔-H͕y͔-I͕z͔-J͕ð͔+V͕ø͔-W͔ø͕)e01243",
     /// ]);
     /// ```
     #[must_use]

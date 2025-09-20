@@ -155,10 +155,10 @@
 //! use vee::{format_eq, PgaP3 as Vee};
 //!
 //! format_eq!(Vee::plane().pin() << Vee::rotator(), [
-//!     "+(+[+1vv+1xx+1yy+1zz]W͓)e0",
-//!     "+(+[+2vz+2xy]y͓+[-2vy+2xz]z͓+[+1vv+1xx-1yy-1zz]x͓)e1",
-//!     "+(+[+2vx+2yz]z͓+[-2vz+2xy]x͓+[+1vv-1xx+1yy-1zz]y͓)e2",
-//!     "+(+[+2vy+2xz]x͓+[-2vx+2yz]y͓+[+1vv-1xx-1yy+1zz]z͓)e3",
+//!     "+(+[+vv+xx+yy+zz]W͓)e0",
+//!     "+(+[+2vz+2xy]y͓+[-2vy+2xz]z͓+[+vv+xx-yy-zz]x͓)e1",
+//!     "+(+[+2vx+2yz]z͓+[-2vz+2xy]x͓+[+vv-xx+yy-zz]y͓)e2",
+//!     "+(+[+2vy+2xz]x͓+[-2vx+2yz]y͓+[+vv-xx-yy+zz]z͓)e3",
 //! ]);
 //! ```
 //!
@@ -189,7 +189,7 @@ macro_rules! format_eq {
         pretty_assertions::assert_eq!(emitted, $literal);
     }};
     ($emitted:expr, [$($literal:literal),* $(,)?]) => {{
-        let emitted = format!("{:+#}", $emitted);
+        let emitted = format!("{:#}", $emitted);
         let mut literal = String::with_capacity(emitted.len());
         $(
             literal.push_str($literal);
