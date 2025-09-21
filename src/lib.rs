@@ -210,7 +210,6 @@ use core::{
     },
 };
 use num_rational::Ratio;
-use smartstring::alias::String;
 use std::collections::{BTreeMap, BTreeSet};
 
 trait Choose {
@@ -328,7 +327,7 @@ impl<B: Algebra> Multivector<B> {
     pub fn new<E, S>(iter: E) -> Self
     where
         E: IntoIterator<Item = (S, B)>,
-        S: Into<String>,
+        S: Into<Symbol>,
     {
         iter.into_iter().map(|(s, b)| ([[s]], b)).collect()
     }
@@ -336,31 +335,31 @@ impl<B: Algebra> Multivector<B> {
     ///
     /// Pins this multivector as being sandwiched by the reflection or projection operator.
     ///
-    /// Calls <code>[Self::sym]\(\"\u{0353}\"\)</code>.
+    /// Calls <code>[Self::cdm]\(\[Symbol::PIN]\)</code>.
     #[must_use]
     #[inline]
     pub fn pin(self) -> Self {
-        self.sym("\u{0353}")
+        self.cdm(Symbol::PIN)
     }
     /// Adds Unicode *combining left arrowhead below* (i.e., `"◌͔"`) to all symbols.
     ///
     /// Pins this multivector as left-hand side.
     ///
-    /// Calls <code>[Self::sym]\(\"\u{0354}\"\)</code>.
+    /// Calls <code>[Self::cdm]\(\[Symbol::LHS]\)</code>.
     #[must_use]
     #[inline]
     pub fn lhs(self) -> Self {
-        self.sym("\u{0354}")
+        self.cdm(Symbol::LHS)
     }
-    /// Adds Unicode *combining left arrowhead below* (i.e., `"◌͕"`) to all symbols.
+    /// Adds Unicode *combining right arrowhead below* (i.e., `"◌͕"`) to all symbols.
     ///
     /// Pins this multivector as right-hand side.
     ///
-    /// Calls <code>[Self::sym]\(\"\u{0355}\"\)</code>.
+    /// Calls <code>[Self::cdm]\(\[Symbol::RHS]\)</code>.
     #[must_use]
     #[inline]
     pub fn rhs(self) -> Self {
-        self.sym("\u{0355}")
+        self.cdm(Symbol::RHS)
     }
     /// Appends Unicode *combining diacritical mark* to all symbols.
     ///
@@ -370,11 +369,11 @@ impl<B: Algebra> Multivector<B> {
     /// use vee::{format_eq, PgaP3 as Vee};
     ///
     /// format_eq!(Vee::plane(), "We0+xe1+ye2+ze3");
-    /// format_eq!(Vee::plane().sym("\u{035c}"), "W͜e0+x͜e1+y͜e2+z͜e3");
+    /// format_eq!(Vee::plane().cdm('\u{035c}'), "W͜e0+x͜e1+y͜e2+z͜e3");
     /// ```
     #[must_use]
-    pub fn sym(mut self, mark: &str) -> Self {
-        self.map.values_mut().for_each(|p| *p = take(p).sym(mark));
+    pub fn cdm(mut self, mark: char) -> Self {
+        self.map.values_mut().for_each(|p| *p = take(p).cdm(mark));
         self
     }
     /// Swaps lowercase and uppercase symbols.
@@ -443,7 +442,7 @@ impl<B: Algebra> Multivector<B> {
     #[must_use]
     #[allow(clippy::missing_panics_doc)]
     pub fn pol(self) -> Self {
-        self * Self::new([("", B::basis().next_back().expect("empty basis"))])
+        self * Self::new([('\0', B::basis().next_back().expect("empty basis"))])
     }
     /// The mixed-grade squared norm (i.e., a Study number).
     ///
@@ -466,7 +465,7 @@ impl<B: Algebra, P, M, S> FromIterator<(P, B)> for Multivector<B>
 where
     P: IntoIterator<Item = M>,
     M: IntoIterator<Item = S>,
-    S: Into<String>,
+    S: Into<Symbol>,
 {
     fn from_iter<V: IntoIterator<Item = (P, B)>>(iter: V) -> Self {
         Self {
@@ -686,19 +685,14 @@ impl<B: Algebra> Display for Multivector<B> {
                 .filter_map(|sym| {
                     sym.map
                         .keys()
-                        .rfind(|sym| sym.ends_with("\u{0353}"))
+                        .rfind(|sym| sym.is_pin())
                         .or_else(|| sym.map.keys().last())
                 })
-                .all(|sym| sym.ends_with("\u{0353}"))
+                .all(Symbol::is_pin)
             {
                 let mut map = BTreeMap::<_, Polynomial>::new();
                 for (mut s, c) in p.map.clone() {
-                    let key = s
-                        .map
-                        .keys()
-                        .rfind(|sym| sym.ends_with("\u{0353}"))
-                        .unwrap()
-                        .clone();
+                    let key = *s.map.keys().rfind(|sym| sym.is_pin()).unwrap();
                     let pin = s.map.remove_entry(&key).unwrap();
                     assert!(map.entry(pin).or_default().map.insert(s, c).is_none());
                 }
@@ -744,8 +738,8 @@ impl<B: Algebra> Display for Multivector<B> {
 /// Uniquely reduced form of a symbolic polynomial expression.
 ///
 /// A Laurent polynomial $`P_b`$ is realized as the sum of products of a rational coefficient
-/// $`C_m`$ and a primitive Laurent [`Monomial`] $`M_m`$ (i.e., an element of an
-/// ordered polynomial basis).
+/// $`C_m`$ (i.e., <code>[Ratio]<[i32]></code>) and a primitive Laurent [`Monomial`] $`M_m`$ (i.e.,
+/// an element of an ordered polynomial basis).
 ///
 /// ```math
 /// P_b \equiv \sum_m C_m M_m
@@ -763,7 +757,7 @@ impl Polynomial {
     /// Appends combining diacritical `mark` to all symbols.
     #[must_use]
     #[inline]
-    pub fn sym(self, mark: &str) -> Self {
+    pub fn cdm(self, mark: char) -> Self {
         let map = BTreeMap::new();
         let map = self.map.into_iter().fold(map, |mut map, (s, c)| {
             map.insert(s.sym(mark), c);
@@ -787,7 +781,7 @@ impl Polynomial {
 impl<M, S> FromIterator<M> for Polynomial
 where
     M: IntoIterator<Item = S>,
-    S: Into<String>,
+    S: Into<Symbol>,
 {
     fn from_iter<P: IntoIterator<Item = M>>(iter: P) -> Self {
         Self {
@@ -925,9 +919,8 @@ impl Display for Polynomial {
 
 /// Uniquely reduced form of a symbolic monomial expression.
 ///
-/// A primitive Laurent monomial $`M_m`$ is realized as the product of symbols $`S_s`$ with
-/// individual non-zero exponents $`E_s`$ where [`String`] is an element of an ordered set of
-/// multi-character symbols.
+/// A primitive Laurent monomial $`M_m`$ is realized as the product of <code>[Symbol]</code>s
+/// $`S_s`$ with individual non-zero exponents $`E_s`$.
 ///
 /// ```math
 /// M_m \equiv \prod_s S_s^{E_s}
@@ -938,20 +931,17 @@ impl Display for Polynomial {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default)]
 pub struct Monomial {
     /// Symbolic storage.
-    pub map: BTreeMap<String, NonZeroI32>,
+    pub map: BTreeMap<Symbol, NonZeroI32>,
 }
 
 impl Monomial {
     /// Appends combining diacritical `mark` to all symbols.
     #[must_use]
     #[inline]
-    pub fn sym(self, mark: &str) -> Self {
+    pub fn sym(self, mark: char) -> Self {
         let map = BTreeMap::new();
-        let map = self.map.into_iter().fold(map, |mut map, (mut s, e)| {
-            if !s.ends_with(mark) {
-                s.push_str(mark);
-            }
-            map.insert(s, e);
+        let map = self.map.into_iter().fold(map, |mut map, (s, e)| {
+            map.insert(s.cdm(mark), e);
             map
         });
         Self { map }
@@ -961,18 +951,8 @@ impl Monomial {
     #[inline]
     pub fn swp(self) -> Self {
         let map = BTreeMap::new();
-        let map = self.map.into_iter().fold(map, |mut map, (mut s, e)| {
-            s = if s
-                .chars()
-                .next()
-                .is_some_and(char::is_uppercase)
-            {
-                s.to_lowercase()
-            } else {
-                s.to_uppercase()
-            }
-            .into();
-            map.insert(s, e);
+        let map = self.map.into_iter().fold(map, |mut map, (s, e)| {
+            map.insert(!s, e);
             map
         });
         Self { map }
@@ -981,7 +961,7 @@ impl Monomial {
 
 impl<S> FromIterator<S> for Monomial
 where
-    S: Into<String>,
+    S: Into<Symbol>,
 {
     fn from_iter<M: IntoIterator<Item = S>>(iter: M) -> Self {
         Self {
@@ -1016,7 +996,7 @@ impl MulAssign for Monomial {
                 assert!(self.map.insert(s, rhs_e).is_none());
             }
         }
-        self.map.retain(|s, _e| !s.is_empty());
+        self.map.retain(|s, _e| !s.is_one());
     }
 }
 
@@ -1043,7 +1023,7 @@ impl DivAssign for Monomial {
                 assert!(self.map.insert(s, rhs_e).is_none());
             }
         }
-        self.map.retain(|s, _e| !s.is_empty());
+        self.map.retain(|s, _e| !s.is_one());
     }
 }
 
@@ -1053,6 +1033,127 @@ impl Display for Monomial {
             .iter()
             .flat_map(|(s, e)| (0..e.get()).map(move |_| s))
             .try_for_each(|s| write!(f, "{s}"))
+    }
+}
+
+/// Symbol as Unicode character with optional *combining diacritical mark*.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
+pub struct Symbol {
+    var: char,
+    cdm: char,
+}
+
+impl Symbol {
+    /// Unicode null (i.e., `'\0'`).
+    pub const NIL: char = '\0';
+
+    /// Unicode *combining x below* (i.e., `"◌͓"`).
+    pub const PIN: char = '\u{0353}';
+    /// Unicode *combining left arrowhead below* (i.e., `"◌͔"`).
+    pub const LHS: char = '\u{0354}';
+    /// Unicode *combining right arrowhead below* (i.e., `"◌͕"`).
+    pub const RHS: char = '\u{0355}';
+
+    /// Creates empty [`Default`] symbol representing scalar one.
+    #[must_use]
+    #[inline]
+    pub const fn one() -> Self {
+        Self {
+            var: Self::NIL,
+            cdm: Self::NIL,
+        }
+    }
+    /// Whether this symbol is [`Self::one()`].
+    #[must_use]
+    #[inline]
+    pub const fn is_one(&self) -> bool {
+        self.var == Self::NIL
+    }
+    /// Whether this symbol is pinned.
+    #[must_use]
+    #[inline]
+    pub const fn is_pin(&self) -> bool {
+        self.cdm == Self::PIN
+    }
+    /// Creates symbol for variable `var`.
+    #[must_use]
+    #[inline]
+    pub const fn new(var: char) -> Self {
+        Self {
+            var,
+            cdm: Self::NIL,
+        }
+    }
+    /// Marks this symbol with Unicode *combining diacritical mark*.
+    #[must_use]
+    #[inline]
+    pub(crate) const fn cdm(self, cdm: char) -> Self {
+        Self { var: self.var, cdm }
+    }
+    /// Marks this symbol with [`Self::PIN`].
+    #[must_use]
+    #[inline]
+    pub const fn pin(self) -> Self {
+        self.cdm(Self::PIN)
+    }
+    /// Marks this symbol with [`Self::LHS`] as left-hand side.
+    #[must_use]
+    #[inline]
+    pub const fn lhs(self) -> Self {
+        self.cdm(Self::LHS)
+    }
+    /// Marks this symbol with [`Self::RHS`] as right-hand side.
+    #[must_use]
+    #[inline]
+    pub const fn rhs(self) -> Self {
+        self.cdm(Self::RHS)
+    }
+}
+
+impl From<&str> for Symbol {
+    #[inline]
+    fn from(sym: &str) -> Self {
+        let mut sym = sym.chars();
+        let var = sym.next().unwrap_or_default();
+        assert_eq!(sym.next(), None, "multi-character symbol");
+        Self::new(var)
+    }
+}
+
+impl From<char> for Symbol {
+    #[inline]
+    fn from(var: char) -> Self {
+        Self::new(var)
+    }
+}
+
+impl Not for Symbol {
+    type Output = Self;
+
+    /// Swaps lowercase and uppercase character.
+    fn not(self) -> Self {
+        let var = if self.var.is_lowercase() {
+            let mut iter = self.var.to_uppercase();
+            assert_eq!(iter.len(), 1, "no uppercase for {}", self.var);
+            iter.next().unwrap()
+        } else {
+            let mut iter = self.var.to_lowercase();
+            assert_eq!(iter.len(), 1, "no lowercase for {}", self.var);
+            iter.next().unwrap()
+        };
+        Self { var, cdm: self.cdm }
+    }
+}
+
+impl Display for Symbol {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if self.var != Self::NIL {
+            write!(f, "{}", self.var)?;
+            if self.cdm != Self::NIL {
+                write!(f, "{}", self.cdm)?;
+            }
+        }
+        Ok(())
     }
 }
 
