@@ -181,21 +181,24 @@
 ///
 /// If the preformatted `$right` literal is an array of multiple literals, `$left` is formated in
 /// alternate form `"{:#}"` instead of default form `"{}"`.
-#[cfg(feature = "pretty_assertions")]
 #[macro_export]
 macro_rules! format_eq {
     ($emitted:expr, $literal:literal) => {{
+        #[cfg(feature = "pretty_assertions")]
+        use pretty_assertions::assert_eq;
         let emitted = format!("{}", $emitted);
-        pretty_assertions::assert_eq!(emitted, $literal);
+        assert_eq!(emitted, $literal);
     }};
     ($emitted:expr, [$($literal:literal),* $(,)?]) => {{
+        #[cfg(feature = "pretty_assertions")]
+        use pretty_assertions::assert_eq;
         let emitted = format!("{:#}", $emitted);
         let mut literal = String::with_capacity(emitted.len());
         $(
             literal.push_str($literal);
             literal.push_str("\n");
         )*
-        pretty_assertions::assert_eq!(emitted, literal);
+        assert_eq!(emitted, literal);
     }};
 }
 
