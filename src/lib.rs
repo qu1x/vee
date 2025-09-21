@@ -199,7 +199,6 @@ macro_rules! format_eq {
     }};
 }
 
-use change_case::swap_case;
 use core::{
     fmt::{self, Debug, Display},
     iter::FromIterator,
@@ -963,7 +962,16 @@ impl Monomial {
     pub fn swp(self) -> Self {
         let map = BTreeMap::new();
         let map = self.map.into_iter().fold(map, |mut map, (mut s, e)| {
-            s = swap_case(&s).into();
+            s = if s
+                .chars()
+                .next()
+                .is_some_and(char::is_uppercase)
+            {
+                s.to_lowercase()
+            } else {
+                s.to_uppercase()
+            }
+            .into();
             map.insert(s, e);
             map
         });
