@@ -13,7 +13,9 @@
 //! dimensions $`D < 6`$.[^1] See the [examples](#examples) below where the symbolic expressions are
 //! generated in text form. The next releases will implement code forms (e.g., Rust code in various
 //! profiles based on SIMD using [`lav`] with and without generics or arbitrary precision types
-//! using [`rug`]). Currently, the planed-based pistachio flavor -- Projective Geometric Algebra
+//! using [`rug`]). The pre-generated code forms will be provided along with the code generator
+//! behind respective feature gates. When [`packages_as_namespaces`] is stable, each code form will
+//! become a crate. Currently, the planed-based pistachio flavor -- Projective Geometric Algebra
 //! (PGA) -- is implemented for $`D \equiv N + 1 \le 8`$ in all three metrics, i.e., elliptic,
 //! hyperbolic, and parabolic (Euclidean).[^2] The 5D, 6D, and 7D PGAs (i.e., $`N = 5`$, $`N = 6`$,
 //! and $`N = 7`$) are incomplete as there are no inverses based on Study numbers but they provide
@@ -25,6 +27,9 @@
 //! positional and directional aspects of geometric entities (e.g., planes, lines, points) and the
 //! linear and angular aspects of rigid-body dynamics in a dimension-agnostic way with closed-form
 //! (i.e., non-iterative) solutions up to 4D (e.g., [`PgaP2`], [`PgaP3`], [`PgaP4`]).[^3]
+//!
+//! [`packages_as_namespaces`]:
+//! https://rust-lang.github.io/rfcs/3243-packages-as-optional-namespaces.html
 //!
 //! [^1]: S. De Keninck and M. Roelfs, “Normalization, square roots, and the exponential and
 //! logarithmic maps in geometric algebras of less than 6D”, [Mathematical Methods in the Applied

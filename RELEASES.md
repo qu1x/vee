@@ -1,3 +1,13 @@
+# Version 0.1.4 (2025-09-??)
+
+  * Refactor symbol without dependency.
+  * Swap case without dependency.
+  * Let `format_eq!` omit unit coefficient for more compact text form.
+  * Introduce `{:+}` for not omitting unit coefficient.
+  * Fix invalid coefficient omission.
+  * Fix typo and link.
+  * Construct Cayley table with pre-allocations only.
+
 # Version 0.1.3 (2025-09-18)
 
   * Add projection operator. Supports rejection, i.e., projecting lower- onto higher-grade blade.

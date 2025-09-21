@@ -29,6 +29,8 @@ coefficients.
 
 ## Roadmap
 
+  * Eliminate orthonormalization conditions form expressions using reflection/projection operator by
+    factoring pinned symbols and GCD coefficients in symbolic storage rather than during formatting.
   * Generate expressions in code form.
   * Define other geometric algebra flavors.
 
