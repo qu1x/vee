@@ -208,9 +208,10 @@ macro_rules! format_eq {
 }
 
 use core::{
+    cmp::min,
     fmt::{self, Debug, Display},
     iter::FromIterator,
-    mem::take,
+    mem::{swap, take},
     num::NonZeroI32,
     ops::{
         Add, AddAssign, BitAnd, BitOr, BitXor, Div, DivAssign, Mul, MulAssign, Neg, Not, Rem, Shl,
@@ -220,9 +221,12 @@ use core::{
 use num_rational::Ratio;
 use std::collections::{BTreeMap, BTreeSet};
 
+/// Finds the binomial coefficient.
 trait Choose {
+    /// The output type.
     type Output;
 
+    /// Finds the binomial coefficient as in `self` over `other`.
     #[must_use]
     fn choose(self, other: Self) -> Self::Output;
 }
@@ -230,7 +234,6 @@ trait Choose {
 impl Choose for u32 {
     type Output = Self;
 
-    #[inline]
     fn choose(self, other: Self) -> Self::Output {
         let (n, k) = (self, other);
         if n < k {
@@ -238,6 +241,62 @@ impl Choose for u32 {
         } else {
             (0..k).fold(1, |r, i| r * (n - i) / (i + 1))
         }
+    }
+}
+
+/// Finds the greatest common divisor (GCD).
+#[allow(dead_code)]
+trait Gcd {
+    /// The output type.
+    type Output;
+
+    /// Finds the greatest common divisor (GCD) of `self` and `other`.
+    #[must_use]
+    fn gcd(self, other: Self) -> Self::Output;
+}
+
+impl Gcd for i32 {
+    type Output = u32;
+
+    #[inline]
+    fn gcd(self, other: Self) -> Self::Output {
+        self.unsigned_abs().gcd(other.unsigned_abs())
+    }
+}
+
+impl Gcd for u32 {
+    type Output = Self;
+
+    #[allow(clippy::many_single_char_names, clippy::debug_assert_with_mut_call)]
+    fn gcd(self, other: Self) -> Self::Output {
+        let mut a = self;
+        let mut b = other;
+        let g = if a == 0 || b == 0 {
+            a | b
+        } else {
+            let mut u = a.trailing_zeros();
+            let v = b.trailing_zeros();
+            let x = min(u, v);
+            b >>= v;
+            while a != 0 {
+                a >>= u;
+                let d = b.abs_diff(a);
+                u = d.trailing_zeros();
+                b = min(a, b);
+                a = d;
+            }
+            b << x
+        };
+        debug_assert_eq!(g, {
+            let mut a = self;
+            let mut b = other;
+            while b != 0 {
+                a %= b;
+                swap(&mut a, &mut b);
+            }
+            a
+        });
+        g
     }
 }
 
