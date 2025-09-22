@@ -33,11 +33,7 @@ cargo-args = ["-Z", "unstable-options", "-Z", "rustdoc-scrape-examples"]
 rustdoc-args = ["--cfg", "docsrs", "--html-in-header", "katex.html"]
 
 [dependencies]
-num-rational = { version = "0.4.2", default-features = false }
 pretty_assertions = { version = "1.4.1", optional = true }
-
-[dev-dependencies]
-vee = { path = ".", features = ["pretty_assertions"] }
 
 [lints.rust]
 missing-docs = "forbid"

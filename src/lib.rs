@@ -208,7 +208,7 @@ macro_rules! format_eq {
 }
 
 use core::{
-    cmp::min,
+    cmp::{Ordering, min},
     fmt::{self, Debug, Display},
     iter::FromIterator,
     mem::{swap, take},
@@ -218,11 +218,10 @@ use core::{
         Shr, Sub, SubAssign,
     },
 };
-use num_rational::Ratio;
 use std::collections::{BTreeMap, BTreeSet};
 
 /// Finds the binomial coefficient.
-trait Choose {
+pub trait Choose {
     /// The output type.
     type Output;
 
@@ -244,31 +243,95 @@ impl Choose for u32 {
     }
 }
 
-/// Finds the greatest common divisor (GCD).
-#[allow(dead_code)]
-trait Gcd {
-    /// The output type.
-    type Output;
+/// Finds the greatest common divisor (GCD) and the least common multiple (LCM).
+pub trait GcdLcm
+where
+    Self: Copy + Mul<Output = Self> + Div<Output = Self> + PartialEq + Eq + Default,
+{
+    /// The zero constant.
+    const ZERO: Self;
 
     /// Finds the greatest common divisor (GCD) of `self` and `other`.
     #[must_use]
-    fn gcd(self, other: Self) -> Self::Output;
-}
-
-impl Gcd for i32 {
-    type Output = u32;
-
+    fn gcd(self, other: Self) -> Self;
+    /// Finds the least common multiple (LCM) of `self` and `other`.
+    ///
+    /// Calls [`Self::gcd_lcm()`] and discards GCD.
     #[inline]
-    fn gcd(self, other: Self) -> Self::Output {
-        self.unsigned_abs().gcd(other.unsigned_abs())
+    #[must_use]
+    fn lcm(self, other: Self) -> Self {
+        self.gcd_lcm(other).1
+    }
+    /// Returns <code>([Self::gcd()], [Self::lcm()])</code> of `self` and `other`.
+    ///
+    /// Calls [`Self::gcd()`] to find LCM.
+    #[inline]
+    #[must_use]
+    fn gcd_lcm(self, other: Self) -> (Self, Self) {
+        if self == Self::ZERO && other == Self::ZERO {
+            (Self::ZERO, Self::ZERO)
+        } else {
+            let gcd = self.gcd(other);
+            let lcm = self * (other / gcd);
+            (gcd, lcm)
+        }
+    }
+    /// Finds the GCD of iterator over `Self`.
+    #[inline]
+    #[must_use]
+    fn gcd_bulk(r: impl IntoIterator<Item = Self>) -> Self {
+        r.into_iter().reduce(Self::gcd).unwrap_or_default()
+    }
+    /// Finds the LCM of iterator over `Self`.
+    #[inline]
+    #[must_use]
+    fn lcm_bulk(r: impl IntoIterator<Item = Self>) -> Self {
+        r.into_iter().reduce(Self::lcm).unwrap_or_default()
     }
 }
 
-impl Gcd for u32 {
-    type Output = Self;
+impl GcdLcm for Rational {
+    const ZERO: Self = Self::ZERO;
+
+    #[inline]
+    fn gcd(self, other: Self) -> Self {
+        Self {
+            p: self.p.gcd(other.p),
+            q: self.q.lcm(other.q),
+        }
+    }
+    #[inline]
+    fn lcm(self, other: Self) -> Self {
+        Self {
+            p: self.p.lcm(other.p),
+            q: self.q.gcd(other.q),
+        }
+    }
+    #[inline]
+    fn gcd_lcm(self, other: Self) -> (Self, Self) {
+        let (g_p, l_p) = self.p.gcd_lcm(other.p);
+        let (g_q, l_q) = self.q.gcd_lcm(other.q);
+        (Self { p: g_p, q: l_q }, Self { p: l_p, q: g_q })
+    }
+}
+
+impl GcdLcm for i32 {
+    const ZERO: Self = 0;
+
+    #[inline]
+    fn gcd(self, other: Self) -> Self {
+        self.unsigned_abs()
+            .gcd(other.unsigned_abs())
+            .try_into()
+            .expect("GCD is `i32::MIN.abs()` which is one more than `i32::MAX`.")
+    }
+}
+
+impl GcdLcm for u32 {
+    const ZERO: Self = 0;
 
     #[allow(clippy::many_single_char_names, clippy::debug_assert_with_mut_call)]
-    fn gcd(self, other: Self) -> Self::Output {
+    fn gcd(self, other: Self) -> Self {
         let mut a = self;
         let mut b = other;
         let g = if a == 0 || b == 0 {
@@ -804,9 +867,9 @@ impl<B: Algebra> Display for Multivector<B> {
 
 /// Uniquely reduced form of a symbolic polynomial expression.
 ///
-/// A Laurent polynomial $`P_b`$ is realized as the sum of products of a rational coefficient
-/// $`C_m`$ (i.e., <code>[Ratio]<[i32]></code>) and a primitive Laurent [`Monomial`] $`M_m`$ (i.e.,
-/// an element of an ordered polynomial basis).
+/// A Laurent polynomial $`P_b`$ is realized as the sum of products of a [`Rational`] coefficient
+/// $`C_m`$ and a primitive Laurent [`Monomial`] $`M_m`$ (i.e., an element of an ordered polynomial
+/// basis).
 ///
 /// ```math
 /// P_b \equiv \sum_m C_m M_m
@@ -817,7 +880,7 @@ impl<B: Algebra> Display for Multivector<B> {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default)]
 pub struct Polynomial {
     /// Symbolic storage.
-    pub map: BTreeMap<Monomial, Ratio<i32>>,
+    pub map: BTreeMap<Monomial, Rational>,
 }
 
 impl Polynomial {
@@ -827,7 +890,7 @@ impl Polynomial {
     pub fn cdm(self, mark: char) -> Self {
         let map = BTreeMap::new();
         let map = self.map.into_iter().fold(map, |mut map, (s, c)| {
-            map.insert(s.sym(mark), c);
+            map.insert(s.cdm(mark), c);
             map
         });
         Self { map }
@@ -854,7 +917,7 @@ where
         Self {
             map: iter
                 .into_iter()
-                .map(|sym| (Monomial::from_iter(sym), Ratio::from_integer(1)))
+                .map(|sym| (Monomial::from_iter(sym), Rational::from(1)))
                 .collect(),
         }
     }
@@ -873,9 +936,9 @@ impl Add for Polynomial {
 impl AddAssign for Polynomial {
     fn add_assign(&mut self, other: Self) {
         for (s, c) in other.map {
-            *self.map.entry(s).or_insert_with(|| Ratio::from_integer(0)) += c;
+            *self.map.entry(s).or_insert_with(|| Rational::from(0)) += c;
         }
-        self.map.retain(|_s, c| *c.numer() != 0);
+        self.map.retain(|_s, c| c.p() != 0);
     }
 }
 
@@ -892,9 +955,9 @@ impl Sub for Polynomial {
 impl SubAssign for Polynomial {
     fn sub_assign(&mut self, other: Self) {
         for (s, c) in other.map {
-            *self.map.entry(s).or_insert_with(|| Ratio::from_integer(0)) -= c;
+            *self.map.entry(s).or_insert_with(|| Rational::from(0)) -= c;
         }
-        self.map.retain(|_s, c| *c.numer() != 0);
+        self.map.retain(|_s, c| c.p() != 0);
     }
 }
 
@@ -915,11 +978,11 @@ impl Mul for Polynomial {
         for (lhs_s, lhs_c) in &self.map {
             for (rhs_s, rhs_c) in &other.map {
                 let s = lhs_s.clone() * rhs_s.clone();
-                let c = lhs_c * rhs_c;
-                *map.entry(s).or_insert_with(|| Ratio::from_integer(0)) += c;
+                let c = *lhs_c * *rhs_c;
+                *map.entry(s).or_insert_with(|| Rational::from(0)) += c;
             }
         }
-        map.retain(|_s, c| *c.numer() != 0);
+        map.retain(|_s, c| c.p() != 0);
         Self { map }
     }
 }
@@ -962,7 +1025,7 @@ impl Div<i32> for Polynomial {
 
 impl DivAssign<i32> for Polynomial {
     fn div_assign(&mut self, other: i32) {
-        assert!(other != 0, "division by zero");
+        assert_ne!(other, 0, "division by zero");
         self.map.values_mut().for_each(|c| *c /= other);
     }
 }
@@ -970,8 +1033,8 @@ impl DivAssign<i32> for Polynomial {
 impl Display for Polynomial {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.map.iter().enumerate().try_for_each(|(i, (s, c))| {
-            if !f.sign_plus() && !s.map.is_empty() && c.numer().abs() == 1 && c.denom().abs() == 1 {
-                if c.numer().is_negative() {
+            if !f.sign_plus() && !s.map.is_empty() && c.abs().is_one() {
+                if c.is_negative() {
                     write!(f, "-")?;
                 } else if f.alternate() || i > 0 {
                     write!(f, "+")?;
@@ -981,6 +1044,331 @@ impl Display for Polynomial {
             }
             Display::fmt(s, f)
         })
+    }
+}
+
+/// Rational number in canonical form.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Rational {
+    p: i32,
+    q: i32,
+}
+
+impl Rational {
+    /// The zero constant.
+    pub const ZERO: Self = Self { p: 0, q: 1 };
+    /// The one constant.
+    pub const ONE: Self = Self { p: 1, q: 1 };
+
+    /// Finds the irreducable fraction of numerator `p` and denominator `q`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if denominator is zero.
+    #[must_use]
+    pub fn new(mut p: i32, mut q: i32) -> Self {
+        if p == 0 {
+            Self { p: 0, q: 1 }
+        } else if p == q {
+            Self { p: 1, q: 1 }
+        } else {
+            let mut g = p.gcd(q);
+            assert_ne!(g, 0, "division by zero");
+            if q < 0 {
+                g = -g;
+            }
+            p /= g;
+            q /= g;
+            Self { p, q }
+        }
+    }
+    /// The numerator.
+    #[must_use]
+    #[inline]
+    pub const fn p(&self) -> i32 {
+        self.p
+    }
+    /// The denominator.
+    #[must_use]
+    #[inline]
+    pub const fn q(&self) -> i32 {
+        self.q
+    }
+    /// Inverts the fraction.
+    ///
+    /// # Panics
+    ///
+    /// Panics if numerator is zero.
+    #[must_use]
+    pub fn inv(&self) -> Self {
+        assert_ne!(self.p, 0, "division by zero");
+        if self.p < 0 {
+            Self {
+                p: -self.p,
+                q: -self.q,
+            }
+        } else {
+            Self {
+                p: self.q,
+                q: self.p,
+            }
+        }
+    }
+    /// The absolute.
+    #[must_use]
+    #[inline]
+    pub const fn abs(&self) -> Self {
+        Self {
+            p: self.p.abs(),
+            q: self.q,
+        }
+    }
+    /// Whether this rational number is negative.
+    #[must_use]
+    #[inline]
+    pub const fn is_negative(&self) -> bool {
+        self.p.is_negative()
+    }
+    /// Whether this rational number is positive.
+    #[must_use]
+    #[inline]
+    pub const fn is_positive(&self) -> bool {
+        self.p.is_positive()
+    }
+    /// Whether this rational number is one.
+    #[must_use]
+    #[inline]
+    pub const fn is_one(&self) -> bool {
+        self.p == 1 && self.q == 1
+    }
+    /// Whether this rational number is zero.
+    #[must_use]
+    #[inline]
+    pub const fn is_zero(&self) -> bool {
+        self.p == 0
+    }
+}
+
+impl Default for Rational {
+    #[inline]
+    fn default() -> Self {
+        Self::ZERO
+    }
+}
+
+impl From<i32> for Rational {
+    #[inline]
+    fn from(p: i32) -> Self {
+        Self { p, q: 1 }
+    }
+}
+
+impl From<(i32, i32)> for Rational {
+    #[inline]
+    fn from((p, q): (i32, i32)) -> Self {
+        Self::new(p, q)
+    }
+}
+
+impl Add for Rational {
+    type Output = Self;
+
+    #[inline]
+    fn add(self, other: Self) -> Self {
+        Self::new(self.p * other.q + self.q * other.p, self.q * other.q)
+    }
+}
+
+impl AddAssign for Rational {
+    #[inline]
+    fn add_assign(&mut self, other: Self) {
+        *self = *self + other;
+    }
+}
+
+impl Add<i32> for Rational {
+    type Output = Self;
+
+    #[inline]
+    fn add(self, other: i32) -> Self {
+        Self::new(self.p + self.q * other, self.q)
+    }
+}
+
+impl AddAssign<i32> for Rational {
+    #[inline]
+    fn add_assign(&mut self, other: i32) {
+        *self = *self + other;
+    }
+}
+
+impl Add<Rational> for i32 {
+    type Output = Rational;
+
+    #[inline]
+    fn add(self, other: Rational) -> Rational {
+        Rational::new(self * other.q + other.p, other.q)
+    }
+}
+
+impl Sub for Rational {
+    type Output = Self;
+
+    #[inline]
+    fn sub(self, other: Self) -> Self {
+        Self::new(self.p * other.q - self.q * other.p, self.q * other.q)
+    }
+}
+
+impl SubAssign for Rational {
+    #[inline]
+    fn sub_assign(&mut self, other: Self) {
+        *self = *self - other;
+    }
+}
+
+impl Neg for Rational {
+    type Output = Self;
+
+    #[inline]
+    fn neg(self) -> Self {
+        Self {
+            p: -self.p,
+            q: self.q,
+        }
+    }
+}
+
+impl Sub<i32> for Rational {
+    type Output = Self;
+
+    #[inline]
+    fn sub(self, other: i32) -> Self {
+        Self::new(self.p - self.q * other, self.q)
+    }
+}
+
+impl SubAssign<i32> for Rational {
+    #[inline]
+    fn sub_assign(&mut self, other: i32) {
+        *self = *self - other;
+    }
+}
+
+impl Sub<Rational> for i32 {
+    type Output = Rational;
+
+    #[inline]
+    fn sub(self, other: Rational) -> Rational {
+        Rational::new(self * other.q - other.p, other.q)
+    }
+}
+
+impl Mul for Rational {
+    type Output = Self;
+
+    #[inline]
+    fn mul(self, other: Self) -> Self {
+        Self::new(self.p * other.p, self.q * other.q)
+    }
+}
+
+impl MulAssign for Rational {
+    #[inline]
+    fn mul_assign(&mut self, other: Self) {
+        *self = *self * other;
+    }
+}
+
+impl Mul<i32> for Rational {
+    type Output = Self;
+
+    #[inline]
+    fn mul(self, other: i32) -> Self {
+        Self::new(self.p * other, self.q)
+    }
+}
+
+impl MulAssign<i32> for Rational {
+    #[inline]
+    fn mul_assign(&mut self, other: i32) {
+        *self = *self * other;
+    }
+}
+
+impl Mul<Rational> for i32 {
+    type Output = Rational;
+
+    #[inline]
+    fn mul(self, other: Rational) -> Rational {
+        Rational::new(self * other.p, other.q)
+    }
+}
+
+impl Div for Rational {
+    type Output = Self;
+
+    #[inline]
+    fn div(self, other: Self) -> Self {
+        Self::new(self.p * other.q, self.q * other.p)
+    }
+}
+
+impl DivAssign for Rational {
+    #[inline]
+    fn div_assign(&mut self, other: Self) {
+        *self = *self / other;
+    }
+}
+
+impl Div<i32> for Rational {
+    type Output = Self;
+
+    #[inline]
+    #[allow(clippy::suspicious_arithmetic_impl)]
+    fn div(self, other: i32) -> Self {
+        Self::new(self.p, self.q * other)
+    }
+}
+
+impl DivAssign<i32> for Rational {
+    #[inline]
+    fn div_assign(&mut self, other: i32) {
+        *self = *self / other;
+    }
+}
+
+impl Div<Rational> for i32 {
+    type Output = Rational;
+
+    #[inline]
+    #[allow(clippy::suspicious_arithmetic_impl)]
+    fn div(self, other: Rational) -> Rational {
+        Rational::new(self * other.q, other.p)
+    }
+}
+
+impl PartialOrd for Rational {
+    #[inline]
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Rational {
+    #[inline]
+    fn cmp(&self, other: &Self) -> Ordering {
+        (self.p * other.q).cmp(&(other.p * self.q))
+    }
+}
+
+impl Display for Rational {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        Display::fmt(&self.p, f)?;
+        if self.q != 1 {
+            write!(f, "/{}", self.q)?;
+        }
+        Ok(())
     }
 }
 
@@ -1005,7 +1393,7 @@ impl Monomial {
     /// Appends combining diacritical `mark` to all symbols.
     #[must_use]
     #[inline]
-    pub fn sym(self, mark: char) -> Self {
+    pub fn cdm(self, mark: char) -> Self {
         let map = BTreeMap::new();
         let map = self.map.into_iter().fold(map, |mut map, (s, e)| {
             map.insert(s.cdm(mark), e);
