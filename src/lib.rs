@@ -917,7 +917,7 @@ where
         Self {
             map: iter
                 .into_iter()
-                .map(|sym| (Monomial::from_iter(sym), Rational::from(1)))
+                .map(|sym| (Monomial::from_iter(sym), Rational::ONE))
                 .collect(),
         }
     }
@@ -936,7 +936,7 @@ impl Add for Polynomial {
 impl AddAssign for Polynomial {
     fn add_assign(&mut self, other: Self) {
         for (s, c) in other.map {
-            *self.map.entry(s).or_insert_with(|| Rational::from(0)) += c;
+            *self.map.entry(s).or_default() += c;
         }
         self.map.retain(|_s, c| c.p() != 0);
     }
@@ -955,7 +955,7 @@ impl Sub for Polynomial {
 impl SubAssign for Polynomial {
     fn sub_assign(&mut self, other: Self) {
         for (s, c) in other.map {
-            *self.map.entry(s).or_insert_with(|| Rational::from(0)) -= c;
+            *self.map.entry(s).or_default() -= c;
         }
         self.map.retain(|_s, c| c.p() != 0);
     }
@@ -979,10 +979,10 @@ impl Mul for Polynomial {
             for (rhs_s, rhs_c) in &other.map {
                 let s = lhs_s.clone() * rhs_s.clone();
                 let c = *lhs_c * *rhs_c;
-                *map.entry(s).or_insert_with(|| Rational::from(0)) += c;
+                *map.entry(s).or_default() += c;
             }
         }
-        map.retain(|_s, c| c.p() != 0);
+        map.retain(|_s, c: &mut Rational| c.p() != 0);
         Self { map }
     }
 }
@@ -1068,9 +1068,9 @@ impl Rational {
     #[must_use]
     pub fn new(mut p: i32, mut q: i32) -> Self {
         if p == 0 {
-            Self { p: 0, q: 1 }
+            Self::ZERO
         } else if p == q {
-            Self { p: 1, q: 1 }
+            Self::ONE
         } else {
             let mut g = p.gcd(q);
             assert_ne!(g, 0, "division by zero");
