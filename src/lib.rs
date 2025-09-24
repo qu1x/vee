@@ -323,7 +323,7 @@ impl GcdLcm for i32 {
         self.unsigned_abs()
             .gcd(other.unsigned_abs())
             .try_into()
-            .expect("GCD is `i32::MIN.abs()` which is one more than `i32::MAX`.")
+            .expect("GCD is `i32::MIN.unsigned_abs() == i32::MAX.unsigned_abs() + 1`.")
     }
 }
 
@@ -572,7 +572,7 @@ impl<B: Algebra> Multivector<B> {
     #[must_use]
     #[allow(clippy::missing_panics_doc)]
     pub fn pol(self) -> Self {
-        self * Self::new([('\0', B::basis().next_back().expect("empty basis"))])
+        self * Self::new([(Symbol::NIL, B::basis().next_back().expect("empty basis"))])
     }
     /// The mixed-grade squared norm (i.e., a Study number).
     ///
@@ -1374,7 +1374,7 @@ impl Display for Rational {
 
 /// Uniquely reduced form of a symbolic monomial expression.
 ///
-/// A primitive Laurent monomial $`M_m`$ is realized as the product of <code>[Symbol]</code>s
+/// A primitive Laurent monomial $`M_m`$ is realized as the product of <code>[Symbol]s</code>
 /// $`S_s`$ with individual non-zero exponents $`E_s`$.
 ///
 /// ```math
