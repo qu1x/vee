@@ -1,7 +1,14 @@
-# Version 0.1.4 (2025-09-??)
+# Version 0.1.4 (2025-10-11)
 
+  * Update KaTeX.
+  * Explore 6D/7D PGA.
+  * Assert entities have unique symbols and exactly one per basis blade fixing 4D PGA.
+  * Introduce `Symbol::alt()` to extend symbol space.
+  * Rechoose basis blades following recipe. After a refactoring, they can be genrated this way.
+  * Refactor rational numbers without dependency and find their GCD/LCM.
   * Refactor symbol without dependency.
   * Swap case without dependency.
+  * Always export `format_eq!` by using non-pretty fallback.
   * Let `format_eq!` omit unit coefficient for more compact text form.
   * Introduce `{:+}` for not omitting unit coefficient.
   * Fix invalid coefficient omission.

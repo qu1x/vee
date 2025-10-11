@@ -182,10 +182,14 @@
 //! assert_eq!(!Vee::plane(), Vee::point().swp());
 //! ```
 
-/// Like `assert_eq!` but formats `$left` expression and `$right` literal using [`Display`].
+/// Formats the `$left` expression using [`Display`] and asserts the `$right` string literal(s).
 ///
-/// If the preformatted `$right` literal is an array of multiple literals, `$left` is formated in
-/// alternate form `"{:#}"` instead of default form `"{}"`.
+/// If `$right` is an array expression of string literals, formats `$left` in alternate form (i.e.,
+/// `"{:#}"`) instead of default form (i.e., `"{}"`), appends `"\n"` to each `$right` literal, and
+/// asserts the concatenation thereof.
+///
+/// With the `pretty_assertions` feature, the respective [`assert_eq!`] macro is used. In this way,
+/// the Unicode *combining diacritical marks* are rendered as in the examples using [`format_eq!`].
 #[macro_export]
 macro_rules! format_eq {
     ($emitted:expr, $literal:literal) => {{
@@ -461,31 +465,39 @@ impl<B: Algebra> Multivector<B> {
     {
         iter.into_iter().map(|(s, b)| ([[s]], b)).collect()
     }
-    /// Adds Unicode *combining x below* (i.e., `"◌͓"`) to all symbols.
+    /// Appends Unicode *combining dot above* (i.e., `"◌̇"`) to all symbols.
+    ///
+    /// This is orthogonal to [`Self::cdm()`] extending the symbol space.
+    #[must_use]
+    pub fn alt(mut self) -> Self {
+        self.map.values_mut().for_each(|p| *p = take(p).alt());
+        self
+    }
+    /// Appends Unicode *combining x below* (i.e., `"◌͓"`) to all symbols.
     ///
     /// Pins this multivector as being sandwiched by the reflection or projection operator.
     ///
-    /// Calls <code>[Self::cdm]\(\[Symbol::PIN]\)</code>.
+    /// Calls <code>[Self::cdm]\([Symbol::PIN]\)</code>.
     #[must_use]
     #[inline]
     pub fn pin(self) -> Self {
         self.cdm(Symbol::PIN)
     }
-    /// Adds Unicode *combining left arrowhead below* (i.e., `"◌͔"`) to all symbols.
+    /// Appends Unicode *combining left arrowhead below* (i.e., `"◌͔"`) to all symbols.
     ///
     /// Pins this multivector as left-hand side.
     ///
-    /// Calls <code>[Self::cdm]\(\[Symbol::LHS]\)</code>.
+    /// Calls <code>[Self::cdm]\([Symbol::LHS]\)</code>.
     #[must_use]
     #[inline]
     pub fn lhs(self) -> Self {
         self.cdm(Symbol::LHS)
     }
-    /// Adds Unicode *combining right arrowhead below* (i.e., `"◌͕"`) to all symbols.
+    /// Appends Unicode *combining right arrowhead below* (i.e., `"◌͕"`) to all symbols.
     ///
     /// Pins this multivector as right-hand side.
     ///
-    /// Calls <code>[Self::cdm]\(\[Symbol::RHS]\)</code>.
+    /// Calls <code>[Self::cdm]\([Symbol::RHS]\)</code>.
     #[must_use]
     #[inline]
     pub fn rhs(self) -> Self {
@@ -524,6 +536,22 @@ impl<B: Algebra> Multivector<B> {
         (grades.len() == 1)
             .then(|| grades.first().copied())
             .flatten()
+    }
+    /// Whether being an entity (i.e., having unique symbols and exactly one per basis blade).
+    #[must_use]
+    pub fn is_entity(&self) -> bool {
+        let mut set = BTreeSet::new();
+        for p in self.map.values() {
+            if let Some(m) = p.map.keys().next().filter(|_| p.map.len() == 1) {
+                if let Some(s) = m.map.keys().next().filter(|_| m.map.len() == 1) {
+                    if set.insert(s) {
+                        continue;
+                    }
+                }
+            }
+            return false;
+        }
+        true
     }
     /// Collects the vectors per grade.
     #[must_use]
@@ -884,6 +912,17 @@ pub struct Polynomial {
 }
 
 impl Polynomial {
+    /// Extends the symbol space.
+    #[must_use]
+    #[inline]
+    pub fn alt(self) -> Self {
+        let map = BTreeMap::new();
+        let map = self.map.into_iter().fold(map, |mut map, (s, c)| {
+            map.insert(s.alt(), c);
+            map
+        });
+        Self { map }
+    }
     /// Appends combining diacritical `mark` to all symbols.
     #[must_use]
     #[inline]
@@ -1390,6 +1429,17 @@ pub struct Monomial {
 }
 
 impl Monomial {
+    /// Extends the symbol space.
+    #[must_use]
+    #[inline]
+    pub fn alt(self) -> Self {
+        let map = BTreeMap::new();
+        let map = self.map.into_iter().fold(map, |mut map, (s, e)| {
+            map.insert(s.alt(), e);
+            map
+        });
+        Self { map }
+    }
     /// Appends combining diacritical `mark` to all symbols.
     #[must_use]
     #[inline]
@@ -1495,6 +1545,7 @@ impl Display for Monomial {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
 pub struct Symbol {
     var: char,
+    alt: char,
     cdm: char,
 }
 
@@ -1502,6 +1553,8 @@ impl Symbol {
     /// Unicode null (i.e., `'\0'`).
     pub const NIL: char = '\0';
 
+    /// Unicode *combining dot above* (i.e., `"◌̇"`).
+    pub const ALT: char = '\u{0307}';
     /// Unicode *combining x below* (i.e., `"◌͓"`).
     pub const PIN: char = '\u{0353}';
     /// Unicode *combining left arrowhead below* (i.e., `"◌͔"`).
@@ -1515,6 +1568,7 @@ impl Symbol {
     pub const fn one() -> Self {
         Self {
             var: Self::NIL,
+            alt: Self::NIL,
             cdm: Self::NIL,
         }
     }
@@ -1530,20 +1584,35 @@ impl Symbol {
     pub const fn is_pin(&self) -> bool {
         self.cdm == Self::PIN
     }
+    /// Whether this symbol is alternative.
+    #[must_use]
+    #[inline]
+    pub const fn is_alt(&self) -> bool {
+        self.alt == Self::ALT
+    }
     /// Creates symbol for variable `var`.
     #[must_use]
     #[inline]
     pub const fn new(var: char) -> Self {
         Self {
             var,
+            alt: Self::NIL,
             cdm: Self::NIL,
         }
+    }
+    /// Marks this symbol with [`Self::ALT`].
+    #[must_use]
+    #[inline]
+    pub const fn alt(mut self) -> Self {
+        self.alt = Self::ALT;
+        self
     }
     /// Marks this symbol with Unicode *combining diacritical mark*.
     #[must_use]
     #[inline]
-    pub(crate) const fn cdm(self, cdm: char) -> Self {
-        Self { var: self.var, cdm }
+    pub(crate) const fn cdm(mut self, cdm: char) -> Self {
+        self.cdm = cdm;
+        self
     }
     /// Marks this symbol with [`Self::PIN`].
     #[must_use]
@@ -1596,7 +1665,11 @@ impl Not for Symbol {
             assert_eq!(iter.len(), 1, "no lowercase for {}", self.var);
             iter.next().unwrap()
         };
-        Self { var, cdm: self.cdm }
+        Self {
+            var,
+            alt: self.alt,
+            cdm: self.cdm,
+        }
     }
 }
 
@@ -1604,6 +1677,9 @@ impl Display for Symbol {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if self.var != Self::NIL {
             write!(f, "{}", self.var)?;
+            if self.alt != Self::NIL {
+                write!(f, "{}", self.alt)?;
+            }
             if self.cdm != Self::NIL {
                 write!(f, "{}", self.cdm)?;
             }
