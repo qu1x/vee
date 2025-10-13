@@ -248,7 +248,7 @@ impl Choose for u32 {
 }
 
 /// Finds the greatest common divisor (GCD) and the least common multiple (LCM).
-pub trait GcdLcm
+pub trait Factor
 where
     Self: Copy + Mul<Output = Self> + Div<Output = Self> + PartialEq + Eq + Default,
 {
@@ -294,7 +294,7 @@ where
     }
 }
 
-impl GcdLcm for Rational {
+impl Factor for Rational {
     const ZERO: Self = Self::ZERO;
 
     #[inline]
@@ -319,7 +319,7 @@ impl GcdLcm for Rational {
     }
 }
 
-impl GcdLcm for i32 {
+impl Factor for i32 {
     const ZERO: Self = 0;
 
     #[inline]
@@ -331,7 +331,7 @@ impl GcdLcm for i32 {
     }
 }
 
-impl GcdLcm for u32 {
+impl Factor for u32 {
     const ZERO: Self = 0;
 
     #[allow(clippy::many_single_char_names, clippy::debug_assert_with_mut_call)]
