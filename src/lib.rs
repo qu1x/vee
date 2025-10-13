@@ -15,7 +15,7 @@
 //! profiles based on SIMD using [`lav`] with and without generics or arbitrary precision types
 //! using [`rug`]). The pre-generated code forms will be provided along with the code generator
 //! behind respective feature gates. When [`packages_as_namespaces`] is stable, each code form will
-//! become a crate. Currently, the planed-based pistachio flavor -- Projective Geometric Algebra
+//! become a crate. Currently, the plane-based pistachio flavor -- Projective Geometric Algebra
 //! (PGA) -- is implemented for $`D \equiv N + 1 \le 8`$ in all three metrics, i.e., elliptic,
 //! hyperbolic, and parabolic (Euclidean).[^2] The 5D, 6D, and 7D PGAs (i.e., $`N = 5`$, $`N = 6`$,
 //! and $`N = 7`$) are incomplete as there are no inverses based on Study numbers but they provide
