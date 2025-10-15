@@ -20,13 +20,13 @@ pub type PgaE1 = Pga<1, 1>;
 pub type PgaE2 = Pga<1, 2>;
 /// Basis blade of Elliptic 3D PGA.
 pub type PgaE3 = Pga<1, 3>;
-/// Basis blade of Elliptic 4D PGA (experimental).
+/// Basis blade of Elliptic 4D PGA.
 pub type PgaE4 = Pga<1, 4>;
-/// Basis blade of Elliptic 5D PGA (experimental, no inverse).
+/// Basis blade of Elliptic 5D PGA (exploratory).
 pub type PgaE5 = Pga<1, 5>;
-/// Basis blade of Elliptic 6D PGA (experimental, no inverse).
+/// Basis blade of Elliptic 6D PGA (exploratory).
 pub type PgaE6 = Pga<1, 6>;
-/// Basis blade of Elliptic 7D PGA (experimental, no inverse).
+/// Basis blade of Elliptic 7D PGA (exploratory).
 pub type PgaE7 = Pga<1, 7>;
 
 /// Basis blade of Hyperbolic 0D PGA.
@@ -37,13 +37,13 @@ pub type PgaH1 = Pga<-1, 1>;
 pub type PgaH2 = Pga<-1, 2>;
 /// Basis blade of Hyperbolic 3D PGA.
 pub type PgaH3 = Pga<-1, 3>;
-/// Basis blade of Hyperbolic 4D PGA (experimental).
+/// Basis blade of Hyperbolic 4D PGA.
 pub type PgaH4 = Pga<-1, 4>;
-/// Basis blade of Hyperbolic 5D PGA (experimental, no inverse).
+/// Basis blade of Hyperbolic 5D PGA (exploratory).
 pub type PgaH5 = Pga<-1, 5>;
-/// Basis blade of Hyperbolic 6D PGA (experimental, no inverse).
+/// Basis blade of Hyperbolic 6D PGA (exploratory).
 pub type PgaH6 = Pga<-1, 6>;
-/// Basis blade of Hyperbolic 7D PGA (experimental, no inverse).
+/// Basis blade of Hyperbolic 7D PGA (exploratory).
 pub type PgaH7 = Pga<-1, 7>;
 
 /// Basis blade of Parabolic (Euclidean) 0D PGA.
@@ -54,13 +54,13 @@ pub type PgaP1 = Pga<0, 1>;
 pub type PgaP2 = Pga<0, 2>;
 /// Basis blade of Parabolic (Euclidean) 3D PGA.
 pub type PgaP3 = Pga<0, 3>;
-/// Basis blade of Parabolic (Euclidean) 4D PGA (experimental).
+/// Basis blade of Parabolic (Euclidean) 4D PGA.
 pub type PgaP4 = Pga<0, 4>;
-/// Basis blade of Parabolic (Euclidean) 5D PGA (experimental, no inverse).
+/// Basis blade of Parabolic (Euclidean) 5D PGA (exploratory).
 pub type PgaP5 = Pga<0, 5>;
-/// Basis blade of Parabolic (Euclidean) 6D PGA (experimental, no inverse).
+/// Basis blade of Parabolic (Euclidean) 6D PGA (exploratory).
 pub type PgaP6 = Pga<0, 6>;
-/// Basis blade of Parabolic (Euclidean) 7D PGA (experimental, no inverse).
+/// Basis blade of Parabolic (Euclidean) 7D PGA (exploratory).
 pub type PgaP7 = Pga<0, 7>;
 
 /// Basis blade of PGA with metric $`M\in\{\pm 1,0\}`$ and embedded dimension $`N\in[0, 7]`$.
@@ -1576,7 +1576,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     }
 }
 
-/// The named entities of the PGA with embedded dimension $`N = 4`$ (experimental).
+/// The named entities of the PGA with embedded dimension $`N = 4`$.
 ///
 /// ```gdef
 /// \gdef\e{
@@ -2126,7 +2126,7 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     }
 }
 
-/// The named entities of the PGA with embedded dimension $`N = 5`$ (experimental, no inverse).
+/// The named entities of the PGA with embedded dimension $`N = 5`$ (exploratory).
 ///
 /// ```gdef
 /// \gdef\e{
@@ -3063,7 +3063,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     }
 }
 
-/// The named entities of the PGA with embedded dimension $`N = 6`$ (experimental, no inverse).
+/// The named entities of the PGA with embedded dimension $`N = 6`$ (exploratory).
 ///
 /// ```gdef
 /// \gdef\e{
@@ -5025,7 +5025,7 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     }
 }
 
-/// The named entities of the PGA with embedded dimension $`N = 7`$ (experimental, no inverse).
+/// The named entities of the PGA with embedded dimension $`N = 7`$ (exploratory).
 ///
 /// ```gdef
 /// \gdef\e{

@@ -18,15 +18,16 @@
 //! become a crate. Currently, the plane-based pistachio flavor -- Projective Geometric Algebra
 //! (PGA) -- is implemented for $`D \equiv N + 1 \le 8`$ in all three metrics, i.e., elliptic,
 //! hyperbolic, and parabolic (Euclidean).[^2] The 5D, 6D, and 7D PGAs (i.e., $`N = 5`$, $`N = 6`$,
-//! and $`N = 7`$) are incomplete as there are no inverses based on Study numbers but they provide
-//! dimension-agnostic insights regarding duality and the choice of basis blades. The PGA is
-//! especially of interest for computer graphics, game engines, and physics simulations as it is the
-//! most compact flavor (i.e., a one-up flavor) unifying the established but scattered frameworks,
-//! e.g., homogeneous coordinates, Plücker coordinates, (dual) quaternions, and screw theory. Even
-//! without any knowledge of geometric algebra, an API can be more intuitive as it unifies the
-//! positional and directional aspects of geometric entities (e.g., planes, lines, points) and the
-//! linear and angular aspects of rigid-body dynamics in a dimension-agnostic way with closed-form
-//! (i.e., non-iterative) solutions up to 4D (e.g., [`PgaP2`], [`PgaP3`], [`PgaP4`]).[^3]
+//! and $`N = 7`$) are exploratory as there are no inverses based on Study numbers. They provide
+//! dimension-agnostic insights regarding duality, the choice of basis blades, and grade-preserving
+//! conditions among orthonormalization conditions. The PGA is especially of interest for computer
+//! graphics (e.g., game and physics engines) as it is the most compact flavor (i.e., a one-up
+//! flavor) unifying the established but scattered frameworks, e.g., homogeneous coordinates,
+//! Plücker coordinates, (dual) quaternions, and screw theory. Even without any knowledge of
+//! geometric algebra, an API can be more intuitive as it unifies the positional and directional
+//! aspects of geometric entities (e.g., planes, lines, points) and the linear and angular aspects
+//! of rigid-body dynamics in a dimension-agnostic way with closed-form (i.e., non-iterative)
+//! solutions up to 4D (e.g., [`PgaP2`], [`PgaP3`], [`PgaP4`]).[^3]
 //!
 //! [`packages_as_namespaces`]:
 //! https://rust-lang.github.io/rfcs/3243-packages-as-optional-namespaces.html
@@ -1698,13 +1699,13 @@ pub type PgaE1 = Multivector<pga::PgaE1>;
 pub type PgaE2 = Multivector<pga::PgaE2>;
 /// Multivector for Elliptic 3D PGA.
 pub type PgaE3 = Multivector<pga::PgaE3>;
-/// Multivector for Elliptic 4D PGA (experimental).
+/// Multivector for Elliptic 4D PGA.
 pub type PgaE4 = Multivector<pga::PgaE4>;
-/// Multivector for Elliptic 5D PGA (experimental, no inverse).
+/// Multivector for Elliptic 5D PGA (exploratory).
 pub type PgaE5 = Multivector<pga::PgaE5>;
-/// Multivector for Elliptic 6D PGA (experimental, no inverse).
+/// Multivector for Elliptic 6D PGA (exploratory).
 pub type PgaE6 = Multivector<pga::PgaE6>;
-/// Multivector for Elliptic 7D PGA (experimental, no inverse).
+/// Multivector for Elliptic 7D PGA (exploratory).
 pub type PgaE7 = Multivector<pga::PgaE7>;
 
 /// Multivector for Hyperbolic 0D PGA.
@@ -1715,13 +1716,13 @@ pub type PgaH1 = Multivector<pga::PgaH1>;
 pub type PgaH2 = Multivector<pga::PgaH2>;
 /// Multivector for Hyperbolic 3D PGA.
 pub type PgaH3 = Multivector<pga::PgaH3>;
-/// Multivector for Hyperbolic 4D PGA (experimental).
+/// Multivector for Hyperbolic 4D PGA.
 pub type PgaH4 = Multivector<pga::PgaH4>;
-/// Multivector for Hyperbolic 5D PGA (experimental, no inverse).
+/// Multivector for Hyperbolic 5D PGA (exploratory).
 pub type PgaH5 = Multivector<pga::PgaH5>;
-/// Multivector for Hyperbolic 6D PGA (experimental, no inverse).
+/// Multivector for Hyperbolic 6D PGA (exploratory).
 pub type PgaH6 = Multivector<pga::PgaH6>;
-/// Multivector for Hyperbolic 7D PGA (experimental, no inverse).
+/// Multivector for Hyperbolic 7D PGA (exploratory).
 pub type PgaH7 = Multivector<pga::PgaH7>;
 
 /// Multivector for Parabolic (Euclidean) 0D PGA.
@@ -1732,11 +1733,11 @@ pub type PgaP1 = Multivector<pga::PgaP1>;
 pub type PgaP2 = Multivector<pga::PgaP2>;
 /// Multivector for Parabolic (Euclidean) 3D PGA.
 pub type PgaP3 = Multivector<pga::PgaP3>;
-/// Multivector for Parabolic (Euclidean) 4D PGA (experimental).
+/// Multivector for Parabolic (Euclidean) 4D PGA.
 pub type PgaP4 = Multivector<pga::PgaP4>;
-/// Multivector for Parabolic (Euclidean) 5D PGA (experimental, no inverse).
+/// Multivector for Parabolic (Euclidean) 5D PGA (exploratory).
 pub type PgaP5 = Multivector<pga::PgaP5>;
-/// Multivector for Parabolic (Euclidean) 6D PGA (experimental, no inverse).
+/// Multivector for Parabolic (Euclidean) 6D PGA (exploratory).
 pub type PgaP6 = Multivector<pga::PgaP6>;
-/// Multivector for Parabolic (Euclidean) 7D PGA (experimental, no inverse).
+/// Multivector for Parabolic (Euclidean) 7D PGA (exploratory).
 pub type PgaP7 = Multivector<pga::PgaP7>;
