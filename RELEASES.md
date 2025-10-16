@@ -1,4 +1,4 @@
-# Version 0.1.4 (2025-10-11)
+# Version 0.1.4 (2025-10-16)
 
   * Update KaTeX.
   * Explore 6D/7D PGA.
