@@ -618,6 +618,14 @@ impl<B: Algebra> Multivector<B> {
     pub fn squared_norm(self) -> Self {
         self.clone() * self.rev()
     }
+    /// Returns the number of `(multiplications, additions)`.
+    #[must_use]
+    pub fn ops(&self) -> (usize, usize) {
+        self.map.values().fold((0, 0), |(v_muls, v_adds), p| {
+            let (p_muls, p_adds) = p.ops();
+            (v_muls + p_muls, v_adds + p_adds)
+        })
+    }
 }
 
 impl<B: Algebra, P, M, S> FromIterator<(P, B)> for Multivector<B>
@@ -945,6 +953,23 @@ impl Polynomial {
             map
         });
         Self { map }
+    }
+    /// Returns the number of `(multiplications, additions)`.
+    #[must_use]
+    pub fn ops(&self) -> (usize, usize) {
+        (
+            self.map
+                .keys()
+                .map(|m| {
+                    m.map
+                        .values()
+                        .filter_map(|e| usize::try_from(e.get()).ok())
+                        .sum::<usize>()
+                        .saturating_sub(1)
+                })
+                .sum::<usize>(),
+            self.map.len().saturating_sub(1),
+        )
     }
 }
 
