@@ -959,13 +959,14 @@ impl Polynomial {
     pub fn ops(&self) -> (usize, usize) {
         (
             self.map
-                .keys()
-                .map(|m| {
-                    m.map
+                .iter()
+                .map(|(m, r)| {
+                    (m.map
                         .values()
                         .filter_map(|e| usize::try_from(e.get()).ok())
                         .sum::<usize>()
-                        .saturating_sub(1)
+                        + usize::from(!r.abs().is_one()))
+                    .saturating_sub(1)
                 })
                 .sum::<usize>(),
             self.map.len().saturating_sub(1),
