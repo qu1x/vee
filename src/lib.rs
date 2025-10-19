@@ -151,20 +151,29 @@
 //!
 //! # Examples
 //!
-//! Generates the expression for rotating a plane in [`PgaP3`], i.e., the type alias of
+//! Generates the expression for rotating a point in [`PgaP3`], i.e., the type alias of
 //! [`Multivector`] parameterized for the Parabolic (Euclidean) 3D PGA. The [`PgaP3::pin()`] method
-//! pins symbols of [`PgaP3::plane()`] with the *combining x below* (i.e., the Unicode *combining
+//! pins symbols of [`PgaP3::point()`] with the *combining x below* (i.e., the Unicode *combining
 //! diacritical mark* `"◌͓"`) to distinguish them from the symbols of
 //! [`PgaP3::rotator()`](struct.Multivector.html#method.rotator-1).
 //!
 //! ```
 //! use vee::{format_eq, PgaP3 as Vee};
 //!
-//! format_eq!(Vee::plane().pin() << Vee::rotator(), [
-//!     "+(+[+vv+xx+yy+zz]W͓)e0",
-//!     "+(+[+2vz+2xy]y͓+[-2vy+2xz]z͓+[+vv+xx-yy-zz]x͓)e1",
-//!     "+(+[+2vx+2yz]z͓+[-2vz+2xy]x͓+[+vv-xx+yy-zz]y͓)e2",
-//!     "+(+[+2vy+2xz]x͓+[-2vx+2yz]y͓+[+vv-xx-yy+zz]z͓)e3",
+//! // Assumes rotator is not normalized.
+//! format_eq!(Vee::point().pin() << Vee::rotator(), [
+//!     "+(+[+vv+xx+yy+zz]w͓)e123",
+//!     "+(+[+2vz+2xy]Y͓+[-2vy+2xz]Z͓+[+vv+xx-yy-zz]X͓)e032",
+//!     "+(+[+2vx+2yz]Z͓+[-2vz+2xy]X͓+[+vv-xx+yy-zz]Y͓)e013",
+//!     "+(+[+2vy+2xz]X͓+[-2vx+2yz]Y͓+[+vv-xx-yy+zz]Z͓)e021",
+//! ]);
+//!
+//! // Assumes rotator is normalized.
+//! format_eq!(Vee::point().pin() << Vee::rotator().unit(), [
+//!     "+[+1]w͓e123",
+//!     "+(+[+2vz+2xy]Y͓+[-2vy+2xz]Z͓+[+1-2yy-2zz]X͓)e032",
+//!     "+(+[+2vx+2yz]Z͓+[-2vz+2xy]X͓+[+1-2xx-2zz]Y͓)e013",
+//!     "+(+[+2vy+2xz]X͓+[-2vx+2yz]Y͓+[+1-2xx-2yy]Z͓)e021",
 //! ]);
 //! ```
 //!
