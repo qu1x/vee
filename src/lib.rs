@@ -591,6 +591,12 @@ impl<B: Algebra> Multivector<B> {
         });
         self
     }
+    /// The one.
+    #[must_use]
+    #[allow(clippy::missing_panics_doc)]
+    pub fn one() -> Self {
+        Self::new([(Symbol::NIL, B::basis().next().expect("empty basis"))])
+    }
     /// The polarity.
     ///
     /// ```
@@ -599,9 +605,9 @@ impl<B: Algebra> Multivector<B> {
     /// assert_eq!(Vee::plane().pol(), Vee::direction().swp());
     /// ```
     #[must_use]
-    #[allow(clippy::missing_panics_doc)]
+    #[inline]
     pub fn pol(self) -> Self {
-        self * Self::new([(Symbol::NIL, B::basis().next_back().expect("empty basis"))])
+        self * !Self::one()
     }
     /// The mixed-grade squared norm (i.e., a Study number).
     ///
