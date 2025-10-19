@@ -439,6 +439,8 @@ where
 pub struct Multivector<B: Algebra> {
     /// Symbolic storage.
     pub map: BTreeMap<B, Polynomial>,
+    /// Whether to leverage orthonormalization conditions (ONC).
+    pub onc: bool,
 }
 
 impl<B: Algebra> Multivector<B> {
@@ -525,6 +527,14 @@ impl<B: Algebra> Multivector<B> {
         self.map.values_mut().for_each(|p| *p = take(p).swp());
         self
     }
+    /// Leverages orthonormalization conditions.
+    ///
+    /// Assumes <code>[Self::squared_norm]\(self\) == [Self::one()]</code>.
+    #[must_use]
+    pub const fn unit(mut self) -> Self {
+        self.onc = true;
+        self
+    }
     /// Collects all grades.
     #[must_use]
     pub fn grades(&self) -> BTreeSet<u32> {
@@ -565,7 +575,7 @@ impl<B: Algebra> Multivector<B> {
             // 	.collect();
             let mut map = self.map.clone();
             map.retain(|b, _p| b.grade() == grade);
-            vectors.insert(grade, Self { map });
+            vectors.insert(grade, Self { map, onc: false });
         }
         vectors
     }
@@ -646,6 +656,7 @@ where
                 .into_iter()
                 .map(|(p, b)| (b, Polynomial::from_iter(p)))
                 .collect(),
+            onc: false,
         }
     }
 }
@@ -710,7 +721,7 @@ impl<B: Algebra> Mul for Multivector<B> {
             }
         }
         map.retain(|_b, p| !p.map.is_empty());
-        Self { map }
+        Self { map, onc: false }
     }
 }
 
@@ -795,7 +806,7 @@ impl<B: Algebra> Not for Multivector<B> {
             map.insert(b, p * i32::from(s));
             map
         });
-        Self { map }
+        Self { map, onc: false }
     }
 }
 
@@ -820,6 +831,10 @@ impl<B: Algebra> Shl for Multivector<B> {
     type Output = Self;
 
     fn shl(mut self, other: Self) -> Self::Output {
+        let onc = other
+            .onc
+            .then(|| self.clone() | (Self::one() - other.clone().squared_norm()))
+            .unwrap_or_default();
         if self
             .grade()
             .zip(other.grade())
@@ -828,7 +843,7 @@ impl<B: Algebra> Shl for Multivector<B> {
         {
             self = -self;
         }
-        other.clone() * self * other.rev()
+        other.clone() * self * other.rev() + onc
     }
 }
 
