@@ -16,27 +16,43 @@ Vector Expression Emitter (VEE): Geometric Algebra Code Generator
 [Rust]: https://img.shields.io/badge/rust-v1.85.0-brightgreen.svg
 [License]: https://img.shields.io/crates/l/vee
 
-The goal of this crate is to generate optimized code for geometric algebra flavors. Currently, this
-crate implements the symbolic reduction of multivector expressions up to polynomials with rational
-coefficients.
+The goal of this crate is to generate optimized code for geometric algebra flavors.
 
 ## Features
 
   * Uniquely reduce symbolic multivector expressions.
   * Generate expressions in text form.
+      * Use symbols with Unicode *combining diacritical marks* (`"{}"`).
+      * Use Symbols labelled after basis blades (`"{:#}"`).
+      * Expand (`"{:+}"`) or reduce (i.e., factorize) expressions (`"{}"`).
+      * Factor predominant sign (`"{:-}"`).
+      * Omit newlines (`"{:0}"`).
+      * Omit leading plus signs (`"{:<}"`).
+  * Generate expressions in DOT form (i.e., [`text/vnd.graphviz`]).
+      * Use symbols with Unicode diacritical marks (`"{:o}"`).
+      * Use Symbols labelled after basis blades (`"{:#o}"`).
+      * Expand (`"{:+o}"`) or reduce (i.e., factorize) expressions (`"{:o}"`).
+      * Factor predominant sign (`"{:-o}"`).
+      * Change rank direction from top-to-bottom (TB) to left-to-right (LR) (`"{:0o}"`).
+  * Eliminate orthonormalization conditions from expressions using reflection/projection operator by
+    factoring pinned symbols, GCD coefficients, and predominant signs.
+  * Evaluate symbols as rationals.
+  * Count operations (i.e., multiplication and additions).
   * Define the metric-agnostic basis (i.e., elliptic, parabolic, hyperbolic) and the multivector
     entities of the projective geometric algebra (PGA) for dimensions D = N + 1 < 8.
 
+[`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
+
 ## Roadmap
 
-  * Eliminate orthonormalization conditions form expressions using reflection/projection operator by
-    factoring pinned symbols and GCD coefficients in symbolic storage rather than during formatting.
-  * Generate expressions in code form.
+  * Further optimize expressions to reduce operation count by domain-specific common subexpression
+    elimination (CSE) targeting exterior products.
+  * Generate expressions in LaTeX and code form.
   * Define other geometric algebra flavors.
 
 See the [release history](RELEASES.md) to keep track of the development.
 
-## Pseudo-local Documentation Builds
+## Pseudo-Local Documentation Builds
 
 Build the documentation with [cargo-tex](cargo-tex). Note that navigating the documentation requires
 web access as KaTeX is embedded via remote CDN.

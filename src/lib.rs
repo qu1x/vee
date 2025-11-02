@@ -160,20 +160,28 @@
 //! ```
 //! use vee::{format_eq, PgaP3 as Vee};
 //!
-//! // Assumes rotator is not normalized.
-//! format_eq!(Vee::point().pin() << Vee::rotator(), [
-//!     "+(+[+vv+xx+yy+zz]w͓)e123",
-//!     "+(+[+2vz+2xy]Y͓+[-2vy+2xz]Z͓+[+vv+xx-yy-zz]X͓)e032",
-//!     "+(+[+2vx+2yz]Z͓+[-2vz+2xy]X͓+[+vv-xx+yy-zz]Y͓)e013",
-//!     "+(+[+2vy+2xz]X͓+[-2vx+2yz]Y͓+[+vv-xx-yy+zz]Z͓)e021",
+//! // Assumes motor is not orthonormalized.
+//! format_eq!(Vee::point().pin() << Vee::motor(), [
+//!     "+(+vv+xx+yy+zz)w͓e123",
+//!     "+(+(+vv+xx-yy-zz)X͓+2(+vz+xy)Y͓+2(-vy+xz)Z͓+2(-Vx-Xv-Yz+Zy)w͓)e032",
+//!     "+(+2(-vz+xy)X͓+(+vv-xx+yy-zz)Y͓+2(+vx+yz)Z͓+2(-Vy+Xz-Yv-Zx)w͓)e013",
+//!     "+(+2(+vy+xz)X͓+2(-vx+yz)Y͓+(+vv-xx-yy+zz)Z͓+2(-Vz-Xy+Yx-Zv)w͓)e021",
 //! ]);
 //!
-//! // Assumes rotator is normalized.
-//! format_eq!(Vee::point().pin() << Vee::rotator().unit(), [
-//!     "+[+1]w͓e123",
-//!     "+(+[+2vz+2xy]Y͓+[-2vy+2xz]Z͓+[+1-2yy-2zz]X͓)e032",
-//!     "+(+[+2vx+2yz]Z͓+[-2vz+2xy]X͓+[+1-2xx-2zz]Y͓)e013",
-//!     "+(+[+2vy+2xz]X͓+[-2vx+2yz]Y͓+[+1-2xx-2yy]Z͓)e021",
+//! // Assumes motor is orthonormalized.
+//! format_eq!(Vee::point().pin() << Vee::motor().unit(), [
+//!     "+w͓e123",
+//!     "+(+(+1-2yy-2zz)X͓+2(+vz+xy)Y͓+2(-vy+xz)Z͓+2(-Vx-Xv-Yz+Zy)w͓)e032",
+//!     "+(+2(-vz+xy)X͓+(+1-2xx-2zz)Y͓+2(+vx+yz)Z͓+2(-Vy+Xz-Yv-Zx)w͓)e013",
+//!     "+(+2(+vy+xz)X͓+2(-vx+yz)Y͓+(+1-2xx-2yy)Z͓+2(-Vz-Xy+Yx-Zv)w͓)e021",
+//! ]);
+//!
+//! // Assumes motor and point are (ortho)normalized where point has positive orientation.
+//! format_eq!(Vee::point().eval([(('w', "e123"), 1)]).pin() << Vee::motor().unit(), [
+//!     "+e123",
+//!     "+(+2(-Vx-Xv-Yz+Zy)+(+1-2yy-2zz)X͓+2(+vz+xy)Y͓+2(-vy+xz)Z͓)e032",
+//!     "+(+2(-Vy+Xz-Yv-Zx)+2(-vz+xy)X͓+(+1-2xx-2zz)Y͓+2(+vx+yz)Z͓)e013",
+//!     "+(+2(-Vz-Xy+Yx-Zv)+2(+vy+xz)X͓+2(-vx+yz)Y͓+(+1-2xx-2yy)Z͓)e021",
 //! ]);
 //! ```
 //!
@@ -185,48 +193,102 @@
 //! ```
 //! use vee::{format_eq, PgaP3 as Vee};
 //!
-//! format_eq!(Vee::plane(), "We0+xe1+ye2+ze3");
-//! format_eq!(Vee::point(), "we123+Xe032+Ye013+Ze021");
+//! format_eq!(Vee::plane(), ["+We0", "+xe1", "+ye2", "+ze3"]);
+//! format_eq!(Vee::point(), ["+we123", "+Xe032", "+Ye013", "+Ze021"]);
 //!
 //! assert_ne!(!Vee::plane(), Vee::point());
 //! assert_eq!(!Vee::plane(), Vee::point().swp());
 //! ```
+//!
+//! Alternatively, symbols are labelled after their initially assigned basis blades starting with:
+//!
+//!   * `'p'` if pinned with [`PgaP3::pin()`],
+//!   * `'l'` if left-hand side as in [`PgaP3::lhs()`],
+//!   * `'r'` if right-hand side as in [`PgaP3::rhs()`],
+//!   * `'v'` otherwise.
+//!
+//! ```
+//! use vee::{format_eq, PgaP3 as Vee};
+//!
+//! format_eq!("{:#}", Vee::point().pin() << Vee::motor().unit(), [
+//!     "+p123*e123",
+//!     "+(+(+1-2*v31*v31-2*v12*v12)*p032+2*(+v*v12+v23*v31)*p013+2*(-v*v31+v23*v12)*p021\
+//!        +2*(-v0123*v23-v01*v-v02*v12+v03*v31)*p123)*e032",
+//!     "+(+2*(-v*v12+v23*v31)*p032+(+1-2*v23*v23-2*v12*v12)*p013+2*(+v*v23+v31*v12)*p021\
+//!        +2*(-v0123*v31+v01*v12-v02*v-v03*v23)*p123)*e013",
+//!     "+(+2*(+v*v31+v23*v12)*p032+2*(-v*v23+v31*v12)*p013+(+1-2*v23*v23-2*v31*v31)*p021\
+//!        +2*(-v0123*v12-v01*v31+v02*v23-v03*v)*p123)*e021",
+//! ]);
+//! ```
+//!
+//! The predominant sign is factored as well with `"{:-}"`:
+//!
+//! ```
+//! use vee::{format_eq, PgaP3 as Vee};
+//!
+//! // Unfactored predominant sign.
+//! format_eq!(Vee::point().pin() << Vee::motor(), [
+//!    "+(+vv+xx+yy+zz)w͓e123",
+//!    "+(+(+vv+xx-yy-zz)X͓+2(+vz+xy)Y͓+2(-vy+xz)Z͓+2(-Vx-Xv-Yz+Zy)w͓)e032",
+//!    "+(+2(-vz+xy)X͓+(+vv-xx+yy-zz)Y͓+2(+vx+yz)Z͓+2(-Vy+Xz-Yv-Zx)w͓)e013",
+//!    "+(+2(+vy+xz)X͓+2(-vx+yz)Y͓+(+vv-xx-yy+zz)Z͓+2(-Vz-Xy+Yx-Zv)w͓)e021",
+//! //                                          ^^^^^^^^^^^^^^^^^
+//! ]);
+//!
+//! // Factored predominant sign.
+//! format_eq!("{:-}", Vee::point().pin() << Vee::motor(), [
+//!    "+(+vv+xx+yy+zz)w͓e123",
+//!    "+(+(+vv+xx-yy-zz)X͓+2(+vz+xy)Y͓+2(-vy+xz)Z͓-2(+Vx+Xv+Yz-Zy)w͓)e032",
+//!    "+(+2(-vz+xy)X͓+(+vv-xx+yy-zz)Y͓+2(+vx+yz)Z͓-2(+Vy-Xz+Yv+Zx)w͓)e013",
+//!    "+(+2(+vy+xz)X͓+2(-vx+yz)Y͓+(+vv-xx-yy+zz)Z͓-2(+Vz+Xy-Yx+Zv)w͓)e021",
+//! //                                          ^^^^^^^^^^^^^^^^^
+//! ]);
+//! ```
+//!
+//! The factorization is skipped with `"{:+}"`:
+//!
+//! ```
+//! use vee::{format_eq, PgaP3 as Vee};
+//!
+//! format_eq!("{:+}", Vee::point().pin() << Vee::motor(), [
+//!     "+(+vvw͓+w͓xx+w͓yy+w͓zz)e123",
+//!     "+(-2Vw͓x-2Xvw͓+X͓vv+X͓xx-X͓yy-X͓zz-2Yw͓z+2Y͓vz+2Y͓xy+2Zw͓y-2Z͓vy+2Z͓xz)e032",
+//!     "+(-2Vw͓y+2Xw͓z-2X͓vz+2X͓xy-2Yvw͓+Y͓vv-Y͓xx+Y͓yy-Y͓zz-2Zw͓x+2Z͓vx+2Z͓yz)e013",
+//!     "+(-2Vw͓z-2Xw͓y+2X͓vy+2X͓xz+2Yw͓x-2Y͓vx+2Y͓yz-2Zvw͓+Z͓vv-Z͓xx-Z͓yy+Z͓zz)e021",
+//! ]);
+//! ```
 
-/// Formats the `$left` expression using [`Display`] and asserts the `$right` string literal(s).
+/// Formats the `$lhs` expression using [`Display`] and asserts the `$rhs` string literals.
 ///
-/// If `$right` is an array expression of string literals, formats `$left` in alternate form (i.e.,
-/// `"{:#}"`) instead of default form (i.e., `"{}"`), appends `"\n"` to each `$right` literal, and
-/// asserts the concatenation thereof.
+/// Passes `$fmt` to [`Display`] with `{}` as default if omitted. Appends `"\n"` to each `$rhs`
+/// literal and asserts the concatenation thereof.
 ///
 /// With the `pretty_assertions` feature, the respective [`assert_eq!`] macro is used. In this way,
 /// the Unicode *combining diacritical marks* are rendered as in the examples using [`format_eq!`].
 #[macro_export]
 macro_rules! format_eq {
-    ($emitted:expr, $literal:literal) => {{
-        #[cfg(feature = "pretty_assertions")]
-        use pretty_assertions::assert_eq;
-        let emitted = format!("{}", $emitted);
-        assert_eq!(emitted, $literal);
+    ($lhs:expr, [$($rhs:literal),* $(,)?]) => {{
+        format_eq!("{}", $lhs, [$($rhs),*]);
     }};
-    ($emitted:expr, [$($literal:literal),* $(,)?]) => {{
+    ($fmt:literal, $lhs:expr, [$($rhs:literal),* $(,)?]) => {{
         #[cfg(feature = "pretty_assertions")]
         use pretty_assertions::assert_eq;
-        let emitted = format!("{:#}", $emitted);
-        let mut literal = String::with_capacity(emitted.len());
+        let lhs = format!($fmt, $lhs);
+        let mut rhs = String::with_capacity(lhs.len());
         $(
-            literal.push_str($literal);
-            literal.push_str("\n");
+            rhs.push_str($rhs);
+            rhs.push_str("\n");
         )*
-        assert_eq!(emitted, literal);
+        assert_eq!(lhs, rhs);
     }};
 }
 
 use core::{
     cmp::{Ordering, min},
-    fmt::{self, Debug, Display},
-    iter::FromIterator,
+    fmt::{self, Debug, Display, Octal},
+    iter::{FromIterator, repeat},
     mem::{swap, take},
-    num::NonZeroI32,
+    num::{NonZero, NonZeroI32},
     ops::{
         Add, AddAssign, BitAnd, BitOr, BitXor, Div, DivAssign, Mul, MulAssign, Neg, Not, Rem, Shl,
         Shr, Sub, SubAssign,
@@ -301,6 +363,23 @@ where
     #[must_use]
     fn lcm_bulk(r: impl IntoIterator<Item = Self>) -> Self {
         r.into_iter().reduce(Self::lcm).unwrap_or_default()
+    }
+    /// Finds the [`Self::gcd`] or [`Self::lcm`] and the predominant sign of iterator over `Self`.
+    #[must_use]
+    fn signed(f: impl Fn(Self, Self) -> Self, r: impl IntoIterator<Item = Self>) -> Self
+    where
+        Self: Neg<Output = Self> + PartialOrd + Ord,
+    {
+        let (acc, neg, len) = r
+            .into_iter()
+            .fold((Self::ZERO, 0, 0), |(acc, neg, len), r| {
+                (
+                    f(acc, r),
+                    if r < Self::ZERO { neg + 1 } else { neg },
+                    len + 1,
+                )
+            });
+        if neg > len / 2 { -acc } else { acc }
     }
 }
 
@@ -392,6 +471,7 @@ where
         + Ord
         + PartialOrd
         + Default
+        + Into<Symbol>
         + Debug
         + Display
         + Mul<Output = (i8, Self)>
@@ -459,14 +539,14 @@ impl<B: Algebra> Multivector<B> {
     /// use vee::{format_eq, PgaP3 as Vee, pga::Pga};
     ///
     /// let plane = Vee::new([
-    ///     ("W", Pga::new("e0")),
-    ///     ("x", Pga::new("e1")),
-    ///     ("y", Pga::new("e2")),
-    ///     ("z", Pga::new("e3")),
+    ///     (("W", "e0"), Pga::new("e0")),
+    ///     (("x", "e1"), Pga::new("e1")),
+    ///     (("y", "e2"), Pga::new("e2")),
+    ///     (("z", "e3"), Pga::new("e3")),
     /// ]);
     ///
     /// assert_eq!(plane, Vee::plane());
-    /// format_eq!(plane, "We0+xe1+ye2+ze3");
+    /// format_eq!(plane, ["+We0", "+xe1", "+ye2", "+ze3"]);
     /// ```
     #[must_use]
     #[inline]
@@ -522,8 +602,8 @@ impl<B: Algebra> Multivector<B> {
     /// ```
     /// use vee::{format_eq, PgaP3 as Vee};
     ///
-    /// format_eq!(Vee::plane(), "We0+xe1+ye2+ze3");
-    /// format_eq!(Vee::plane().cdm('\u{035c}'), "W͜e0+x͜e1+y͜e2+z͜e3");
+    /// format_eq!(Vee::plane(), ["+We0", "+xe1", "+ye2", "+ze3"]);
+    /// format_eq!(Vee::plane().cdm('\u{035c}'), ["+W͜e0", "+x͜e1", "+y͜e2", "+z͜e3"]);
     /// ```
     #[must_use]
     pub fn cdm(mut self, mark: char) -> Self {
@@ -534,14 +614,6 @@ impl<B: Algebra> Multivector<B> {
     #[must_use]
     pub fn swp(mut self) -> Self {
         self.map.values_mut().for_each(|p| *p = take(p).swp());
-        self
-    }
-    /// Leverages orthonormalization conditions.
-    ///
-    /// Assumes <code>[Self::squared_norm]\(self\) == [Self::one()]</code>.
-    #[must_use]
-    pub const fn unit(mut self) -> Self {
-        self.onc = true;
         self
     }
     /// Collects all grades.
@@ -614,7 +686,44 @@ impl<B: Algebra> Multivector<B> {
     #[must_use]
     #[allow(clippy::missing_panics_doc)]
     pub fn one() -> Self {
-        Self::new([(Symbol::NIL, B::basis().next().expect("empty basis"))])
+        Self::new([(Symbol::one(), B::basis().next().expect("empty basis"))])
+    }
+    /// Evaluates each symbol `S` of map `M` as respective rational `R`.
+    #[must_use]
+    #[allow(clippy::missing_panics_doc)]
+    pub fn eval<M, S, R>(mut self, map: M) -> Self
+    where
+        M: IntoIterator<Item = (S, R)>,
+        S: Into<Symbol>,
+        R: Into<Rational>,
+    {
+        // Using inner non-generic function as monomorphization barrier.
+        fn eval(vec: Vec<&mut Polynomial>, map: &BTreeMap<Symbol, Rational>) {
+            for old_p in vec {
+                let mut new_p = Polynomial::default();
+                for (old_m, old_r) in &old_p.map {
+                    let mut new_m = old_m.clone();
+                    let mut new_r = *old_r;
+                    for (old_s, old_e) in &old_m.map {
+                        if let Some(map_r) = map.get(old_s) {
+                            new_m.map.remove(old_s);
+                            new_r *= map_r.pow(old_e.get());
+                        }
+                    }
+                    if new_m.map.is_empty() {
+                        new_m = Monomial::one();
+                    }
+                    new_p.map.insert(new_m, new_r);
+                }
+                *old_p = new_p;
+            }
+        }
+        eval(
+            self.map.values_mut().collect(),
+            &map.into_iter().map(|(s, r)| (s.into(), r.into())).collect(),
+        );
+        self.map.retain(|_b, p| !p.map.is_empty());
+        self
     }
     /// The polarity.
     ///
@@ -633,22 +742,67 @@ impl<B: Algebra> Multivector<B> {
     /// ```
     /// use vee::{format_eq, PgaP3 as Vee};
     ///
-    /// format_eq!(Vee::plane().squared_norm(), "xx+yy+zz");
-    /// format_eq!(Vee::point().squared_norm(), "ww");
-    /// format_eq!(Vee::line().squared_norm(), "xx+yy+zz+(-2Xx-2Yy-2Zz)I");
-    /// format_eq!(Vee::displacement().squared_norm(), "xx+yy+zz");
-    /// format_eq!(Vee::moment().squared_norm(), "");
+    /// format_eq!(Vee::plane().squared_norm(), ["+xx+yy+zz"]);
+    /// format_eq!(Vee::point().squared_norm(), ["+ww"]);
+    /// format_eq!(Vee::line().squared_norm(), ["+xx+yy+zz", "+2(-Xx-Yy-Zz)I"]);
+    /// format_eq!(Vee::displacement().squared_norm(), ["+xx+yy+zz"]);
+    /// format_eq!(Vee::moment().squared_norm(), []);
     /// ```
     #[must_use]
     pub fn squared_norm(self) -> Self {
         self.clone() * self.rev()
     }
+    /// Leverages orthonormalization conditions.
+    ///
+    /// Assumes <code>[Self::squared_norm]\(self\) == [Self::one()]</code>.
+    #[must_use]
+    pub const fn unit(mut self) -> Self {
+        self.onc = true;
+        self
+    }
+    /// Applies `lhs == rhs` condition to `self`.
+    ///
+    /// Factors the GCD and the predominant sign of `lhs`. The remaining polynomial is matched with
+    /// each remaining polynomial of <code>self.map.into_values().map([Factorization::from])</code>.
+    /// The matched polynomials are replaced with the `rhs` vector of the respective `lhs` vector.
+    #[must_use]
+    pub fn cond(mut self, lhs: &Self, rhs: &Self) -> Self {
+        for (lhs_b, lhs_p) in lhs.map.clone() {
+            let rhs_p = rhs.map.get(&lhs_b).cloned().unwrap_or_default();
+            let lhs_g = lhs_p.signed_gcd();
+            let lhs_p = lhs_p / lhs_g;
+            for p in self.map.values_mut() {
+                let mut f = Factorization::from(p.clone());
+                for (p, _r) in f.map.values_mut() {
+                    if p == &lhs_p {
+                        *p = rhs_p.clone();
+                    }
+                }
+                *p = f.into();
+            }
+        }
+        self.map.retain(|_b, p| !p.map.is_empty());
+        self
+    }
     /// Returns the number of `(multiplications, additions)`.
     #[must_use]
     pub fn ops(&self) -> (usize, usize) {
         self.map.values().fold((0, 0), |(v_muls, v_adds), p| {
-            let (p_muls, p_adds) = p.ops();
-            (v_muls + p_muls, v_adds + p_adds)
+            let f = Factorization::from(p.clone());
+            let (f_muls, f_adds) =
+                f.map
+                    .into_iter()
+                    .fold((0, 0), |(mut f_muls, f_adds), (m, (p, r))| {
+                        if !m.is_one() {
+                            f_muls += 1;
+                        }
+                        if !r.abs().is_one() {
+                            f_muls += 1;
+                        }
+                        let (p_muls, p_adds) = p.ops();
+                        (f_muls + p_muls, f_adds + p_adds)
+                    });
+            (v_muls + f_muls, v_adds + f_adds)
         })
     }
 }
@@ -840,10 +994,10 @@ impl<B: Algebra> Shl for Multivector<B> {
     type Output = Self;
 
     fn shl(mut self, other: Self) -> Self::Output {
-        let onc = other
-            .onc
-            .then(|| self.clone() | (Self::one() - other.clone().squared_norm()))
-            .unwrap_or_default();
+        let onc = other.onc.then(|| {
+            let lhs = other.clone().squared_norm();
+            (self.clone() | (Self::one() - lhs.clone()), lhs, Self::one())
+        });
         if self
             .grade()
             .zip(other.grade())
@@ -852,7 +1006,12 @@ impl<B: Algebra> Shl for Multivector<B> {
         {
             self = -self;
         }
-        other.clone() * self * other.rev() + onc
+        let shl = other.clone() * self * other.rev();
+        if let Some((onc, lhs, rhs)) = onc {
+            (shl + onc).cond(&lhs, &rhs)
+        } else {
+            shl
+        }
     }
 }
 
@@ -860,75 +1019,307 @@ impl<B: Algebra> Shr for Multivector<B> {
     type Output = Self;
 
     fn shr(self, other: Self) -> Self::Output {
-        (self | other.clone()) * other.rev()
+        let shr = (self | other.clone()) * other.clone().rev();
+        if other.onc {
+            shr.cond(&other.squared_norm(), &Self::one())
+        } else {
+            shr
+        }
     }
 }
 
 impl<B: Algebra> Display for Multivector<B> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for (i, (b, p)) in self.map.iter().enumerate() {
-            let is_one = *b == B::default();
-            let is_sum = p.map.len() > 1;
-            if (f.alternate() && !is_one && is_sum) || (!f.alternate() && i > 0) {
-                write!(f, "+")?;
-            }
-            if !is_one && is_sum {
-                write!(f, "(")?;
-            }
-            if self
-                .map
-                .values()
-                .flat_map(|pol| pol.map.keys())
-                .filter_map(|sym| {
-                    sym.map
-                        .keys()
-                        .rfind(|sym| sym.is_pin())
-                        .or_else(|| sym.map.keys().last())
-                })
-                .all(Symbol::is_pin)
-            {
-                let mut map = BTreeMap::<_, Polynomial>::new();
-                for (mut s, c) in p.map.clone() {
-                    let key = *s.map.keys().rfind(|sym| sym.is_pin()).unwrap();
-                    let pin = s.map.remove_entry(&key).unwrap();
-                    assert!(map.entry(pin).or_default().map.insert(s, c).is_none());
-                }
-                let len = if map.len() % B::N as usize == 0 {
-                    B::N as usize
-                } else {
-                    map.len()
-                };
-                for (i, ((s, e), p)) in map
-                    .iter()
-                    .take(len)
-                    .cycle()
-                    .skip(i)
-                    .take(len)
-                    .chain(map.iter().skip(len).cycle().skip(i).take(len))
-                    .enumerate()
-                {
-                    if f.alternate() || i > 0 {
-                        write!(f, "+")?;
+    #[allow(clippy::cognitive_complexity, clippy::too_many_lines)]
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        fn traverse<'a>(
+            fmt: &mut fmt::Formatter,
+            graph: &Graph,
+            depth: usize,
+            grasp: bool,
+            mut defer: &'a str,
+        ) -> Result<&'a str, fmt::Error> {
+            match graph {
+                Graph::Add(siblings) => {
+                    let grasp = grasp || !(defer.is_empty() || defer == "+");
+                    if grasp {
+                        write!(fmt, "{defer}")?;
+                        defer = "";
+                        write!(fmt, "(")?;
                     }
-                    write!(f, "[")?;
-                    Display::fmt(p, f)?;
-                    write!(f, "]")?;
-                    (0..e.get()).map(|_| s).try_for_each(|s| write!(f, "{s}"))?;
+                    for (index, sibling) in siblings.iter().enumerate() {
+                        if fmt.align().is_none() || index != 0 {
+                            defer = "+";
+                        }
+                        defer = traverse(fmt, sibling, depth + 1, grasp, defer)?;
+                        write!(fmt, "{defer}")?;
+                    }
+                    if grasp {
+                        write!(fmt, ")")?;
+                    }
+                    defer = "";
                 }
+                Graph::Mul(siblings) => {
+                    let mut is_one = false;
+                    if let Some(Graph::Sym(sym)) = siblings.last() {
+                        if sym.lab == "1" && depth <= 1 && siblings.len() == 2 {
+                            is_one = true;
+                        }
+                    }
+                    for (index, sibling) in siblings.iter().enumerate() {
+                        defer = if index == 0 {
+                            defer
+                        } else if fmt.alternate() && defer.is_empty() && !is_one {
+                            "*"
+                        } else {
+                            ""
+                        };
+                        let grasp = !(index == 0 && is_one);
+                        defer = traverse(fmt, sibling, depth + 1, grasp, defer)?;
+                    }
+                    defer = "";
+                }
+                Graph::Num(num) => {
+                    if num.abs().is_one() {
+                        if num.is_negative() {
+                            write!(fmt, "-")?;
+                        }
+                        defer = if fmt.align().is_none() { "+1" } else { "1" };
+                    } else if num.is_negative() {
+                        write!(fmt, "{num}")?;
+                        defer = "";
+                    } else if !num.is_zero() {
+                        write!(fmt, "{defer}{num}")?;
+                        defer = "";
+                    }
+                }
+                Graph::Sym(sym) => {
+                    write!(fmt, "{defer}")?;
+                    if sym.lab != "1" || depth == 0 {
+                        Display::fmt(sym, fmt)?;
+                        defer = "";
+                    }
+                    if !fmt.sign_aware_zero_pad() && sym.is_vec() {
+                        writeln!(fmt)?;
+                    }
+                }
+            }
+            if depth == 0 {
+                if defer == "1" {
+                    write!(fmt, "{defer}")?;
+                }
+                defer = "";
+            }
+            Ok(defer)
+        }
+        let graph = if fmt.sign_plus() {
+            Graph::from(self.clone())
+        } else {
+            Graph::with_factorization(self.clone(), fmt.sign_minus())
+        };
+        let defer = if fmt.align().is_none() { "+" } else { "" };
+        traverse(fmt, &graph, 0, false, defer)?;
+        Ok(())
+    }
+}
+
+impl<B: Algebra> Octal for Multivector<B> {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        fn traverse(
+            fmt: &mut fmt::Formatter,
+            graph: &Graph,
+            inode: usize,
+            mut index: usize,
+        ) -> Result<usize, fmt::Error> {
+            let [add, mul] = if fmt.alternate() {
+                ["+", "*"]
             } else {
-                Display::fmt(p, f)?;
-            }
-            if !is_one && is_sum {
-                write!(f, ")")?;
-            }
-            if !is_one {
-                Display::fmt(b, f)?;
-            }
-            if f.alternate() {
-                writeln!(f)?;
+                ["∑", "∏"]
+            };
+            match graph {
+                Graph::Add(siblings) => {
+                    writeln!(fmt, "  n{index} [label=\"{add}\" shape=box]")?;
+                    if inode != index {
+                        writeln!(fmt, "  n{inode} -> n{index}")?;
+                    }
+                    let inode = index;
+                    for sibling in siblings {
+                        index = traverse(fmt, sibling, inode, index + 1)?;
+                    }
+                    Ok(index)
+                }
+                Graph::Mul(siblings) => {
+                    writeln!(fmt, "  n{index} [label=\"{mul}\" shape=box]")?;
+                    if inode != index {
+                        writeln!(fmt, "  n{inode} -> n{index}")?;
+                    }
+                    let inode = index;
+                    for sibling in siblings {
+                        index = traverse(fmt, sibling, inode, index + 1)?;
+                    }
+                    Ok(index)
+                }
+                Graph::Num(num) => {
+                    writeln!(fmt, "  n{index} [label=\"{num}\" shape=circle]")?;
+                    if inode != index {
+                        writeln!(fmt, "  n{inode} -> n{index}")?;
+                    }
+                    Ok(index)
+                }
+                Graph::Sym(sym) => {
+                    let shape = if sym.var == Symbol::VEC {
+                        "diamond"
+                    } else {
+                        match sym.cdm {
+                            Symbol::NIL => "ellipse",
+                            Symbol::PIN => "hexagon",
+                            Symbol::LHS => "larrow",
+                            Symbol::RHS => "rarrow",
+                            label => panic!("unknown symbol label `{label}`"),
+                        }
+                    };
+                    if fmt.alternate() {
+                        writeln!(fmt, "  n{index} [label=\"{sym:#}\" shape={shape}]")?;
+                    } else {
+                        writeln!(fmt, "  n{index} [label=\"{sym}\" shape={shape}]")?;
+                    }
+                    if inode != index {
+                        writeln!(fmt, "  n{inode} -> n{index}")?;
+                    }
+                    Ok(index)
+                }
             }
         }
+        writeln!(fmt, "digraph vee {{")?;
+        if fmt.sign_aware_zero_pad() {
+            writeln!(fmt, "  rankdir=LR")?;
+        }
+        writeln!(fmt, "  node [ordering=out]")?;
+        let g = if fmt.sign_plus() {
+            Graph::from(self.clone())
+        } else {
+            Graph::with_factorization(self.clone(), fmt.sign_minus())
+        };
+        traverse(fmt, &g, 0, 0)?;
+        writeln!(fmt, "}}")?;
         Ok(())
+    }
+}
+
+/// Uniquely reduced but **volatile** form of symbolic polynomial factorization.
+///
+/// Factors pinned symbols as monomials and factors the greatest common divisors (GCDs) of the
+/// remaining polynomials and the GCD among them. Optionally, the GCDs are
+/// [`signed`](`Factor::signed()`) comprising the factored predominant sign.
+///
+/// Initially, a factorization is uniquely reduced but in contrast to [`Polynomial`], the invariants
+/// are no longer enforced by storage, making this form volatile. As the members are public, the
+/// invariants are unguarded. For instance, manipulating a polynomial in [`Self::map`], potentially
+/// invalidates the GCD.
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Factorization {
+    /// Symbolic storage mapping factored monomials to remaining polynomials and their GCDs.
+    pub map: BTreeMap<Monomial, (Polynomial, Rational)>,
+    /// GCD among remaining polynomials' GCDs.
+    pub gcd: Rational,
+}
+
+impl Factorization {
+    /// Performs the factorization.
+    ///
+    /// Optionally, the GCDs are `signed` comprising the factored predominant sign.
+    #[must_use]
+    pub fn new(p: Polynomial, signed: bool) -> Self {
+        let mut f = p
+            .map
+            .into_iter()
+            .fold(Self::default(), |mut f, (mut m, c)| {
+                let mut g = m.clone();
+                g.map.retain(|s, _e| s.is_pin());
+                m.map.retain(|s, _e| !s.is_pin());
+                // TODO
+                // let g = Monomial {
+                //     map: m.map.extract_if(|s, _e| s.is_pin()).collect(),
+                // };
+                if g.map.is_empty() {
+                    g = Monomial::one();
+                }
+                if m.map.is_empty() {
+                    m = Monomial::one();
+                }
+                let (p, r) = f.map.entry(g).or_default();
+                *p.map.entry(m).or_default() += c;
+                *r = Rational::ONE;
+                f
+            });
+        let gcd = if signed {
+            Polynomial::signed_gcd
+        } else {
+            Polynomial::gcd
+        };
+        f.map.values_mut().for_each(|(p, r)| {
+            *r = gcd(p);
+            *p /= *r;
+        });
+        f.gcd = if signed {
+            Rational::signed(Rational::gcd, f.map.values().map(|(_p, r)| *r))
+        } else {
+            Rational::gcd_bulk(f.map.values().map(|(_p, r)| *r))
+        };
+        f.map.values_mut().for_each(|(_p, r)| *r /= f.gcd);
+        f
+    }
+    /// Whether this factorization is zero.
+    #[must_use]
+    pub fn is_zero(&self) -> bool {
+        self.map.is_empty()
+            || self.gcd.is_zero()
+            || self
+                .map
+                .iter()
+                .all(|(m, (p, c))| m.is_zero() || p.is_zero() || c.is_zero())
+    }
+    /// Whether this factorization is one.
+    #[must_use]
+    pub fn is_one(&self) -> bool {
+        let mut sum = 0;
+        self.gcd.is_one()
+            && self
+                .map
+                .iter()
+                .filter(|(m, (p, c))| !(m.is_zero() || p.is_zero() || c.is_zero()))
+                .all(|(m, (p, c))| {
+                    sum += 1;
+                    m.is_one() && p.is_one() && c.is_one()
+                })
+            && sum == 1
+    }
+}
+
+impl Default for Factorization {
+    fn default() -> Self {
+        Self {
+            map: BTreeMap::new(),
+            gcd: Rational::ONE,
+        }
+    }
+}
+
+impl From<Polynomial> for Factorization {
+    #[inline]
+    fn from(p: Polynomial) -> Self {
+        Self::new(p, true)
+    }
+}
+
+impl From<Factorization> for Polynomial {
+    fn from(f: Factorization) -> Self {
+        let mut p = Self::default();
+        for (f_m, (f_p, f_r)) in f.map {
+            for (m, c) in f_p.map {
+                *p.map.entry(f_m.clone() * m).or_default() += c * f_r * f.gcd;
+            }
+        }
+        p
     }
 }
 
@@ -951,9 +1342,27 @@ pub struct Polynomial {
 }
 
 impl Polynomial {
+    /// The one.
+    #[must_use]
+    pub fn one() -> Self {
+        let mut map = BTreeMap::new();
+        map.insert(Monomial::one(), Rational::ONE);
+        Self { map }
+    }
+    /// Whether this polynomial is zero.
+    #[must_use]
+    pub fn is_zero(&self) -> bool {
+        self.map.is_empty() || self.map.iter().all(|(m, c)| m.is_zero() || c.is_zero())
+    }
+    /// Whether this polynomial is one.
+    #[must_use]
+    pub fn is_one(&self) -> bool {
+        self.map
+            .first_key_value()
+            .is_some_and(|(m, c)| self.map.len() == 1 && m.is_one() && c.is_one())
+    }
     /// Extends the symbol space.
     #[must_use]
-    #[inline]
     pub fn alt(self) -> Self {
         let map = BTreeMap::new();
         let map = self.map.into_iter().fold(map, |mut map, (s, c)| {
@@ -964,7 +1373,6 @@ impl Polynomial {
     }
     /// Appends combining diacritical `mark` to all symbols.
     #[must_use]
-    #[inline]
     pub fn cdm(self, mark: char) -> Self {
         let map = BTreeMap::new();
         let map = self.map.into_iter().fold(map, |mut map, (s, c)| {
@@ -975,7 +1383,6 @@ impl Polynomial {
     }
     /// Swaps lowercase and uppercase symbols.
     #[must_use]
-    #[inline]
     pub fn swp(self) -> Self {
         let map = BTreeMap::new();
         let map = self.map.into_iter().fold(map, |mut map, (s, c)| {
@@ -1001,6 +1408,24 @@ impl Polynomial {
                 .sum::<usize>(),
             self.map.len().saturating_sub(1),
         )
+    }
+    /// GCD of coefficients.
+    #[must_use]
+    pub fn gcd(&self) -> Rational {
+        Rational::gcd_bulk(self.map.values().copied())
+    }
+    /// LCM of coefficients.
+    #[must_use]
+    pub fn lcm(&self) -> Rational {
+        Rational::lcm_bulk(self.map.values().copied())
+    }
+    /// GCD and predominant sign of coefficients.
+    pub fn signed_gcd(&self) -> Rational {
+        Rational::signed(Rational::gcd, self.map.values().copied())
+    }
+    /// LCD and predominant sign of coefficients.
+    pub fn signed_lcd(&self) -> Rational {
+        Rational::signed(Rational::lcm, self.map.values().copied())
     }
 }
 
@@ -1031,10 +1456,10 @@ impl Add for Polynomial {
 
 impl AddAssign for Polynomial {
     fn add_assign(&mut self, other: Self) {
-        for (s, c) in other.map {
-            *self.map.entry(s).or_default() += c;
+        for (m, c) in other.map {
+            *self.map.entry(m).or_default() += c;
         }
-        self.map.retain(|_s, c| c.p() != 0);
+        self.map.retain(|_m, c| !c.is_zero());
     }
 }
 
@@ -1050,10 +1475,10 @@ impl Sub for Polynomial {
 
 impl SubAssign for Polynomial {
     fn sub_assign(&mut self, other: Self) {
-        for (s, c) in other.map {
-            *self.map.entry(s).or_default() -= c;
+        for (m, c) in other.map {
+            *self.map.entry(m).or_default() -= c;
         }
-        self.map.retain(|_s, c| c.p() != 0);
+        self.map.retain(|_m, c| !c.is_zero());
     }
 }
 
@@ -1071,14 +1496,14 @@ impl Mul for Polynomial {
 
     fn mul(self, other: Self) -> Self::Output {
         let mut map = BTreeMap::new();
-        for (lhs_s, lhs_c) in &self.map {
+        for (lhs_m, lhs_c) in &self.map {
             for (rhs_s, rhs_c) in &other.map {
-                let s = lhs_s.clone() * rhs_s.clone();
+                let m = lhs_m.clone() * rhs_s.clone();
                 let c = *lhs_c * *rhs_c;
-                *map.entry(s).or_default() += c;
+                *map.entry(m).or_default() += c;
             }
         }
-        map.retain(|_s, c: &mut Rational| c.p() != 0);
+        map.retain(|_m, c: &mut Rational| !c.is_zero());
         Self { map }
     }
 }
@@ -1086,6 +1511,26 @@ impl Mul for Polynomial {
 impl MulAssign for Polynomial {
     fn mul_assign(&mut self, other: Self) {
         *self = take(self) * other;
+    }
+}
+
+impl Mul<Rational> for Polynomial {
+    type Output = Self;
+
+    #[inline]
+    fn mul(mut self, other: Rational) -> Self::Output {
+        self *= other;
+        self
+    }
+}
+
+impl MulAssign<Rational> for Polynomial {
+    fn mul_assign(&mut self, other: Rational) {
+        if other.is_zero() {
+            self.map = BTreeMap::default();
+        } else {
+            self.map.values_mut().for_each(|c| *c *= other);
+        }
     }
 }
 
@@ -1100,12 +1545,26 @@ impl Mul<i32> for Polynomial {
 }
 
 impl MulAssign<i32> for Polynomial {
+    #[inline]
     fn mul_assign(&mut self, other: i32) {
-        if other == 0 {
-            self.map = BTreeMap::default();
-        } else {
-            self.map.values_mut().for_each(|c| *c *= other);
-        }
+        *self *= Rational::from(other);
+    }
+}
+
+impl Div<Rational> for Polynomial {
+    type Output = Self;
+
+    #[inline]
+    fn div(mut self, other: Rational) -> Self::Output {
+        self /= other;
+        self
+    }
+}
+
+impl DivAssign<Rational> for Polynomial {
+    fn div_assign(&mut self, other: Rational) {
+        assert!(!other.is_zero(), "division by zero");
+        self.map.values_mut().for_each(|c| *c /= other);
     }
 }
 
@@ -1120,26 +1579,9 @@ impl Div<i32> for Polynomial {
 }
 
 impl DivAssign<i32> for Polynomial {
+    #[inline]
     fn div_assign(&mut self, other: i32) {
-        assert_ne!(other, 0, "division by zero");
-        self.map.values_mut().for_each(|c| *c /= other);
-    }
-}
-
-impl Display for Polynomial {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.map.iter().enumerate().try_for_each(|(i, (s, c))| {
-            if !f.sign_plus() && !s.map.is_empty() && c.abs().is_one() {
-                if c.is_negative() {
-                    write!(f, "-")?;
-                } else if f.alternate() || i > 0 {
-                    write!(f, "+")?;
-                }
-            } else {
-                write!(f, "{c:+}")?;
-            }
-            Display::fmt(s, f)
-        })
+        *self /= Rational::from(other);
     }
 }
 
@@ -1156,7 +1598,7 @@ impl Rational {
     /// The one constant.
     pub const ONE: Self = Self { p: 1, q: 1 };
 
-    /// Finds the irreducable fraction of numerator `p` and denominator `q`.
+    /// Finds the irreducible fraction of numerator `p` and denominator `q`.
     ///
     /// # Panics
     ///
@@ -1242,6 +1684,13 @@ impl Rational {
     #[inline]
     pub const fn is_zero(&self) -> bool {
         self.p == 0
+    }
+    /// Power.
+    #[must_use]
+    pub fn pow(&self, exp: i32) -> Self {
+        let abs = exp.unsigned_abs();
+        let pow = Self::new(self.p().pow(abs), self.q().pow(abs));
+        if exp.is_negative() { pow.inv() } else { pow }
     }
 }
 
@@ -1459,10 +1908,10 @@ impl Ord for Rational {
 }
 
 impl Display for Rational {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Display::fmt(&self.p, f)?;
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        Display::fmt(&self.p, fmt)?;
         if self.q != 1 {
-            write!(f, "/{}", self.q)?;
+            write!(fmt, "/{}", self.q)?;
         }
         Ok(())
     }
@@ -1486,9 +1935,29 @@ pub struct Monomial {
 }
 
 impl Monomial {
-    /// Extends the symbol space.
+    /// The one.
+    #[must_use]
+    #[allow(clippy::missing_panics_doc)]
+    pub fn one() -> Self {
+        let mut map = BTreeMap::new();
+        map.insert(Symbol::one(), NonZero::new(1).unwrap());
+        Self { map }
+    }
+    /// Whether this monomial is zero.
     #[must_use]
     #[inline]
+    pub fn is_zero(&self) -> bool {
+        self.map.is_empty()
+    }
+    /// Whether this monomial is one.
+    #[must_use]
+    pub fn is_one(&self) -> bool {
+        self.map
+            .iter()
+            .all(|(s, e)| s.is_one() && e.get().abs() == 1)
+    }
+    /// Extends the symbol space.
+    #[must_use]
     pub fn alt(self) -> Self {
         let map = BTreeMap::new();
         let map = self.map.into_iter().fold(map, |mut map, (s, e)| {
@@ -1499,7 +1968,6 @@ impl Monomial {
     }
     /// Appends combining diacritical `mark` to all symbols.
     #[must_use]
-    #[inline]
     pub fn cdm(self, mark: char) -> Self {
         let map = BTreeMap::new();
         let map = self.map.into_iter().fold(map, |mut map, (s, e)| {
@@ -1510,7 +1978,6 @@ impl Monomial {
     }
     /// Swaps lowercase and uppercase symbols.
     #[must_use]
-    #[inline]
     pub fn swp(self) -> Self {
         let map = BTreeMap::new();
         let map = self.map.into_iter().fold(map, |mut map, (s, e)| {
@@ -1589,26 +2056,43 @@ impl DivAssign for Monomial {
     }
 }
 
-impl Display for Monomial {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.map
-            .iter()
-            .flat_map(|(s, e)| (0..e.get()).map(move |_| s))
-            .try_for_each(|s| write!(f, "{s}"))
-    }
-}
-
 /// Symbol as Unicode character with optional *combining diacritical mark*.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct Symbol {
     var: char,
     alt: char,
     cdm: char,
+    lab: &'static str,
+}
+
+impl PartialEq for Symbol {
+    fn eq(&self, other: &Self) -> bool {
+        self.var == other.var && self.alt == other.alt && self.cdm == other.cdm
+    }
+}
+
+impl Eq for Symbol {}
+
+impl Ord for Symbol {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.var
+            .cmp(&other.var)
+            .then(self.alt.cmp(&other.alt))
+            .then(self.cdm.cmp(&other.cdm))
+    }
+}
+
+impl PartialOrd for Symbol {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
 }
 
 impl Symbol {
     /// Unicode null (i.e., `'\0'`).
     pub const NIL: char = '\0';
+    /// Unicode zero-width space.
+    pub const VEC: char = '\u{200b}';
 
     /// Unicode *combining dot above* (i.e., `"◌̇"`).
     pub const ALT: char = '\u{0307}';
@@ -1627,7 +2111,14 @@ impl Symbol {
             var: Self::NIL,
             alt: Self::NIL,
             cdm: Self::NIL,
+            lab: "",
         }
+    }
+    /// Whether this symbol is a basis blade.
+    #[must_use]
+    #[inline]
+    pub const fn is_vec(&self) -> bool {
+        self.var == Self::VEC
     }
     /// Whether this symbol is [`Self::one()`].
     #[must_use]
@@ -1647,14 +2138,15 @@ impl Symbol {
     pub const fn is_alt(&self) -> bool {
         self.alt == Self::ALT
     }
-    /// Creates symbol for variable `var`.
+    /// Creates symbol for variable `var` with symbol name `sym`.
     #[must_use]
     #[inline]
-    pub const fn new(var: char) -> Self {
+    pub const fn new(var: char, sym: &'static str) -> Self {
         Self {
             var,
             alt: Self::NIL,
             cdm: Self::NIL,
+            lab: sym,
         }
     }
     /// Marks this symbol with [`Self::ALT`].
@@ -1691,20 +2183,20 @@ impl Symbol {
     }
 }
 
-impl From<&str> for Symbol {
+impl From<(&str, &'static str)> for Symbol {
     #[inline]
-    fn from(sym: &str) -> Self {
-        let mut sym = sym.chars();
-        let var = sym.next().unwrap_or_default();
-        assert_eq!(sym.next(), None, "multi-character symbol");
-        Self::new(var)
+    fn from((vars, sym): (&str, &'static str)) -> Self {
+        let mut vars = vars.chars();
+        let var = vars.next().unwrap_or_default();
+        assert_eq!(vars.next(), None, "multi-character symbol");
+        Self::new(var, sym)
     }
 }
 
-impl From<char> for Symbol {
+impl From<(char, &'static str)> for Symbol {
     #[inline]
-    fn from(var: char) -> Self {
-        Self::new(var)
+    fn from((var, sym): (char, &'static str)) -> Self {
+        Self::new(var, sym)
     }
 }
 
@@ -1726,22 +2218,257 @@ impl Not for Symbol {
             var,
             alt: self.alt,
             cdm: self.cdm,
+            lab: self.lab,
         }
     }
 }
 
 impl Display for Symbol {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if self.var != Self::NIL {
-            write!(f, "{}", self.var)?;
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        if self.var == Self::VEC {
+            write!(fmt, "{}", &self.lab)?;
+        } else if fmt.alternate() {
+            if !self.lab.is_empty() {
+                write!(
+                    fmt,
+                    "{}{}",
+                    match self.cdm {
+                        Self::PIN => 'p',
+                        Self::LHS => 'l',
+                        Self::RHS => 'r',
+                        _ => 'v',
+                    },
+                    &self.lab[1..]
+                )?;
+            }
+        } else if self.var != Self::NIL {
+            write!(fmt, "{}", self.var)?;
             if self.alt != Self::NIL {
-                write!(f, "{}", self.alt)?;
+                write!(fmt, "{}", self.alt)?;
             }
             if self.cdm != Self::NIL {
-                write!(f, "{}", self.cdm)?;
+                write!(fmt, "{}", self.cdm)?;
             }
         }
+
         Ok(())
+    }
+}
+
+/// Graph of symbolic expressions up to polynomials with rational coefficients.
+///
+/// Construct with:
+///
+///   * <code>Graph::from([Multivector])</code> or <code>[Graph::with_factorization](v, true)</code>
+///   * <code>Graph::from([Factorization])</code>
+///   * <code>Graph::from([Polynomial])</code>
+///   * <code>Graph::from([Monomial])</code>
+///   * <code>Graph::from([Rational])</code>
+///   * <code>Graph::from([Symbol])</code>
+///
+/// Generate text form with:
+///
+///   * `"{}"` for factorization of pinned symbols and GCDs,
+///   * `"{:-}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
+///   * `"{:+}"` for expanded form (i.e., no factorization),
+///   * `"{:#}"` for alternative symbols labelled after basis blades,
+///   * `"{:0}"` for zero newlines,
+///   * `"{:<}"` for no leading plus signs.
+///
+/// Generate DOT form (i.e., [`text/vnd.graphviz`]) with:
+///
+///   * `"{:o}"` for factorization of pinned symbols and GCDs,
+///   * `"{:-o}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
+///   * `"{:+o}"` for expanded form (i.e., no factorization),
+///   * `"{:#o}"` for alternative symbols labelled after basis blades,
+///   * `"{:0o}"` for left-to-right rank direction.
+///
+/// [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Graph {
+    /// Sum of subgraphs.
+    Add(Vec<Self>),
+    /// Product of subgraphs.
+    Mul(Vec<Self>),
+    /// Rational leaf node.
+    Num(Rational),
+    /// Symbolic leaf node.
+    Sym(Symbol),
+}
+
+impl Graph {
+    /// The zero constant.
+    pub const ZERO: Self = Self::Num(Rational::ZERO);
+    /// The one constant.
+    pub const ONE: Self = Self::Num(Rational::ONE);
+
+    /// Performs factorization on `v` and creates graph.
+    ///
+    /// Optionally, the GCDs are `signed` comprising the factored predominant sign.
+    #[must_use]
+    #[allow(clippy::missing_panics_doc)]
+    pub fn with_factorization<B: Algebra>(v: Multivector<B>, signed: bool) -> Self {
+        let mut add = Vec::with_capacity(v.map.len());
+        for (b, p) in v.map {
+            let f = Factorization::new(p, signed);
+            if f.is_one() {
+                add.push(b.into().into());
+            } else {
+                add.push(Self::Mul(vec![f.into(), b.into().into()]));
+            }
+        }
+        if add.is_empty() {
+            Self::ZERO
+        } else if add.len() == 1 {
+            add.pop().expect("unreachable")
+        } else {
+            Self::Add(add)
+        }
+    }
+}
+
+impl Default for Graph {
+    #[inline]
+    fn default() -> Self {
+        Self::ZERO
+    }
+}
+
+impl<B: Algebra> From<Multivector<B>> for Graph {
+    fn from(v: Multivector<B>) -> Self {
+        let add = v
+            .map
+            .into_iter()
+            .filter(|(_b, p)| !p.is_zero())
+            .map(|(b, p)| {
+                if p.is_one() {
+                    b.into().into()
+                } else {
+                    Self::Mul(vec![p.into(), b.into().into()])
+                }
+            })
+            .collect::<Vec<Self>>();
+        if add.is_empty() {
+            Self::ZERO
+        } else if add.len() == 1 {
+            add.into_iter().next().expect("unreachable")
+        } else {
+            Self::Add(add)
+        }
+    }
+}
+
+impl From<Factorization> for Graph {
+    fn from(f: Factorization) -> Self {
+        let add = f
+            .map
+            .into_iter()
+            .filter(|(m, (p, c))| !(m.is_zero() || p.is_zero() || c.is_zero()))
+            .map(|(m, (p, c))| {
+                let is_mul = [c.is_one(), p.is_one(), m.is_one()].map(bool::not);
+                let len = is_mul.into_iter().map(usize::from).sum::<usize>();
+                let mut mul = Vec::with_capacity(len);
+                if is_mul[0] {
+                    mul.push(c.into());
+                }
+                if is_mul[1] {
+                    mul.push(p.into());
+                }
+                if is_mul[2] {
+                    mul.push(m.into());
+                }
+                if len == 1 {
+                    mul.pop().expect("unreachable")
+                } else {
+                    Self::Mul(mul)
+                }
+            })
+            .collect::<Vec<Self>>();
+        if add.is_empty() {
+            Self::ZERO
+        } else if add.len() == 1 {
+            let any = add.into_iter().next().expect("unreachable");
+            if f.gcd.is_one() {
+                any
+            } else if let Self::Num(num) = any {
+                Self::Num(f.gcd * num)
+            } else {
+                Self::Mul(vec![f.gcd.into(), any])
+            }
+        } else if f.gcd.is_one() {
+            Self::Add(add)
+        } else {
+            Self::Mul(vec![f.gcd.into(), Self::Add(add)])
+        }
+    }
+}
+
+impl From<Polynomial> for Graph {
+    fn from(p: Polynomial) -> Self {
+        let add = p
+            .map
+            .into_iter()
+            .filter(|(p, c)| !(p.is_zero() || c.is_zero()))
+            .map(|(m, c)| {
+                if c.is_one() {
+                    m.into()
+                } else {
+                    let m = Self::from(m);
+                    if let Self::Mul(mul) = m {
+                        let mut vec = vec![Self::from(c)];
+                        vec.extend(mul);
+                        Self::Mul(vec)
+                    } else if let Self::Num(num) = m {
+                        Self::Num(c * num)
+                    } else {
+                        Self::Mul(vec![c.into(), m])
+                    }
+                }
+            })
+            .collect::<Vec<Self>>();
+        if add.is_empty() {
+            Self::ZERO
+        } else if add.len() == 1 {
+            add.into_iter().next().expect("unreachable")
+        } else {
+            Self::Add(add)
+        }
+    }
+}
+
+impl From<Monomial> for Graph {
+    fn from(m: Monomial) -> Self {
+        let mul = m
+            .map
+            .into_iter()
+            .filter(|(s, _e)| !s.is_one())
+            .flat_map(|(s, e)| {
+                repeat(s)
+                    .take(e.get().try_into().expect("negative exponent"))
+                    .map(From::from)
+            })
+            .collect::<Vec<Self>>();
+        if mul.is_empty() {
+            Self::ONE
+        } else if mul.len() == 1 {
+            mul.into_iter().next().expect("unreachable")
+        } else {
+            Self::Mul(mul)
+        }
+    }
+}
+
+impl From<Rational> for Graph {
+    #[inline]
+    fn from(r: Rational) -> Self {
+        Self::Num(r)
+    }
+}
+
+impl From<Symbol> for Graph {
+    #[inline]
+    fn from(s: Symbol) -> Self {
+        if s.is_one() { Self::ONE } else { Self::Sym(s) }
     }
 }
 

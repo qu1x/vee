@@ -1,3 +1,15 @@
+# Version 0.1.5 (2025-11-04)
+
+  * Add DOT form (i.e., `text/vnd.graphviz`) via `Octal` trait.
+  * Add alternative symbols labelled after basis blades (`"{:#}"`).
+  * Implement factorization of pinned symbols, GCD coefficients, and predominant sign.
+      * Expand (`"{:+}"`) or reduce (i.e., factorized) (`"{}"`).
+      * Factor predominant sign (`"{:-}"`).
+  * Eliminate orthonormalization conditions from expressions using reflection/projection operator.
+  * Evaluate symbols as rationals.
+  * Count operations (i.e., multiplication and additions).
+  * Fix KaTeX rendering on large pages.
+
 # Version 0.1.4 (2025-10-16)
 
   * Update KaTeX.
