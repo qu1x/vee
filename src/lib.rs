@@ -232,7 +232,7 @@
 //!    "+(+(+vv+xx-yy-zz)X͓+2(+vz+xy)Y͓+2(-vy+xz)Z͓+2(-Vx-Xv-Yz+Zy)w͓)e032",
 //!    "+(+2(-vz+xy)X͓+(+vv-xx+yy-zz)Y͓+2(+vx+yz)Z͓+2(-Vy+Xz-Yv-Zx)w͓)e013",
 //!    "+(+2(+vy+xz)X͓+2(-vx+yz)Y͓+(+vv-xx-yy+zz)Z͓+2(-Vz-Xy+Yx-Zv)w͓)e021",
-//! //                                          ^^^^^^^^^^^^^^^^^
+//! //                                          ^^^^^^^^^^^^^^^^^^
 //! ]);
 //!
 //! // Factored predominant sign.
@@ -241,7 +241,7 @@
 //!    "+(+(+vv+xx-yy-zz)X͓+2(+vz+xy)Y͓+2(-vy+xz)Z͓-2(+Vx+Xv+Yz-Zy)w͓)e032",
 //!    "+(+2(-vz+xy)X͓+(+vv-xx+yy-zz)Y͓+2(+vx+yz)Z͓-2(+Vy-Xz+Yv+Zx)w͓)e013",
 //!    "+(+2(+vy+xz)X͓+2(-vx+yz)Y͓+(+vv-xx-yy+zz)Z͓-2(+Vz+Xy-Yx+Zv)w͓)e021",
-//! //                                          ^^^^^^^^^^^^^^^^^
+//! //                                          ^^^^^^^^^^^^^^^^^^
 //! ]);
 //! ```
 //!
@@ -1082,8 +1082,10 @@ impl<B: Algebra> Display for Multivector<B> {
                     if num.abs().is_one() {
                         if num.is_negative() {
                             write!(fmt, "-")?;
-                        }
-                        defer = if fmt.align().is_none() { "+1" } else { "1" };
+                        } else if fmt.align().is_none() {
+                            write!(fmt, "+")?;
+                        };
+                        defer = "1";
                     } else if num.is_negative() {
                         write!(fmt, "{num}")?;
                         defer = "";
