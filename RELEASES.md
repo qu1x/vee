@@ -7,7 +7,7 @@
       * Factor predominant sign (`"{:-}"`).
   * Eliminate orthonormalization conditions from expressions using reflection/projection operator.
   * Evaluate symbols as rationals.
-  * Count operations (i.e., multiplication and additions).
+  * Count operations (i.e., multiplications and additions).
   * Fix KaTeX rendering on large pages.
 
 # Version 0.1.4 (2025-10-16)

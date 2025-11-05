@@ -37,7 +37,7 @@ The goal of this crate is to generate optimized code for geometric algebra flavo
   * Eliminate orthonormalization conditions from expressions using reflection/projection operator by
     factoring pinned symbols, GCD coefficients, and predominant signs.
   * Evaluate symbols as rationals.
-  * Count operations (i.e., multiplication and additions).
+  * Count operations (i.e., multiplications and additions).
   * Define the metric-agnostic basis (i.e., elliptic, parabolic, hyperbolic) and the multivector
     entities of the projective geometric algebra (PGA) for dimensions D = N + 1 < 8.
 
