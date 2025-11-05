@@ -1195,7 +1195,6 @@ impl<B: Algebra> Octal for Multivector<B> {
         if fmt.sign_aware_zero_pad() {
             writeln!(fmt, "  rankdir=LR")?;
         }
-        writeln!(fmt, "  node [ordering=out]")?;
         let g = if fmt.sign_plus() {
             Graph::from(self.clone())
         } else {
