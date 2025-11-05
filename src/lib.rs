@@ -524,6 +524,25 @@ where
 ///
 /// All operators (e.g., [`Add`], [`Mul`]) implemented for [`Multivector`] reduce an arbitrary
 /// expression into this unique form.
+///
+/// Generate text form with:
+///
+///   * `"{}"` for factorization of pinned symbols and GCDs,
+///   * `"{:-}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
+///   * `"{:+}"` for expanded form (i.e., no factorization),
+///   * `"{:#}"` for alternative symbols labelled after basis blades,
+///   * `"{:0}"` for zero newlines,
+///   * `"{:<}"` for omitting plus signs.
+///
+/// Generate DOT form (i.e., [`text/vnd.graphviz`]) with:
+///
+///   * `"{:o}"` for factorization of pinned symbols and GCDs,
+///   * `"{:-o}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
+///   * `"{:+o}"` for expanded form (i.e., no factorization),
+///   * `"{:#o}"` for alternative symbols labelled after basis blades,
+///   * `"{:0o}"` for left-to-right rank direction.
+///
+/// [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default)]
 pub struct Multivector<B: Algebra> {
     /// Symbolic storage.
@@ -2266,25 +2285,6 @@ impl Display for Symbol {
 ///   * <code>Graph::from([Monomial])</code>
 ///   * <code>Graph::from([Rational])</code>
 ///   * <code>Graph::from([Symbol])</code>
-///
-/// Generate text form with:
-///
-///   * `"{}"` for factorization of pinned symbols and GCDs,
-///   * `"{:-}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
-///   * `"{:+}"` for expanded form (i.e., no factorization),
-///   * `"{:#}"` for alternative symbols labelled after basis blades,
-///   * `"{:0}"` for zero newlines,
-///   * `"{:<}"` for no leading plus signs.
-///
-/// Generate DOT form (i.e., [`text/vnd.graphviz`]) with:
-///
-///   * `"{:o}"` for factorization of pinned symbols and GCDs,
-///   * `"{:-o}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
-///   * `"{:+o}"` for expanded form (i.e., no factorization),
-///   * `"{:#o}"` for alternative symbols labelled after basis blades,
-///   * `"{:0o}"` for left-to-right rank direction.
-///
-/// [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Graph {
     /// Sum of subgraphs.

@@ -27,7 +27,7 @@ The goal of this crate is to generate optimized code for geometric algebra flavo
       * Expand (`"{:+}"`) or reduce (i.e., factorize) expressions (`"{}"`).
       * Factor predominant sign (`"{:-}"`).
       * Omit newlines (`"{:0}"`).
-      * Omit leading plus signs (`"{:<}"`).
+      * Omit plus signs (`"{:<}"`).
   * Generate expressions in DOT form (i.e., [`text/vnd.graphviz`]).
       * Use symbols with Unicode diacritical marks (`"{:o}"`).
       * Use Symbols labelled after basis blades (`"{:#o}"`).
