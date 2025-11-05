@@ -1052,13 +1052,13 @@ impl<B: Algebra> Display for Multivector<B> {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         fn traverse<'a>(
             fmt: &mut fmt::Formatter,
-            graph: &Graph,
+            tree: &Tree,
             depth: usize,
             grasp: bool,
             mut defer: &'a str,
         ) -> Result<&'a str, fmt::Error> {
-            match graph {
-                Graph::Add(siblings) => {
+            match tree {
+                Tree::Add(siblings) => {
                     let grasp = grasp || !(defer.is_empty() || defer == "+");
                     if grasp {
                         write!(fmt, "{defer}")?;
@@ -1077,9 +1077,9 @@ impl<B: Algebra> Display for Multivector<B> {
                     }
                     defer = "";
                 }
-                Graph::Mul(siblings) => {
+                Tree::Mul(siblings) => {
                     let mut is_one = false;
-                    if let Some(Graph::Sym(sym)) = siblings.last() {
+                    if let Some(Tree::Sym(sym)) = siblings.last() {
                         if sym.lab == "1" && depth <= 1 && siblings.len() == 2 {
                             is_one = true;
                         }
@@ -1097,7 +1097,7 @@ impl<B: Algebra> Display for Multivector<B> {
                     }
                     defer = "";
                 }
-                Graph::Num(num) => {
+                Tree::Num(num) => {
                     if num.abs().is_one() {
                         if num.is_negative() {
                             write!(fmt, "-")?;
@@ -1113,7 +1113,7 @@ impl<B: Algebra> Display for Multivector<B> {
                         defer = "";
                     }
                 }
-                Graph::Sym(sym) => {
+                Tree::Sym(sym) => {
                     write!(fmt, "{defer}")?;
                     if sym.lab != "1" || depth == 0 {
                         Display::fmt(sym, fmt)?;
@@ -1132,13 +1132,13 @@ impl<B: Algebra> Display for Multivector<B> {
             }
             Ok(defer)
         }
-        let graph = if fmt.sign_plus() {
-            Graph::from(self.clone())
+        let tree = if fmt.sign_plus() {
+            Tree::from(self.clone())
         } else {
-            Graph::with_factorization(self.clone(), fmt.sign_minus())
+            Tree::with_factorization(self.clone(), fmt.sign_minus())
         };
         let defer = if fmt.align().is_none() { "+" } else { "" };
-        traverse(fmt, &graph, 0, false, defer)?;
+        traverse(fmt, &tree, 0, false, defer)?;
         Ok(())
     }
 }
@@ -1147,7 +1147,7 @@ impl<B: Algebra> Octal for Multivector<B> {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         fn traverse(
             fmt: &mut fmt::Formatter,
-            graph: &Graph,
+            tree: &Tree,
             inode: usize,
             mut index: usize,
         ) -> Result<usize, fmt::Error> {
@@ -1156,8 +1156,8 @@ impl<B: Algebra> Octal for Multivector<B> {
             } else {
                 ["∑", "∏"]
             };
-            match graph {
-                Graph::Add(siblings) => {
+            match tree {
+                Tree::Add(siblings) => {
                     writeln!(fmt, "  n{index} [label=\"{add}\" shape=box]")?;
                     if inode != index {
                         writeln!(fmt, "  n{inode} -> n{index}")?;
@@ -1168,7 +1168,7 @@ impl<B: Algebra> Octal for Multivector<B> {
                     }
                     Ok(index)
                 }
-                Graph::Mul(siblings) => {
+                Tree::Mul(siblings) => {
                     writeln!(fmt, "  n{index} [label=\"{mul}\" shape=box]")?;
                     if inode != index {
                         writeln!(fmt, "  n{inode} -> n{index}")?;
@@ -1179,14 +1179,14 @@ impl<B: Algebra> Octal for Multivector<B> {
                     }
                     Ok(index)
                 }
-                Graph::Num(num) => {
+                Tree::Num(num) => {
                     writeln!(fmt, "  n{index} [label=\"{num}\" shape=circle]")?;
                     if inode != index {
                         writeln!(fmt, "  n{inode} -> n{index}")?;
                     }
                     Ok(index)
                 }
-                Graph::Sym(sym) => {
+                Tree::Sym(sym) => {
                     let shape = if sym.var == Symbol::VEC {
                         "diamond"
                     } else {
@@ -1214,12 +1214,12 @@ impl<B: Algebra> Octal for Multivector<B> {
         if fmt.sign_aware_zero_pad() {
             writeln!(fmt, "  rankdir=LR")?;
         }
-        let g = if fmt.sign_plus() {
-            Graph::from(self.clone())
+        let t = if fmt.sign_plus() {
+            Tree::from(self.clone())
         } else {
-            Graph::with_factorization(self.clone(), fmt.sign_minus())
+            Tree::with_factorization(self.clone(), fmt.sign_minus())
         };
-        traverse(fmt, &g, 0, 0)?;
+        traverse(fmt, &t, 0, 0)?;
         writeln!(fmt, "}}")?;
         Ok(())
     }
@@ -2275,21 +2275,21 @@ impl Display for Symbol {
     }
 }
 
-/// Graph of symbolic expressions up to polynomials with rational coefficients.
+/// Non-binary algebraic expression tree up to symbolic [`Multivector`] expressions.
 ///
 /// Construct with:
 ///
-///   * <code>Graph::from([Multivector])</code> or <code>[Graph::with_factorization](v, true)</code>
-///   * <code>Graph::from([Factorization])</code>
-///   * <code>Graph::from([Polynomial])</code>
-///   * <code>Graph::from([Monomial])</code>
-///   * <code>Graph::from([Rational])</code>
-///   * <code>Graph::from([Symbol])</code>
+///   * <code>Tree::from([Multivector])</code> or <code>[Tree::with_factorization](v, true)</code>
+///   * <code>Tree::from([Factorization])</code>
+///   * <code>Tree::from([Polynomial])</code>
+///   * <code>Tree::from([Monomial])</code>
+///   * <code>Tree::from([Rational])</code>
+///   * <code>Tree::from([Symbol])</code>
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub enum Graph {
-    /// Sum of subgraphs.
+pub enum Tree {
+    /// Sum of subtrees.
     Add(Vec<Self>),
-    /// Product of subgraphs.
+    /// Product of subtrees.
     Mul(Vec<Self>),
     /// Rational leaf node.
     Num(Rational),
@@ -2297,13 +2297,13 @@ pub enum Graph {
     Sym(Symbol),
 }
 
-impl Graph {
+impl Tree {
     /// The zero constant.
     pub const ZERO: Self = Self::Num(Rational::ZERO);
     /// The one constant.
     pub const ONE: Self = Self::Num(Rational::ONE);
 
-    /// Performs factorization on `v` and creates graph.
+    /// Performs factorization on `v` and creates tree.
     ///
     /// Optionally, the GCDs are `signed` comprising the factored predominant sign.
     #[must_use]
@@ -2328,14 +2328,14 @@ impl Graph {
     }
 }
 
-impl Default for Graph {
+impl Default for Tree {
     #[inline]
     fn default() -> Self {
         Self::ZERO
     }
 }
 
-impl<B: Algebra> From<Multivector<B>> for Graph {
+impl<B: Algebra> From<Multivector<B>> for Tree {
     fn from(v: Multivector<B>) -> Self {
         let add = v
             .map
@@ -2359,7 +2359,7 @@ impl<B: Algebra> From<Multivector<B>> for Graph {
     }
 }
 
-impl From<Factorization> for Graph {
+impl From<Factorization> for Tree {
     fn from(f: Factorization) -> Self {
         let add = f
             .map
@@ -2404,7 +2404,7 @@ impl From<Factorization> for Graph {
     }
 }
 
-impl From<Polynomial> for Graph {
+impl From<Polynomial> for Tree {
     fn from(p: Polynomial) -> Self {
         let add = p
             .map
@@ -2437,7 +2437,7 @@ impl From<Polynomial> for Graph {
     }
 }
 
-impl From<Monomial> for Graph {
+impl From<Monomial> for Tree {
     fn from(m: Monomial) -> Self {
         let mul = m
             .map
@@ -2459,14 +2459,14 @@ impl From<Monomial> for Graph {
     }
 }
 
-impl From<Rational> for Graph {
+impl From<Rational> for Tree {
     #[inline]
     fn from(r: Rational) -> Self {
         Self::Num(r)
     }
 }
 
-impl From<Symbol> for Graph {
+impl From<Symbol> for Tree {
     #[inline]
     fn from(s: Symbol) -> Self {
         if s.is_one() { Self::ONE } else { Self::Sym(s) }
