@@ -163,9 +163,31 @@ impl<const M: i8, const N: u32> From<Pga<M, N>> for Symbol {
     }
 }
 
+impl<const M: i8, const N: u32> TryFrom<Symbol> for Pga<M, N> {
+    type Error = Symbol;
+
+    #[inline]
+    fn try_from(s: Symbol) -> Result<Self, Symbol> {
+        let b = Self::new(s.lab);
+        if s.lab == LUT[N as usize][b.idx as usize].sym {
+            Ok(b)
+        } else {
+            Err(s)
+        }
+    }
+}
+
 impl<const M: i8, const N: u32> Algebra for Pga<M, N> {
     const N: u32 = N;
 
+    #[inline]
+    fn scalar() -> Self {
+        Self::default()
+    }
+    #[inline]
+    fn pseudoscalar() -> Self {
+        Self::pss()
+    }
     #[inline]
     fn basis() -> impl ExactSizeIterator<Item = Self> + DoubleEndedIterator<Item = Self> {
         TAB[N as usize].iter().map(|b| Self { idx: b.idx })

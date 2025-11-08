@@ -486,6 +486,7 @@ where
         + PartialOrd
         + Default
         + Into<Symbol>
+        + TryFrom<Symbol, Error = Symbol>
         + Debug
         + Display
         + Mul<Output = (i8, Self)>
@@ -500,6 +501,12 @@ where
     /// The ordered basis (i.e., all basis blades).
     #[must_use]
     fn basis() -> impl ExactSizeIterator<Item = Self> + DoubleEndedIterator<Item = Self>;
+    /// The scalar.
+    #[must_use]
+    fn scalar() -> Self;
+    /// The pseudoscalar.
+    #[must_use]
+    fn pseudoscalar() -> Self;
     /// The grade.
     #[must_use]
     fn grade(&self) -> u32;
@@ -563,6 +570,45 @@ pub struct Multivector<B: Algebra> {
     pub map: BTreeMap<B, Polynomial>,
     /// Whether to leverage orthonormalization conditions (ONC).
     pub onc: bool,
+}
+
+impl<B: Algebra> TryFrom<Tree> for Multivector<B> {
+    type Error = Symbol;
+
+    fn try_from(tree: Tree) -> Result<Self, Self::Error> {
+        match tree {
+            Tree::Add(sib) => sib
+                .into_iter()
+                .try_fold(Self::zero(), |add, sib| Ok(add + Self::try_from(sib)?)),
+            Tree::Mul(sib) => sib
+                .into_iter()
+                .try_fold(Self::one(), |mul, sib| Ok(mul * Self::try_from(sib)?)),
+            Tree::Num(num) => Ok(num.into()),
+            Tree::Sym(sym) => sym.try_into(),
+        }
+    }
+}
+
+impl<B: Algebra> From<Rational> for Multivector<B> {
+    fn from(r: Rational) -> Self {
+        let mut p = Polynomial::default();
+        p.map.insert(Monomial::one(), r);
+        let mut v = Self::default();
+        v.map.insert(B::scalar(), p);
+        v
+    }
+}
+
+impl<B: Algebra> TryFrom<Symbol> for Multivector<B> {
+    type Error = Symbol;
+
+    fn try_from(s: Symbol) -> Result<Self, Self::Error> {
+        if s.is_vec() {
+            Ok(Self::new([(Symbol::one(), s.try_into()?)]))
+        } else {
+            Ok(Self::new([(s, B::scalar())]))
+        }
+    }
 }
 
 impl<B: Algebra> Multivector<B> {
@@ -715,11 +761,16 @@ impl<B: Algebra> Multivector<B> {
         });
         self
     }
+    /// The zero.
+    #[must_use]
+    #[inline]
+    pub fn zero() -> Self {
+        Self::default()
+    }
     /// The one.
     #[must_use]
-    #[allow(clippy::missing_panics_doc)]
     pub fn one() -> Self {
-        Self::new([(Symbol::one(), B::basis().next().expect("empty basis"))])
+        Self::new([(Symbol::one(), B::scalar())])
     }
     /// Evaluates each symbol `S` of map `M` as respective rational `R`.
     #[must_use]
@@ -1062,7 +1113,6 @@ impl<B: Algebra> Shr for Multivector<B> {
 }
 
 impl<B: Algebra> Display for Multivector<B> {
-    #[allow(clippy::cognitive_complexity, clippy::too_many_lines)]
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         fn traverse<'a>(
             fmt: &mut fmt::Formatter,
@@ -1201,7 +1251,7 @@ impl<B: Algebra> Octal for Multivector<B> {
                     Ok(index)
                 }
                 Tree::Sym(sym) => {
-                    let shape = if sym.var == Symbol::VEC {
+                    let shape = if sym.is_vec() {
                         "diamond"
                     } else {
                         match sym.cdm {
@@ -2259,7 +2309,7 @@ impl Not for Symbol {
 
 impl Display for Symbol {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        if self.var == Self::VEC {
+        if self.is_vec() {
             write!(fmt, "{}", &self.lab)?;
         } else if fmt.alternate() {
             if !self.lab.is_empty() {
@@ -2275,7 +2325,7 @@ impl Display for Symbol {
                     &self.lab[1..]
                 )?;
             }
-        } else if self.var != Self::NIL {
+        } else if !self.is_one() {
             write!(fmt, "{}", self.var)?;
             if self.alt != Self::NIL {
                 write!(fmt, "{}", self.alt)?;
@@ -2291,7 +2341,13 @@ impl Display for Symbol {
 
 /// Non-binary algebraic expression tree up to symbolic [`Multivector`] expressions.
 ///
-/// Construct with:
+/// Unifies and simplifies following implementations due to being an intermediate and recursive data
+/// structure:
+///
+///   * <code>impl [Display] for [Multivector]</code>
+///   * <code>impl [Octal] for [Multivector]</code>
+///
+/// Convert from:
 ///
 ///   * <code>Tree::from([Multivector])</code> or <code>[Tree::with_factorization](v, true)</code>
 ///   * <code>Tree::from([Factorization])</code>
@@ -2299,6 +2355,12 @@ impl Display for Symbol {
 ///   * <code>Tree::from([Monomial])</code>
 ///   * <code>Tree::from([Rational])</code>
 ///   * <code>Tree::from([Symbol])</code>
+///
+/// Convert to:
+///
+///   * <code>[Multivector]::try_from(tree)</code> where <code>Error = [Symbol]</code> indicates
+///     that [`Symbol`] is not part of the [`Algebra`]. This is due [`Tree`] and [`Symbol`] being
+///     non-generic and hence agnostic of the [`Algebra`].
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Tree {
     /// Sum of subtrees.
