@@ -22,18 +22,7 @@ The goal of this crate is to generate optimized code for geometric algebra flavo
 
   * Uniquely reduce symbolic multivector expressions.
   * Generate expressions in text form.
-      * Use symbols with Unicode *combining diacritical marks* (`"{}"`).
-      * Use Symbols labelled after basis blades (`"{:#}"`).
-      * Expand (`"{:+}"`) or reduce (i.e., factorize) expressions (`"{}"`).
-      * Factor predominant sign (`"{:-}"`).
-      * Omit newlines (`"{:0}"`).
-      * Omit plus signs (`"{:<}"`).
   * Generate expressions in DOT form (i.e., [`text/vnd.graphviz`]).
-      * Use symbols with Unicode *combining diacritical marks* (`"{:o}"`).
-      * Use Symbols labelled after basis blades (`"{:#o}"`).
-      * Expand (`"{:+o}"`) or reduce (i.e., factorize) expressions (`"{:o}"`).
-      * Factor predominant sign (`"{:-o}"`).
-      * Change rank direction from top-to-bottom (TB) to left-to-right (LR) (`"{:0o}"`).
   * Eliminate orthonormalization conditions from expressions using reflection/projection operator by
     factoring pinned symbols, GCD coefficients, and predominant signs.
   * Evaluate symbols as rationals.
