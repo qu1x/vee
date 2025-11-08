@@ -1264,10 +1264,10 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// ```
     /// use vee::{format_eq, PgaP3 as Vee};
     ///
-    /// let squared_norm = Vee::line().squared_norm();
+    /// let norm_squared = Vee::line().norm_squared();
     ///
-    /// assert_eq!(squared_norm.basis_blades(), Vee::norm().basis_blades());
-    /// format_eq!(squared_norm, [
+    /// assert_eq!(norm_squared.basis_blades(), Vee::norm().basis_blades());
+    /// format_eq!(norm_squared, [
     ///     "+xx+yy+zz",
     ///     "+2(-Xx-Yy-Zz)I",
     /// ]);
@@ -1506,10 +1506,10 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///     "+(+X͔x͕+X͕x͔+Y͔y͕+Y͕y͔+Z͔z͕+Z͕z͔)I",
     /// ]);
     ///
-    /// let squared_norm = motor.squared_norm();
+    /// let norm_squared = motor.norm_squared();
     ///
-    /// assert_eq!(squared_norm.basis_blades(), Vee::norm().basis_blades());
-    /// format_eq!(squared_norm, [
+    /// assert_eq!(norm_squared.basis_blades(), Vee::norm().basis_blades());
+    /// format_eq!(norm_squared, [
     ///     "+x͔x͔x͕x͕+x͔x͔y͕y͕+x͔x͔z͕z͕+x͕x͕y͔y͔+x͕x͕z͔z͔+y͔y͔y͕y͕+y͔y͔z͕z͕+y͕y͕z͔z͔+z͔z͔z͕z͕",
     ///     "+2(-X͔x͔x͕x͕-X͔x͔y͕y͕-X͔x͔z͕z͕\
     ///         -X͕x͔x͔x͕-X͕x͕y͔y͔-X͕x͕z͔z͔\
@@ -1533,10 +1533,10 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///     "+(+X͕x͔+Y͕y͔+Z͕z͔)I",
     /// ]);
     ///
-    /// let squared_norm = motor.squared_norm();
+    /// let norm_squared = motor.norm_squared();
     ///
-    /// assert_eq!(squared_norm.basis_blades(), Vee::norm().vector(0).basis_blades());
-    /// format_eq!(squared_norm, [
+    /// assert_eq!(norm_squared.basis_blades(), Vee::norm().vector(0).basis_blades());
+    /// format_eq!(norm_squared, [
     ///     "+v͔v͔v͕v͕+v͕v͕x͔x͔+v͕v͕y͔y͔+v͕v͕z͔z͔",
     /// ]);
     /// ```
@@ -1644,10 +1644,10 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     /// ```
     /// use vee::{format_eq, PgaP4 as Vee};
     ///
-    /// let quadvector_squared_norm = Vee::point().squared_norm();
+    /// let quadvector_norm_squared = Vee::point().norm_squared();
     ///
-    /// assert_eq!(quadvector_squared_norm.basis_blades(), Vee::scalar().basis_blades());
-    /// format_eq!(quadvector_squared_norm, ["+ww"]);
+    /// assert_eq!(quadvector_norm_squared.basis_blades(), Vee::scalar().basis_blades());
+    /// format_eq!(quadvector_norm_squared, ["+ww"]);
     /// ```
     #[must_use]
     #[inline]
@@ -1766,9 +1766,9 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///     "+(-ż͔ð͕̇+ż͕ð͔̇)e34",
     /// ]);
     ///
-    /// let squared_norm = Vee::single_rotator().squared_norm();
-    /// assert_eq!(squared_norm.basis_blades(), (Vee::scalar() + Vee::weight()).basis_blades());
-    /// format_eq!(squared_norm, [
+    /// let norm_squared = Vee::single_rotator().norm_squared();
+    /// assert_eq!(norm_squared.basis_blades(), (Vee::scalar() + Vee::weight()).basis_blades());
+    /// format_eq!(norm_squared, [
     ///     "+ȧȧ+ḃḃ+ċċ+ḋḋ+ėė+ḟḟ+vv",
     ///     "+2(-ȧḟ+ḃė-ċḋ)e1234",
     /// ]);
@@ -1811,9 +1811,9 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///     "+(+ȧ͔ḟ͕+ȧ͕ḟ͔-ḃ͔ė͕-ḃ͕ė͔+ċ͔ḋ͕+ċ͕ḋ͔)e1234",
     /// ]);
     ///
-    /// let squared_norm = Vee::double_rotator().squared_norm();
-    /// assert_eq!(squared_norm.basis_blades(), (Vee::scalar() + Vee::weight()).basis_blades());
-    /// format_eq!(squared_norm, [
+    /// let norm_squared = Vee::double_rotator().norm_squared();
+    /// assert_eq!(norm_squared.basis_blades(), (Vee::scalar() + Vee::weight()).basis_blades());
+    /// format_eq!(norm_squared, [
     ///     "+ȧȧ+ḃḃ+ċċ+ḋḋ+ėė+ḟḟ+vv+ww",
     ///     "+2(-ȧḟ+ḃė-ċḋ+vw)e1234",
     /// ]);
@@ -1866,9 +1866,9 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///     "+(+z͔ð͕-z͕ð͔)e34",
     /// ]);
     ///
-    /// let squared_norm = Vee::simple_motor().squared_norm();
-    /// assert_eq!(squared_norm.basis_blades(), Vee::norm().basis_blades());
-    /// format_eq!(squared_norm, [
+    /// let norm_squared = Vee::simple_motor().norm_squared();
+    /// assert_eq!(norm_squared.basis_blades(), Vee::norm().basis_blades());
+    /// format_eq!(norm_squared, [
     ///     // Scalar condition.
     ///     "+ȧȧ+ḃḃ+ċċ+ḋḋ+ėė+ḟḟ+vv",
     ///     // Point condition.
@@ -2066,9 +2066,9 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///     "+(-ȧ͕z͔+ḃ͕y͔-ḋ͕x͔)e132",
     /// ]);
     ///
-    /// let squared_norm = Vee::rotoreflector().squared_norm();
-    /// assert_eq!(squared_norm.basis_blades(), (Vee::scalar() + Vee::weight()).basis_blades());
-    /// format_eq!(squared_norm, [
+    /// let norm_squared = Vee::rotoreflector().norm_squared();
+    /// assert_eq!(norm_squared.basis_blades(), (Vee::scalar() + Vee::weight()).basis_blades());
+    /// format_eq!(norm_squared, [
     ///     "+xx+ẋẋ+yy+ẏẏ+zz+żż+ðð+ð̇ð̇",
     ///     "+2(-xẋ-yẏ-zż-ðð̇)e1234", // Weight condition.
     /// ]);
@@ -2227,11 +2227,11 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// ```
     /// use vee::{format_eq, PgaP5 as Vee};
     ///
-    /// let quadvector_squared_norm = Vee::line().squared_norm();
+    /// let quadvector_norm_squared = Vee::line().norm_squared();
     ///
-    /// assert_eq!(quadvector_squared_norm.basis_blades(),
+    /// assert_eq!(quadvector_norm_squared.basis_blades(),
     ///     (Vee::scalar() + Vee::line_moment()).basis_blades());
-    /// format_eq!(quadvector_squared_norm, [
+    /// format_eq!(quadvector_norm_squared, [
     ///     "+xx+yy+zz+ðð+øø",
     ///     "+2(-Hø+Ið-Jz)e0345",
     ///     "+2(+Fø-Gð+Jy)e0254",
@@ -2817,10 +2817,10 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///        +(+aa+bb+cc-dd+ee+ff-gg+hh-ii-jj+vv-xx-yy-zz-ðð+øø)Ø͓)e01243",
     /// ]);
     ///
-    /// let squared_norm = Vee::double_motor().squared_norm();
+    /// let norm_squared = Vee::double_motor().norm_squared();
     ///
-    /// assert_eq!(squared_norm.basis_blades(), Vee::norm().basis_blades());
-    /// format_eq!(squared_norm, [
+    /// assert_eq!(norm_squared.basis_blades(), Vee::norm().basis_blades());
+    /// format_eq!(norm_squared, [
     ///     "+aa+bb+cc+dd+ee+ff+gg+hh+ii+jj+vv+xx+yy+zz+ðð+øø",
     ///     "+2(+ay+bz+cð+dø-ej+fi-gh+vx)e2345",
     ///     "+2(-ax+bj-ci+dh+ez+fð+gø+vy)e1354",
@@ -3149,10 +3149,10 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     /// ```
     /// use vee::{format_eq, PgaP6 as Vee};
     ///
-    /// let quadvector_squared_norm = Vee::plane().squared_norm();
+    /// let quadvector_norm_squared = Vee::plane().norm_squared();
     ///
-    /// assert_eq!(quadvector_squared_norm.basis_blades(), Vee::norm().basis_blades());
-    /// format_eq!(quadvector_squared_norm, [
+    /// assert_eq!(quadvector_norm_squared.basis_blades(), Vee::norm().basis_blades());
+    /// format_eq!(quadvector_norm_squared, [
     ///     "+α̇α̇+β̇β̇+γ̇γ̇+δ̇δ̇+ε̇ε̇+ζ̇ζ̇+η̇η̇+θ̇θ̇+ι̇ι̇+κ̇κ̇+λ̇λ̇+μ̇μ̇+ν̇ν̇+ξ̇ξ̇+ο̇ο̇",
     ///     "+2(-κ̇ο̇+λ̇ξ̇-μ̇ν̇)e3456",
     ///     "+2(+η̇ο̇-θ̇ξ̇+ι̇ν̇)e2465",
@@ -3729,7 +3729,7 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     ///     "+v͕ν͔e45",
     ///     "+v͕ξ͔e46",
     ///     "+v͕ο͔e56",
-    ///     // Additional orthogonality condition besides `squared_norm` condition:
+    ///     // Additional orthogonality condition besides `norm_squared` condition:
     ///     "+(-Ð͕ο͔+Ø͕ξ͔-Þ͕ν͔)e0465",
     ///     "+(+Z͕ο͔-Ø͕μ͔+Þ͕λ͔)e0356",
     ///     "+(-Z͕ξ͔+Ð͕μ͔-Þ͕κ͔)e0364",
@@ -3777,11 +3777,11 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     ///     "+(+X͕ζ͔-Y͕β͔+Z͕α͔)e0123",
     /// ]);
     ///
-    /// let squared_norm = single_motor.squared_norm();
+    /// let norm_squared = single_motor.norm_squared();
     ///
-    /// assert_eq!(squared_norm.basis_blades(),
+    /// assert_eq!(norm_squared.basis_blades(),
     ///     (Vee::scalar() + Vee::plane_displacement()).basis_blades());
-    /// format_eq!(squared_norm, [
+    /// format_eq!(norm_squared, [
     ///     "+v͔v͔v͕v͕+v͕v͕α͔α͔+v͕v͕β͔β͔+v͕v͕γ͔γ͔+v͕v͕δ͔δ͔+v͕v͕ε͔ε͔+v͕v͕ζ͔ζ͔+v͕v͕η͔η͔+v͕v͕θ͔θ͔+v͕v͕ι͔ι͔+v͕v͕κ͔κ͔+v͕v͕λ͔λ͔+v͕v͕μ͔μ͔+v͕v͕ν͔ν͔+v͕v͕ξ͔ξ͔+v͕v͕ο͔ο͔",
     ///     // Orthogonality condition:
     ///     "+2(-v͕v͕κ͔ο͔+v͕v͕λ͔ξ͔-v͕v͕μ͔ν͔)e3456",
@@ -3828,10 +3828,10 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     ///     "+(+ø͔þ͕-ø͕þ͔)e56",
     /// ]);
     ///
-    /// let squared_norm = Vee::single_motor().squared_norm();
+    /// let norm_squared = Vee::single_motor().norm_squared();
     ///
-    /// assert_eq!(squared_norm.basis_blades(), Vee::norm().basis_blades());
-    /// format_eq!(squared_norm, [
+    /// assert_eq!(norm_squared.basis_blades(), Vee::norm().basis_blades());
+    /// format_eq!(norm_squared, [
     ///     "+vv+αα+ββ+γγ+δδ+εε+ζζ+ηη+θθ+ιι+κκ+λλ+μμ+νν+ξξ+οο",
     ///     "+2(-κο+λξ-μν)e3456",
     ///     "+2(+ηο-θξ+ιν)e2465",
@@ -3999,7 +3999,7 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     ///     "+(+X͕θ͔-Y͕δ͔+Z͕ξ͔̇-Ð͕μ͔̇+Ø͕α͔+Þ͕κ͔̇)e0125",
     ///     "+(-X͕η͔+Y͕γ͔+Z͕ο͔̇-Ð͕α͔-Ø͕μ͔̇+Þ͕λ͔̇)e0142",
     ///     "+(+X͕ζ͔-Y͕β͔+Z͕α͔+Ð͕ο͔̇-Ø͕ξ͔̇+Þ͕ν͔̇)e0123",
-    ///     // Additional orthogonality condition besides `squared_norm` condition:
+    ///     // Additional orthogonality condition besides `norm_squared` condition:
     ///     "+(-Y͕α͔̇-Z͕β͔̇-Ð͕γ͔̇-Ø͕δ͔̇-Þ͕ε͔̇)e023465",
     ///     "+(+X͕α͔̇-Z͕ζ͔̇-Ð͕η͔̇-Ø͕θ͔̇-Þ͕ι͔̇)e013456",
     ///     "+(+X͕β͔̇+Y͕ζ͔̇-Ð͕κ͔̇-Ø͕λ͔̇-Þ͕μ͔̇)e012465",
@@ -4020,10 +4020,10 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     ///     "+(+X͕ε͔̇+Y͕ι͔̇+Z͕μ͔̇+Ð͕ξ͔̇+Ø͕ο͔̇)e012345",
     /// ]);
     ///
-    /// let squared_norm = Vee::double_motor().squared_norm();
+    /// let norm_squared = Vee::double_motor().norm_squared();
     ///
-    /// assert_eq!(squared_norm.basis_blades(), Vee::norm().basis_blades());
-    /// format_eq!(squared_norm, [
+    /// assert_eq!(norm_squared.basis_blades(), Vee::norm().basis_blades());
+    /// format_eq!(norm_squared, [
     ///     "+vv+αα+α̇α̇+ββ+β̇β̇+γγ+γ̇γ̇+δδ+δ̇δ̇+εε+ε̇ε̇+ζζ+ζ̇ζ̇+ηη+η̇η̇\
     ///      +θθ+θ̇θ̇+ιι+ι̇ι̇+κκ+κ̇κ̇+λλ+λ̇λ̇+μμ+μ̇μ̇+νν+ν̇ν̇+ξξ+ξ̇ξ̇+οο+ο̇ο̇",
     ///     "+2(+vα̇-βζ̇+β̇ζ-γη̇+γ̇η-δθ̇+δ̇θ-ει̇+ε̇ι-κο-κ̇ο̇+λξ+λ̇ξ̇-μν-μ̇ν̇)e3456",
@@ -4145,10 +4145,10 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     ///     "+(+X͔ζ͕+X͕ζ͔-Y͔β͕-Y͕β͔+Z͔α͕+Z͕α͔)e0123",
     /// ]);
     ///
-    /// let squared_norm = Vee::double_motor().squared_norm();
+    /// let norm_squared = Vee::double_motor().norm_squared();
     ///
-    /// assert_eq!(squared_norm.basis_blades(), Vee::norm().basis_blades());
-    /// format_eq!(squared_norm, [
+    /// assert_eq!(norm_squared.basis_blades(), Vee::norm().basis_blades());
+    /// format_eq!(norm_squared, [
     ///     "+vv+αα+α̇α̇+ββ+β̇β̇+γγ+γ̇γ̇+δδ+δ̇δ̇+εε+ε̇ε̇+ζζ+ζ̇ζ̇+ηη+η̇η̇\
     ///      +θθ+θ̇θ̇+ιι+ι̇ι̇+κκ+κ̇κ̇+λλ+λ̇λ̇+μμ+μ̇μ̇+νν+ν̇ν̇+ξξ+ξ̇ξ̇+οο+ο̇ο̇",
     ///     "+2(+vα̇-βζ̇+β̇ζ-γη̇+γ̇η-δθ̇+δ̇θ-ει̇+ε̇ι-κο-κ̇ο̇+λξ+λ̇ξ̇-μν-μ̇ν̇)e3456",
@@ -4366,10 +4366,10 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     ///     "+(+X͕ε͔̇+Y͕ι͔̇+Z͕μ͔̇+ẇ͔Þ͕+Ð͕ξ͔̇+Ø͕ο͔̇)e012345",
     /// ]);
     ///
-    /// let squared_norm = Vee::triple_motor().squared_norm();
+    /// let norm_squared = Vee::triple_motor().norm_squared();
     ///
-    /// assert_eq!(squared_norm.basis_blades(), Vee::norm().basis_blades());
-    /// format_eq!(squared_norm, [
+    /// assert_eq!(norm_squared.basis_blades(), Vee::norm().basis_blades());
+    /// format_eq!(norm_squared, [
     ///     "+vv+ẇẇ+αα+α̇α̇+ββ+β̇β̇+γγ+γ̇γ̇+δδ+δ̇δ̇+εε+ε̇ε̇+ζζ+ζ̇ζ̇+ηη+η̇η̇\
     ///      +θθ+θ̇θ̇+ιι+ι̇ι̇+κκ+κ̇κ̇+λλ+λ̇λ̇+μμ+μ̇μ̇+νν+ν̇ν̇+ξξ+ξ̇ξ̇+οο+ο̇ο̇",
     ///     "+2(+vα̇+ẇα-βζ̇+β̇ζ-γη̇+γ̇η-δθ̇+δ̇θ-ει̇+ε̇ι-κο-κ̇ο̇+λξ+λ̇ξ̇-μν-μ̇ν̇)e3456",
@@ -5111,10 +5111,10 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     /// ```
     /// use vee::{format_eq, PgaP7 as Vee};
     ///
-    /// let quadvector_squared_norm = Vee::volume().squared_norm();
+    /// let quadvector_norm_squared = Vee::volume().norm_squared();
     ///
-    /// assert_eq!(quadvector_squared_norm.basis_blades(), Vee::norm().basis_blades());
-    /// format_eq!(quadvector_squared_norm, [
+    /// assert_eq!(quadvector_norm_squared.basis_blades(), Vee::norm().basis_blades());
+    /// format_eq!(quadvector_norm_squared, [
     ///     "+aa+bb+cc+dd+ee+ff+gg+hh+ii+jj+kk+ll+mm+nn+oo+pp+qq\
     ///      +rr+ss+tt+uu+áá+ää+åå+ææ+çç+éé+ëë+íí+ïï+ññ+óó+öö+úú+üü",
     ///     "+2(-cç-dé-eë+gt+hu+iá-jq-kr-ls)e1234",
@@ -6870,10 +6870,10 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     ///     "+(+X͕x͔+Y͕y͔+Z͕z͔+Ð͕ð͔+Ø͕ø͔+Þ͕þ͔+Œ͕œ͔)I",
     /// ]);
     ///
-    /// let squared_norm = Vee::triple_motor().squared_norm();
+    /// let norm_squared = Vee::triple_motor().norm_squared();
     ///
-    /// assert_eq!(squared_norm.basis_blades(), Vee::norm().basis_blades());
-    /// format_eq!(squared_norm, [
+    /// assert_eq!(norm_squared.basis_blades(), Vee::norm().basis_blades());
+    /// format_eq!(norm_squared, [
     ///     "+aa+bb+cc+dd+ee+ff+gg+hh+ii+jj+kk+ll+mm+nn+oo+pp+qq+rr+ss+tt+uu+vv\
     ///      +xx+yy+zz+áá+ää+åå+ææ+çç+éé+ëë+íí+ïï+ðð+ññ+óó+öö+øø+úú+üü+þþ+œœ\
     ///      +αα+ββ+γγ+δδ+εε+ζζ+ηη+θθ+ιι+κκ+λλ+μμ+νν+ξξ+οο+ππ+ρρ+σσ+ττ+υυ+φφ",

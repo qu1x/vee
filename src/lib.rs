@@ -841,19 +841,19 @@ impl<B: Algebra> Multivector<B> {
     /// ```
     /// use vee::{format_eq, PgaP3 as Vee};
     ///
-    /// format_eq!(Vee::plane().squared_norm(), ["+xx+yy+zz"]);
-    /// format_eq!(Vee::point().squared_norm(), ["+ww"]);
-    /// format_eq!(Vee::line().squared_norm(), ["+xx+yy+zz", "+2(-Xx-Yy-Zz)I"]);
-    /// format_eq!(Vee::displacement().squared_norm(), ["+xx+yy+zz"]);
-    /// format_eq!(Vee::moment().squared_norm(), []);
+    /// format_eq!(Vee::plane().norm_squared(), ["+xx+yy+zz"]);
+    /// format_eq!(Vee::point().norm_squared(), ["+ww"]);
+    /// format_eq!(Vee::line().norm_squared(), ["+xx+yy+zz", "+2(-Xx-Yy-Zz)I"]);
+    /// format_eq!(Vee::displacement().norm_squared(), ["+xx+yy+zz"]);
+    /// format_eq!(Vee::moment().norm_squared(), []);
     /// ```
     #[must_use]
-    pub fn squared_norm(self) -> Self {
+    pub fn norm_squared(self) -> Self {
         self.clone() * self.rev()
     }
     /// Leverages orthonormalization conditions.
     ///
-    /// Assumes <code>[Self::squared_norm]\(self\) == [Self::one()]</code>.
+    /// Assumes <code>[Self::norm_squared]\(self\) == [Self::one()]</code>.
     #[must_use]
     pub const fn unit(mut self) -> Self {
         self.onc = true;
@@ -1094,7 +1094,7 @@ impl<B: Algebra> Shl for Multivector<B> {
 
     fn shl(mut self, other: Self) -> Self::Output {
         let onc = other.onc.then(|| {
-            let lhs = other.clone().squared_norm();
+            let lhs = other.clone().norm_squared();
             (self.clone() | (Self::one() - lhs.clone()), lhs, Self::one())
         });
         if self
@@ -1120,7 +1120,7 @@ impl<B: Algebra> Shr for Multivector<B> {
     fn shr(self, other: Self) -> Self::Output {
         let shr = (self | other.clone()) * other.clone().rev();
         if other.onc {
-            shr.cond(&other.squared_norm(), &Self::one())
+            shr.cond(&other.norm_squared(), &Self::one())
         } else {
             shr
         }
