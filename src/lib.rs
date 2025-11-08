@@ -151,11 +151,12 @@
 //!
 //! # Examples
 //!
-//! Generates the expression for rotating a point in [`PgaP3`], i.e., the type alias of
-//! [`Multivector`] parameterized for the Parabolic (Euclidean) 3D PGA. The [`PgaP3::pin()`] method
-//! pins symbols of [`PgaP3::point()`] with the *combining x below* (i.e., the Unicode *combining
-//! diacritical mark* `"◌͓"`) to distinguish them from the symbols of
-//! [`PgaP3::rotator()`](struct.Multivector.html#method.rotator-1).
+//! Generates the expression for rotating and/or translating a point in [`PgaP3`], i.e., the type
+//! alias of [`Multivector`] parameterized for the Parabolic (Euclidean) 3D PGA. The
+//! [`PgaP3::pin()`] method pins symbols of [`PgaP3::point()`] with the *combining x below* (i.e.,
+//! the Unicode *combining diacritical mark* `"◌͓"`) to distinguish them from the symbols of
+//! [`PgaP3::motor()`](struct.Multivector.html#method.rotator-1). This isometry (i.e., up to a screw
+//! motion) is isomorphic to the transformation of a homogeneoous point by a dual quaternion.
 //!
 //! ```
 //! use vee::{format_eq, PgaP3 as Vee};
@@ -218,6 +219,19 @@
 //!        +2*(-v0123*v31+v01*v12-v02*v-v03*v23)*p123)*e013",
 //!     "+(+2*(+v*v31+v23*v12)*p032+2*(-v*v23+v31*v12)*p013+(+1-2*v23*v23-2*v31*v31)*p021\
 //!        +2*(-v0123*v12-v01*v31+v02*v23-v03*v)*p123)*e021",
+//! ]);
+//! ```
+//!
+//! Optional plus signs are skipped with `"{:<}"`:
+//!
+//! ```
+//! use vee::{format_eq, PgaP3 as Vee};
+//!
+//! format_eq!("{:<}", Vee::point().pin() << Vee::motor().unit(), [
+//!     "w͓e123",
+//!     "+((1-2yy-2zz)X͓+2(vz+xy)Y͓+2(-vy+xz)Z͓+2(-Vx-Xv-Yz+Zy)w͓)e032",
+//!     "+(2(-vz+xy)X͓+(1-2xx-2zz)Y͓+2(vx+yz)Z͓+2(-Vy+Xz-Yv-Zx)w͓)e013",
+//!     "+(2(vy+xz)X͓+2(-vx+yz)Y͓+(1-2xx-2yy)Z͓+2(-Vz-Xy+Yx-Zv)w͓)e021",
 //! ]);
 //! ```
 //!
