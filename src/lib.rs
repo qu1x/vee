@@ -220,6 +220,17 @@
 //!     "+(+2*(+v*v31+v23*v12)*p032+2*(-v*v23+v31*v12)*p013+(+1-2*v23*v23-2*v31*v31)*p021\
 //!        +2*(-v0123*v12-v01*v31+v02*v23-v03*v)*p123)*e021",
 //! ]);
+//!
+//! format_eq!("{:#}", Vee::line().lhs() * Vee::line().rhs(), [
+//!     "-l23*r23-l31*r31-l12*r12",
+//!     "+(-l02*r12+r02*l12+l03*r31-r03*l31)*e01",
+//!     "+(+l01*r12-r01*l12-l03*r23+r03*l23)*e02",
+//!     "+(-l01*r31+r01*l31+l02*r23-r02*l23)*e03",
+//!     "+(-l31*r12+r31*l12)*e23",
+//!     "+(+l23*r12-r23*l12)*e31",
+//!     "+(-l23*r31+r23*l31)*e12",
+//!     "+(+l01*r23+r01*l23+l02*r31+r02*l31+l03*r12+r03*l12)*I",
+//! ]);
 //! ```
 //!
 //! Optional plus signs are skipped with `"{:<}"`:
@@ -591,11 +602,15 @@ impl<B: Algebra> TryFrom<Tree> for Multivector<B> {
 
 impl<B: Algebra> From<Rational> for Multivector<B> {
     fn from(r: Rational) -> Self {
-        let mut p = Polynomial::default();
-        p.map.insert(Monomial::one(), r);
-        let mut v = Self::default();
-        v.map.insert(B::scalar(), p);
-        v
+        if r.is_zero() {
+            Self::zero()
+        } else {
+            let mut p = Polynomial::default();
+            p.map.insert(Monomial::one(), r);
+            let mut v = Self::default();
+            v.map.insert(B::scalar(), p);
+            v
+        }
     }
 }
 
@@ -1144,7 +1159,7 @@ impl<B: Algebra> Display for Multivector<B> {
                 Tree::Mul(siblings) => {
                     let mut is_one = false;
                     if let Some(Tree::Sym(sym)) = siblings.last() {
-                        if sym.lab == "1" && depth <= 1 && siblings.len() == 2 {
+                        if (sym.is_one() || sym.is_scalar()) && depth <= 1 && siblings.len() == 2 {
                             is_one = true;
                         }
                     }
@@ -1179,7 +1194,7 @@ impl<B: Algebra> Display for Multivector<B> {
                 }
                 Tree::Sym(sym) => {
                     write!(fmt, "{defer}")?;
-                    if sym.lab != "1" || depth == 0 {
+                    if !(sym.is_one() || sym.is_scalar()) || depth == 0 {
                         Display::fmt(sym, fmt)?;
                         defer = "";
                     }
@@ -2204,6 +2219,18 @@ impl Symbol {
     pub const fn is_vec(&self) -> bool {
         self.var == Self::VEC
     }
+    /// Whether this symbol is the scalar.
+    #[must_use]
+    #[inline]
+    pub const fn is_scalar(&self) -> bool {
+        self.is_vec() && self.lab.len() == 1
+    }
+    /// Whether this symbol is the pseudoscalar.
+    #[must_use]
+    #[inline]
+    pub const fn is_pseudoscalar(&self) -> bool {
+        self.is_vec() && self.alt == Self::ALT
+    }
     /// Whether this symbol is [`Self::one()`].
     #[must_use]
     #[inline]
@@ -2310,9 +2337,15 @@ impl Not for Symbol {
 impl Display for Symbol {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         if self.is_vec() {
-            write!(fmt, "{}", &self.lab)?;
+            if self.is_scalar() {
+                write!(fmt, "1")?;
+            } else if self.is_pseudoscalar() {
+                write!(fmt, "I")?;
+            } else {
+                write!(fmt, "{}", &self.lab)?;
+            }
         } else if fmt.alternate() {
-            if !self.lab.is_empty() {
+            if !self.is_one() {
                 write!(
                     fmt,
                     "{}{}",

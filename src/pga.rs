@@ -150,16 +150,12 @@ impl<const M: i8, const N: u32> Pga<M, N> {
 impl<const M: i8, const N: u32> From<Pga<M, N>> for Symbol {
     #[inline]
     fn from(b: Pga<M, N>) -> Self {
-        Self::new(
-            Self::VEC,
-            if b.idx == 0 {
-                "1"
-            } else if b.idx == Pga::<M, N>::pss().idx {
-                "I"
-            } else {
-                LUT[N as usize][b.idx as usize].sym
-            },
-        )
+        let s = Self::new(Self::VEC, LUT[N as usize][b.idx as usize].sym);
+        if b.idx == Pga::<M, N>::pss().idx {
+            s.alt()
+        } else {
+            s
+        }
     }
 }
 
@@ -8140,6 +8136,27 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
 // }
 
 #[test]
+fn cnv() {
+    use super::{PgaP4 as Vee, Tree};
+
+    let zero = Vee::zero();
+    assert_eq!(Vee::try_from(Tree::from(zero.clone())), Ok(zero));
+
+    let one = Vee::one();
+    assert_eq!(Vee::try_from(Tree::from(one.clone())), Ok(one));
+
+    let point = Vee::point().pin() << Vee::double_motor().unit();
+    assert_eq!(
+        Vee::try_from(Tree::with_factorization(point.clone(), true)),
+        Ok(point.clone())
+    );
+    assert_eq!(
+        Vee::try_from(Tree::with_factorization(point.clone(), false)),
+        Ok(point)
+    );
+}
+
+#[test]
 #[allow(clippy::too_many_lines)]
 fn ops() {
     use super::{PgaP0, PgaP1, PgaP2, PgaP3, PgaP4, PgaP5, PgaP6, PgaP7};
@@ -8468,7 +8485,7 @@ fn sym() {
 }
 
 #[test]
-fn fmt() {
+fn tab() {
     fn pga<const N: u32>() {
         use core::str::from_utf8;
         let basis_len = 1 << (N + 1);
