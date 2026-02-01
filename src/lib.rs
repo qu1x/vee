@@ -1,4 +1,4 @@
-// Copyright © 2025 Rouven Spreckels <rs@qu1x.dev>
+// Copyright © 2025-2026 Rouven Spreckels <rs@qu1x.dev>
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of
 // the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -11,9 +11,9 @@
 //! required for lower dimensional geometric algebra flavors as the inverse of a multivector is
 //! given by multiplying it with the inverse of its mixed-grade norm, i.e., a Study number for
 //! dimensions $`D < 6`$.[^1] See the [examples](#examples) below where the symbolic expressions are
-//! generated in text form. The next releases will implement code forms (e.g., Rust code in various
-//! profiles based on SIMD using [`lav`] with and without generics or arbitrary precision types
-//! using [`rug`]). The pre-generated code forms will be provided along with the code generator
+//! generated in text form. The next releases will implement further code forms (e.g., Rust code in
+//! various profiles based on SIMD using [`lav`] with and without generics or arbitrary precision
+//! types using [`rug`]). The pregenerated code forms will be provided along with the code generator
 //! behind respective feature gates. When [`packages_as_namespaces`] is stable, each code form will
 //! become a crate. Currently, the plane-based pistachio flavor -- Projective Geometric Algebra
 //! (PGA) -- is implemented for $`D \equiv N + 1 \le 8`$ in all three metrics, i.e., elliptic,
@@ -282,6 +282,32 @@
 //!     "+(-2Vw͓z-2Xw͓y+2X͓vy+2X͓xz+2Yw͓x-2Y͓vx+2Y͓yz-2Zvw͓+Z͓vv-Z͓xx-Z͓yy+Z͓zz)e021",
 //! ]);
 //! ```
+//!
+//! Generate generic statements with `{:x}`:
+//!
+//! ```
+//! use vee::{format_eq, PgaP3 as Vee};
+//!
+//! format_eq!("{:x}", Vee::rotator().lhs() * Vee::rotator().rhs(), [
+//!     "e=l*r-l23*r23-l31*r31-l12*r12",
+//!     "e23=l*r23+r*l23-l31*r12+r31*l12",
+//!     "e31=l*r31+r*l31+l23*r12-r23*l12",
+//!     "e12=l*r12+r*l12-l23*r31+r23*l31",
+//! ]);
+//! ```
+//!
+//! Generate Rust code with `{:#x}`:
+//!
+//! ```
+//! use vee::{format_eq, PgaP3 as Vee};
+//!
+//! format_eq!("{:#x}", Vee::rotator().lhs() * Vee::rotator().rhs(), [
+//!     "let e = l * r - l23 * r23 - l31 * r31 - l12 * r12;",
+//!     "let e23 = l * r23 + r * l23 - l31 * r12 + r31 * l12;",
+//!     "let e31 = l * r31 + r * l31 + l23 * r12 - r23 * l12;",
+//!     "let e12 = l * r12 + r * l12 - l23 * r31 + r23 * l31;",
+//! ]);
+//! ```
 
 /// Formats the `$lhs` expression using [`Display`] and asserts the `$rhs` string literals.
 ///
@@ -319,7 +345,10 @@ use core::{
         Shr, Sub, SubAssign,
     },
 };
-use std::collections::{BTreeMap, BTreeSet};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    fmt::{Alignment, LowerHex},
+};
 
 /// Finds the binomial coefficient.
 pub trait Choose {
@@ -564,7 +593,17 @@ where
 ///   * `"{:+}"` for expanded form (i.e., no factorization),
 ///   * `"{:#}"` for alternative symbols labelled after basis blades,
 ///   * `"{:0}"` for zero newlines,
-///   * `"{:<}"` for omitting plus signs.
+///   * `"{:.1}"` for floating points,
+///   * `"{:<}"` for omitting plus signs,
+///   * `"{:>}"` for omitting plus signs,
+///   * `"{:^}"` for omitting plus signs and surrounding operators with spaces.
+///
+/// Generate code form (i.e., generic statements and Rust) with:
+///
+///   * `"{:x}"` for factorization of pinned symbols and GCDs,
+///   * `"{:-x}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
+///   * `"{:+x}"` for expanded form (i.e., no factorization),
+///   * `"{:#x}"` for Rust instead of generic statements.
 ///
 /// Generate DOT form (i.e., [`text/vnd.graphviz`]) with:
 ///
@@ -1128,6 +1167,7 @@ impl<B: Algebra> Shr for Multivector<B> {
 }
 
 impl<B: Algebra> Display for Multivector<B> {
+    #[allow(clippy::too_many_lines, clippy::cognitive_complexity)]
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         fn traverse<'a>(
             fmt: &mut fmt::Formatter,
@@ -1136,9 +1176,10 @@ impl<B: Algebra> Display for Multivector<B> {
             grasp: bool,
             mut defer: &'a str,
         ) -> Result<&'a str, fmt::Error> {
+            let wide = fmt.align() == Some(Alignment::Center);
             match tree {
                 Tree::Add(siblings) => {
-                    let grasp = grasp || !(defer.is_empty() || defer == "+");
+                    let grasp = grasp || !(defer.is_empty() || defer == "+" || defer == " + ");
                     if grasp {
                         write!(fmt, "{defer}")?;
                         defer = "";
@@ -1146,7 +1187,7 @@ impl<B: Algebra> Display for Multivector<B> {
                     }
                     for (index, sibling) in siblings.iter().enumerate() {
                         if fmt.align().is_none() || index != 0 {
-                            defer = "+";
+                            defer = if wide { " + " } else { "+" };
                         }
                         defer = traverse(fmt, sibling, depth + 1, grasp, defer)?;
                         write!(fmt, "{defer}")?;
@@ -1167,7 +1208,7 @@ impl<B: Algebra> Display for Multivector<B> {
                         defer = if index == 0 {
                             defer
                         } else if fmt.alternate() && defer.is_empty() && !is_one {
-                            "*"
+                            if wide { " * " } else { "*" }
                         } else {
                             ""
                         };
@@ -1177,18 +1218,33 @@ impl<B: Algebra> Display for Multivector<B> {
                     defer = "";
                 }
                 Tree::Num(num) => {
+                    let suffix = if fmt.precision().is_some() { ".0" } else { "" };
                     if num.abs().is_one() {
                         if num.is_negative() {
-                            write!(fmt, "-")?;
+                            if wide && !defer.is_empty() {
+                                write!(fmt, " - ")?;
+                            } else {
+                                write!(fmt, "-")?;
+                            }
                         } else if fmt.align().is_none() {
                             write!(fmt, "+")?;
                         };
-                        defer = "1";
+                        defer = if fmt.precision().is_some() {
+                            "1.0"
+                        } else {
+                            "1"
+                        };
                     } else if num.is_negative() {
-                        write!(fmt, "{num}")?;
+                        if wide && !defer.is_empty() {
+                            write!(fmt, " - ")?;
+                        } else {
+                            write!(fmt, "-")?;
+                        }
+                        let num = num.abs();
+                        write!(fmt, "{num}{suffix}")?;
                         defer = "";
                     } else if !num.is_zero() {
-                        write!(fmt, "{defer}{num}")?;
+                        write!(fmt, "{defer}{num}{suffix}")?;
                         defer = "";
                     }
                 }
@@ -1204,7 +1260,7 @@ impl<B: Algebra> Display for Multivector<B> {
                 }
             }
             if depth == 0 {
-                if defer == "1" {
+                if defer == "1" || defer == "1.0" {
                     write!(fmt, "{defer}")?;
                 }
                 defer = "";
@@ -1218,6 +1274,34 @@ impl<B: Algebra> Display for Multivector<B> {
         };
         let defer = if fmt.align().is_none() { "+" } else { "" };
         traverse(fmt, &tree, 0, false, defer)?;
+        Ok(())
+    }
+}
+
+impl<B: Algebra> LowerHex for Multivector<B> {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        for (b, p) in &self.map {
+            let mut map = BTreeMap::new();
+            map.insert(B::scalar(), p.clone());
+            let m = Self { map, onc: self.onc };
+            if fmt.sign_plus() {
+                if fmt.alternate() {
+                    writeln!(fmt, "let {b:#} = {m:^+#0.1};")?;
+                } else {
+                    writeln!(fmt, "{b:#}={m:<+#0}")?;
+                }
+            } else if fmt.sign_minus() {
+                if fmt.alternate() {
+                    writeln!(fmt, "let {b:#} = {m:^-#0.1};")?;
+                } else {
+                    writeln!(fmt, "{b:#}={m:<-#0}")?;
+                }
+            } else if fmt.alternate() {
+                writeln!(fmt, "let {b:#} = {m:^#0.1};")?;
+            } else {
+                writeln!(fmt, "{b:#}={m:<#0}")?;
+            }
+        }
         Ok(())
     }
 }

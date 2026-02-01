@@ -1,4 +1,4 @@
-// Copyright © 2025 Rouven Spreckels <rs@qu1x.dev>
+// Copyright © 2025-2026 Rouven Spreckels <rs@qu1x.dev>
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of
 // the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -247,11 +247,11 @@ impl<const M: i8, const N: u32> PartialOrd for Pga<M, N> {
 
 impl<const M: i8, const N: u32> Display for Pga<M, N> {
     #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         match self.idx {
-            0 => write!(f, "1"),
-            idx if idx == Self::pss().idx => write!(f, "I"),
-            _ => Display::fmt(LUT[N as usize][self.idx as usize].sym, f),
+            0 if !fmt.alternate() => write!(fmt, "1"),
+            idx if !fmt.alternate() && idx == Self::pss().idx => write!(fmt, "I"),
+            _ => Display::fmt(LUT[N as usize][self.idx as usize].sym, fmt),
         }
     }
 }
