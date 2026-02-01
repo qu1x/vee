@@ -1,6 +1,7 @@
 # Version 0.1.7 (2026-02-01)
 
   * Generate expressions in code form (i.e., generic statements and Rust).
+  * Update KaTeX.
 
 # Version 0.1.6 (2025-11-05)
 
