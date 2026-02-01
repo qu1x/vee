@@ -617,7 +617,9 @@ where
 ///   * `"{:-x}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
 ///   * `"{:+x}"` for expanded form (i.e., no factorization),
 ///   * `"{:^}"` for using `".e"`. input and `"o."` output fields,
-///   * `"{:#x}"` for Rust instead of generic statements.
+///   * `"{:#x}"` for Rust instead of generic statements,
+///
+/// where the [`width`](std::fmt#width) parameter as in `"{:^#4x}"` indents the code by four spaces.
 ///
 /// Generate DOT form (i.e., [`text/vnd.graphviz`]) with:
 ///
@@ -1298,6 +1300,9 @@ impl<B: Algebra> LowerHex for Multivector<B> {
             let mut map = BTreeMap::new();
             map.insert(B::scalar(), p.clone());
             let m = Self { map, onc: self.onc };
+            if let Some(width) = fmt.width() {
+                write!(fmt, "{:width$}", "")?;
+            }
             if fmt.sign_plus() {
                 if fmt.alternate() {
                     if fmt.align() == Some(Alignment::Center) {
