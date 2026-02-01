@@ -308,6 +308,19 @@
 //!     "let e12 = l * r12 + r * l12 - l23 * r31 + r23 * l31;",
 //! ]);
 //! ```
+//!
+//! Generate Rust code using [`std::ops::Deref`]/[`std::ops::DerefMut`] fields with `{:^#x}`:
+//!
+//! ```
+//! use vee::{format_eq, PgaP3 as Vee};
+//!
+//! format_eq!("{:^#x}", Vee::rotator().lhs() * Vee::rotator().rhs(), [
+//!     "o.e = l.e * r.e - l.e23 * r.e23 - l.e31 * r.e31 - l.e12 * r.e12;",
+//!     "o.e23 = l.e * r.e23 + r.e * l.e23 - l.e31 * r.e12 + r.e31 * l.e12;",
+//!     "o.e31 = l.e * r.e31 + r.e * l.e31 + l.e23 * r.e12 - r.e23 * l.e12;",
+//!     "o.e12 = l.e * r.e12 + r.e * l.e12 - l.e23 * r.e31 + r.e23 * l.e31;",
+//! ]);
+//! ```
 
 /// Formats the `$lhs` expression using [`Display`] and asserts the `$rhs` string literals.
 ///
@@ -595,14 +608,15 @@ where
 ///   * `"{:0}"` for zero newlines,
 ///   * `"{:.1}"` for floating points,
 ///   * `"{:<}"` for omitting plus signs,
-///   * `"{:>}"` for omitting plus signs,
-///   * `"{:^}"` for omitting plus signs and surrounding operators with spaces.
+///   * `"{:>}"` for omitting plus signs and surrounding operators with spaces,
+///   * `"{:^#}"` for using `".e"`. input and `"o."` output fields implying `"{:>}"`.
 ///
 /// Generate code form (i.e., generic statements and Rust) with:
 ///
 ///   * `"{:x}"` for factorization of pinned symbols and GCDs,
 ///   * `"{:-x}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
 ///   * `"{:+x}"` for expanded form (i.e., no factorization),
+///   * `"{:^}"` for using `".e"`. input and `"o."` output fields,
 ///   * `"{:#x}"` for Rust instead of generic statements.
 ///
 /// Generate DOT form (i.e., [`text/vnd.graphviz`]) with:
@@ -1176,7 +1190,7 @@ impl<B: Algebra> Display for Multivector<B> {
             grasp: bool,
             mut defer: &'a str,
         ) -> Result<&'a str, fmt::Error> {
-            let wide = fmt.align() == Some(Alignment::Center);
+            let wide = matches!(fmt.align(), Some(Alignment::Center | Alignment::Right));
             match tree {
                 Tree::Add(siblings) => {
                     let grasp = grasp || !(defer.is_empty() || defer == "+" || defer == " + ");
@@ -1286,18 +1300,30 @@ impl<B: Algebra> LowerHex for Multivector<B> {
             let m = Self { map, onc: self.onc };
             if fmt.sign_plus() {
                 if fmt.alternate() {
-                    writeln!(fmt, "let {b:#} = {m:^+#0.1};")?;
+                    if fmt.align() == Some(Alignment::Center) {
+                        writeln!(fmt, "{b:^#} = {m:^+#0.1};")?;
+                    } else {
+                        writeln!(fmt, "let {b:#} = {m:>+#0.1};")?;
+                    }
                 } else {
                     writeln!(fmt, "{b:#}={m:<+#0}")?;
                 }
             } else if fmt.sign_minus() {
                 if fmt.alternate() {
-                    writeln!(fmt, "let {b:#} = {m:^-#0.1};")?;
+                    if fmt.align() == Some(Alignment::Center) {
+                        writeln!(fmt, "{b:^#} = {m:^-#0.1};")?;
+                    } else {
+                        writeln!(fmt, "let {b:#} = {m:>-#0.1};")?;
+                    }
                 } else {
                     writeln!(fmt, "{b:#}={m:<-#0}")?;
                 }
             } else if fmt.alternate() {
-                writeln!(fmt, "let {b:#} = {m:^#0.1};")?;
+                if fmt.align() == Some(Alignment::Center) {
+                    writeln!(fmt, "{b:^#} = {m:^#0.1};")?;
+                } else {
+                    writeln!(fmt, "let {b:#} = {m:>#0.1};")?;
+                }
             } else {
                 writeln!(fmt, "{b:#}={m:<#0}")?;
             }
@@ -2421,7 +2447,9 @@ impl Not for Symbol {
 impl Display for Symbol {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         if self.is_vec() {
-            if self.is_scalar() {
+            if fmt.align() == Some(Alignment::Center) {
+                write!(fmt, "o.{}", &self.lab)?;
+            } else if self.is_scalar() {
                 write!(fmt, "1")?;
             } else if self.is_pseudoscalar() {
                 write!(fmt, "I")?;
@@ -2430,9 +2458,14 @@ impl Display for Symbol {
             }
         } else if fmt.alternate() {
             if !self.is_one() {
+                let deref = if fmt.align() == Some(Alignment::Center) {
+                    ".e"
+                } else {
+                    ""
+                };
                 write!(
                     fmt,
-                    "{}{}",
+                    "{}{deref}{}",
                     match self.cdm {
                         Self::PIN => 'p',
                         Self::LHS => 'l',

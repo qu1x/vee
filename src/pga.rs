@@ -13,6 +13,7 @@ use core::{
     fmt::{self, Debug, Display, Error, Write},
     ops::{Mul, Not},
 };
+use std::fmt::Alignment;
 
 /// Basis blade of Elliptic 0D PGA.
 pub type PgaE0 = Pga<1, 0>;
@@ -251,7 +252,14 @@ impl<const M: i8, const N: u32> Display for Pga<M, N> {
         match self.idx {
             0 if !fmt.alternate() => write!(fmt, "1"),
             idx if !fmt.alternate() && idx == Self::pss().idx => write!(fmt, "I"),
-            _ => Display::fmt(LUT[N as usize][self.idx as usize].sym, fmt),
+            _ => {
+                let deref = if fmt.align() == Some(Alignment::Center) {
+                    "o."
+                } else {
+                    ""
+                };
+                write!(fmt, "{deref}{}", LUT[N as usize][self.idx as usize].sym)
+            }
         }
     }
 }
