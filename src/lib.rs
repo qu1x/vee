@@ -103,7 +103,7 @@
 //!     \lang
 //!       \lang a \rang_s
 //!       \lang b \rang_t
-//!     \rang_{\|s - t\|}
+//!     \rang_{|s - t|}
 //! }
 //! \gdef\bitxor{
 //!   a \wedge b \equiv \sum_{s,t}
