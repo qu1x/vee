@@ -344,7 +344,7 @@ macro_rules! format_eq {
 use core::{
     cmp::{Ordering, min},
     fmt::{self, Debug, Display, Octal},
-    iter::{FromIterator, repeat},
+    iter::{FromIterator, repeat_n},
     mem::{swap, take},
     num::{NonZero, NonZeroI32},
     ops::{
@@ -768,12 +768,11 @@ impl<B: Algebra> Multivector<B> {
     pub fn is_entity(&self) -> bool {
         let mut set = BTreeSet::new();
         for p in self.map.values() {
-            if let Some(m) = p.map.keys().next().filter(|_| p.map.len() == 1) {
-                if let Some(s) = m.map.keys().next().filter(|_| m.map.len() == 1) {
-                    if set.insert(s) {
-                        continue;
-                    }
-                }
+            if let Some(m) = p.map.keys().next().filter(|_| p.map.len() == 1)
+                && let Some(s) = m.map.keys().next().filter(|_| m.map.len() == 1)
+                && set.insert(s)
+            {
+                continue;
             }
             return false;
         }
@@ -1197,12 +1196,9 @@ impl<B: Algebra> Display for Multivector<B> {
                     defer = "";
                 }
                 Tree::Mul(siblings) => {
-                    let mut is_one = false;
-                    if let Some(Tree::Sym(sym)) = siblings.last() {
-                        if (sym.is_one() || sym.is_scalar()) && depth <= 1 && siblings.len() == 2 {
-                            is_one = true;
-                        }
-                    }
+                    let is_one = siblings.last().and_then(Tree::as_sym).is_some_and(|sym| {
+                        (sym.is_one() || sym.is_scalar()) && depth <= 1 && siblings.len() == 2
+                    });
                     for (index, sibling) in siblings.iter().enumerate() {
                         defer = if index == 0 {
                             defer
@@ -1227,7 +1223,7 @@ impl<B: Algebra> Display for Multivector<B> {
                             }
                         } else if fmt.align().is_none() {
                             write!(fmt, "+")?;
-                        };
+                        }
                         defer = if fmt.precision().is_some() {
                             "1.0"
                         } else {
@@ -2536,6 +2532,26 @@ impl Tree {
             Self::Add(add)
         }
     }
+    /// Returns [`Rational`] if [`Self::Num`].
+    #[must_use]
+    #[inline]
+    pub const fn as_num(&self) -> Option<Rational> {
+        if let Self::Num(num) = self {
+            Some(*num)
+        } else {
+            None
+        }
+    }
+    /// Returns [`Symbol`] if [`Self::Sym`].
+    #[must_use]
+    #[inline]
+    pub const fn as_sym(&self) -> Option<Symbol> {
+        if let Self::Sym(sym) = self {
+            Some(*sym)
+        } else {
+            None
+        }
+    }
 }
 
 impl Default for Tree {
@@ -2654,9 +2670,7 @@ impl From<Monomial> for Tree {
             .into_iter()
             .filter(|(s, _e)| !s.is_one())
             .flat_map(|(s, e)| {
-                repeat(s)
-                    .take(e.get().try_into().expect("negative exponent"))
-                    .map(From::from)
+                repeat_n(s, e.get().try_into().expect("negative exponent")).map(From::from)
             })
             .collect::<Vec<Self>>();
         if mul.is_empty() {
