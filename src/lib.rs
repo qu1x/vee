@@ -594,14 +594,14 @@ where
 ///   * `"{:.1}"` for floating points,
 ///   * `"{:<}"` for omitting plus signs,
 ///   * `"{:>}"` for omitting plus signs and surrounding operators with spaces,
-///   * `"{:^#}"` for using `".e"`. input and `"o."` output fields implying `"{:>}"`.
+///   * `"{:^#}"` for dereferencing input and output fields implying `"{:>}"`.
 ///
 /// Generate code form (i.e., generic statements and Rust) with:
 ///
 ///   * `"{:x}"` for factorization of pinned symbols and GCDs,
 ///   * `"{:-x}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
 ///   * `"{:+x}"` for expanded form (i.e., no factorization),
-///   * `"{:^}"` for using `".e"`. input and `"o."` output fields,
+///   * `"{:^x}"` for dereferencing input and output fields,
 ///   * `"{:#x}"` for Rust instead of generic statements,
 ///
 /// where the [`width`](std::fmt#width) parameter as in `"{:^#4x}"` indents the code by four spaces.
