@@ -51,12 +51,6 @@
 //! automatically generated based on [`Multivector`].
 //!
 //! ```gdef
-//! \gdef\e{
-//!   \boldsymbol e
-//! }
-//! \gdef\I{
-//!   \boldsymbol I
-//! }
 //! \gdef\norm{
 //!   \| a \| \equiv \sqrt{a \tilde a}
 //! }
@@ -579,15 +573,6 @@ where
 }
 
 /// Uniquely reduced form of a symbolic multivector expression.
-///
-/// ```gdef
-/// \gdef\e{
-///   \boldsymbol e
-/// }
-/// \gdef\I{
-///   \boldsymbol I
-/// }
-/// ```
 ///
 /// A multivector $`V`$ is realized as the sum of products of a Laurent [`Polynomial`] $`P_b`$ and a
 /// basis blade $`\e_b`$ of an ordered basis `B`.

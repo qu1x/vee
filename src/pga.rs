@@ -67,15 +67,6 @@ pub type PgaP6 = Pga<0, 6>;
 pub type PgaP7 = Pga<0, 7>;
 
 /// Basis blade of PGA with metric $`M\in\{\pm 1,0\}`$ and embedded dimension $`N\in[0, 7]`$.
-///
-/// ```gdef
-/// \gdef\e{
-///   \boldsymbol e
-/// }
-/// \gdef\I{
-///   \boldsymbol I
-/// }
-/// ```
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Default)]
 pub struct Pga<const M: i8, const N: u32> {
     idx: u8,
@@ -334,7 +325,6 @@ macro_rules! basis {
         /// \gdef\idx#1{\expandafter\sub#1\relax}
         /// \gdef\sub#1#2\relax{#2}
         /// \gdef\fmt#1{\e_{\idx{#1}}}
-        /// \gdef\e{\boldsymbol e}
         /// ```
         impl<const M: i8> Multivector<Pga<M, $n>> {
             $(
@@ -925,15 +915,6 @@ basis!(TAB7, LUT7, 7, [
 ]);
 
 /// The named entities of the PGA with embedded dimension $`N = 0`$.
-///
-/// ```gdef
-/// \gdef\e{
-///   \boldsymbol e
-/// }
-/// \gdef\I{
-///   \boldsymbol I
-/// }
-/// ```
 impl<const M: i8> Multivector<Pga<M, 0>> {
     /// The multivector of scalar $`s \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
@@ -956,15 +937,6 @@ impl<const M: i8> Multivector<Pga<M, 0>> {
 }
 
 /// The named entities of the PGA with embedded dimension $`N = 1`$.
-///
-/// ```gdef
-/// \gdef\e{
-///   \boldsymbol e
-/// }
-/// \gdef\I{
-///   \boldsymbol I
-/// }
-/// ```
 impl<const M: i8> Multivector<Pga<M, 1>> {
     /// The multivector of scalar $`s \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
@@ -1031,15 +1003,6 @@ impl<const M: i8> Multivector<Pga<M, 1>> {
 }
 
 /// The named entities of the PGA with embedded dimension $`N = 2`$.
-///
-/// ```gdef
-/// \gdef\e{
-///   \boldsymbol e
-/// }
-/// \gdef\I{
-///   \boldsymbol I
-/// }
-/// ```
 impl<const M: i8> Multivector<Pga<M, 2>> {
     /// The multivector of scalar $`s \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
@@ -1245,15 +1208,6 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
 }
 
 /// The named entities of the PGA with embedded dimension $`N = 3`$.
-///
-/// ```gdef
-/// \gdef\e{
-///   \boldsymbol e
-/// }
-/// \gdef\I{
-///   \boldsymbol I
-/// }
-/// ```
 impl<const M: i8> Multivector<Pga<M, 3>> {
     /// The multivector of scalar $`s \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
@@ -1623,15 +1577,6 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
 }
 
 /// The named entities of the PGA with embedded dimension $`N = 4`$.
-///
-/// ```gdef
-/// \gdef\e{
-///   \boldsymbol e
-/// }
-/// \gdef\I{
-///   \boldsymbol I
-/// }
-/// ```
 impl<const M: i8> Multivector<Pga<M, 4>> {
     /// The multivector of scalar $`s \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
@@ -2206,15 +2151,6 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
 }
 
 /// The named entities of the PGA with embedded dimension $`N = 5`$ (exploratory).
-///
-/// ```gdef
-/// \gdef\e{
-///   \boldsymbol e
-/// }
-/// \gdef\I{
-///   \boldsymbol I
-/// }
-/// ```
 impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of scalar $`s \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
@@ -3128,15 +3064,6 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
 }
 
 /// The named entities of the PGA with embedded dimension $`N = 6`$ (exploratory).
-///
-/// ```gdef
-/// \gdef\e{
-///   \boldsymbol e
-/// }
-/// \gdef\I{
-///   \boldsymbol I
-/// }
-/// ```
 impl<const M: i8> Multivector<Pga<M, 6>> {
     /// The multivector of scalar $`s \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
@@ -5090,15 +5017,6 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
 }
 
 /// The named entities of the PGA with embedded dimension $`N = 7`$ (exploratory).
-///
-/// ```gdef
-/// \gdef\e{
-///   \boldsymbol e
-/// }
-/// \gdef\I{
-///   \boldsymbol I
-/// }
-/// ```
 impl<const M: i8> Multivector<Pga<M, 7>> {
     /// The multivector of scalar $`s \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]
