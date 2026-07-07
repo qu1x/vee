@@ -781,15 +781,13 @@ impl<B: Algebra> Multivector<B> {
     }
     /// Collects the vectors per grade.
     #[must_use]
-    pub fn vectors(/*mut*/ self) -> BTreeMap<u32, Self> {
+    pub fn vectors(mut self) -> BTreeMap<u32, Self> {
         let mut vectors = BTreeMap::new();
         for grade in self.grades() {
-            // let map = self
-            // 	.map
-            // 	.extract_if(.., |b, _p| vec.grade() == grade)
-            // 	.collect();
-            let mut map = self.map.clone();
-            map.retain(|b, _p| b.grade() == grade);
+            let map = self
+                .map
+                .extract_if(.., |b, _p| b.grade() == grade)
+                .collect();
             vectors.insert(grade, Self { map, onc: false });
         }
         vectors
@@ -1432,13 +1430,9 @@ impl Factorization {
             .map
             .into_iter()
             .fold(Self::default(), |mut f, (mut m, c)| {
-                let mut g = m.clone();
-                g.map.retain(|s, _e| s.is_pin());
-                m.map.retain(|s, _e| !s.is_pin());
-                // TODO
-                // let g = Monomial {
-                //     map: m.map.extract_if(|s, _e| s.is_pin()).collect(),
-                // };
+                let mut g = Monomial {
+                    map: m.map.extract_if(.., |s, _e| s.is_pin()).collect(),
+                };
                 if g.map.is_empty() {
                     g = Monomial::one();
                 }

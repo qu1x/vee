@@ -13,7 +13,7 @@ Vector Expression Emitter (VEE): Geometric Algebra Code Generator
 [Documentation]: https://docs.rs/vee/badge.svg
 [Downloads]: https://img.shields.io/crates/d/vee.svg
 [Version]: https://img.shields.io/crates/v/vee.svg
-[Rust]: https://img.shields.io/badge/rust-v1.85.0-brightgreen.svg
+[Rust]: https://img.shields.io/badge/rust-v1.91.1-brightgreen.svg
 [License]: https://img.shields.io/crates/l/vee
 
 The goal of this crate is to generate optimized code for geometric algebra flavors.
