@@ -240,9 +240,10 @@ impl<const M: i8, const N: u32> PartialOrd for Pga<M, N> {
 impl<const M: i8, const N: u32> Display for Pga<M, N> {
     #[inline]
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        let code = fmt.alternate() || fmt.align() == Some(Alignment::Center);
         match self.idx {
-            0 if !fmt.alternate() => write!(fmt, "1"),
-            idx if !fmt.alternate() && idx == Self::pss().idx => write!(fmt, "I"),
+            0 if !code => write!(fmt, "1"),
+            idx if !code && idx == Self::pss().idx => write!(fmt, "I"),
             _ => {
                 let deref = if fmt.align() == Some(Alignment::Center) {
                     "o."

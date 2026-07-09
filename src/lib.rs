@@ -304,12 +304,12 @@
 //! ]);
 //! ```
 //!
-//! Generate Rust code dereferencing fields with `{:^#x}`:
+//! Generate Rust code dereferencing fields with `{:^x}`:
 //!
 //! ```
 //! use vee::{format_eq, PgaP3 as Vee};
 //!
-//! format_eq!("{:^#x}", Vee::rotator().lhs() * Vee::rotator().rhs(), [
+//! format_eq!("{:^x}", Vee::rotator().lhs() * Vee::rotator().rhs(), [
 //!     "o.e = l.e * r.e - l.e23 * r.e23 - l.e31 * r.e31 - l.e12 * r.e12;",
 //!     "o.e23 = l.e * r.e23 + r.e * l.e23 - l.e31 * r.e12 + r.e31 * l.e12;",
 //!     "o.e31 = l.e * r.e31 + r.e * l.e31 + l.e23 * r.e12 - r.e23 * l.e12;",
@@ -595,15 +595,15 @@ where
 ///   * `"{:.1}"` for floating points,
 ///   * `"{:<}"` for omitting plus signs,
 ///   * `"{:>}"` for omitting plus signs and surrounding operators with spaces,
-///   * `"{:^#}"` for dereferencing input and output fields implying `"{:>}"`.
+///   * `"{:^}"` for dereferencing input and output fields implying `"{:>#}"`.
 ///
 /// Generate code form (i.e., generic statements and Rust) with:
 ///
 ///   * `"{:x}"` for factorization of pinned symbols and GCDs,
 ///   * `"{:-x}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
 ///   * `"{:+x}"` for expanded form (i.e., no factorization),
-///   * `"{:^x}"` for dereferencing input and output fields,
 ///   * `"{:#x}"` for Rust instead of generic statements,
+///   * `"{:^x}"` for Rust dereferencing input and output fields.
 ///
 /// where the [`width`](std::fmt#width) parameter as in `"{:^#4x}"` indents the code by four spaces.
 ///
@@ -1176,6 +1176,7 @@ impl<B: Algebra> Display for Multivector<B> {
             mut defer: &'a str,
         ) -> Result<&'a str, fmt::Error> {
             let wide = matches!(fmt.align(), Some(Alignment::Center | Alignment::Right));
+            let code = fmt.alternate() || fmt.align() == Some(Alignment::Center);
             match tree {
                 Tree::Add(siblings) => {
                     let grasp = grasp || !(defer.is_empty() || defer == "+" || defer == " + ");
@@ -1203,7 +1204,7 @@ impl<B: Algebra> Display for Multivector<B> {
                     for (index, sibling) in siblings.iter().enumerate() {
                         defer = if index == 0 {
                             defer
-                        } else if fmt.alternate() && defer.is_empty() && !is_one {
+                        } else if code && defer.is_empty() && !is_one {
                             if wide { " * " } else { "*" }
                         } else {
                             ""
@@ -1283,10 +1284,12 @@ impl<B: Algebra> LowerHex for Multivector<B> {
             if let Some(width) = fmt.width() {
                 write!(fmt, "{:width$}", "")?;
             }
+            let deref = fmt.align() == Some(Alignment::Center);
+            let rust = fmt.alternate() || deref;
             if fmt.sign_plus() {
-                if fmt.alternate() {
-                    if fmt.align() == Some(Alignment::Center) {
-                        writeln!(fmt, "{b:^#} = {m:^+#0.1};")?;
+                if rust {
+                    if deref {
+                        writeln!(fmt, "{b:^} = {m:^+0.1};")?;
                     } else {
                         writeln!(fmt, "let {b:#} = {m:>+#0.1};")?;
                     }
@@ -1294,18 +1297,18 @@ impl<B: Algebra> LowerHex for Multivector<B> {
                     writeln!(fmt, "{b:#}={m:<+#0}")?;
                 }
             } else if fmt.sign_minus() {
-                if fmt.alternate() {
-                    if fmt.align() == Some(Alignment::Center) {
-                        writeln!(fmt, "{b:^#} = {m:^-#0.1};")?;
+                if rust {
+                    if deref {
+                        writeln!(fmt, "{b:^} = {m:^-0.1};")?;
                     } else {
                         writeln!(fmt, "let {b:#} = {m:>-#0.1};")?;
                     }
                 } else {
                     writeln!(fmt, "{b:#}={m:<-#0}")?;
                 }
-            } else if fmt.alternate() {
-                if fmt.align() == Some(Alignment::Center) {
-                    writeln!(fmt, "{b:^#} = {m:^#0.1};")?;
+            } else if rust {
+                if deref {
+                    writeln!(fmt, "{b:^} = {m:^0.1};")?;
                 } else {
                     writeln!(fmt, "let {b:#} = {m:>#0.1};")?;
                 }
@@ -2437,13 +2440,13 @@ impl Display for Symbol {
             } else {
                 write!(fmt, "{}", &self.lab)?;
             }
-        } else if fmt.alternate() {
-            if !self.is_one() {
-                let deref = if fmt.align() == Some(Alignment::Center) {
-                    ".e"
-                } else {
-                    ""
-                };
+        } else if !self.is_one() {
+            let deref = if fmt.align() == Some(Alignment::Center) {
+                ".e"
+            } else {
+                ""
+            };
+            if fmt.alternate() || !deref.is_empty() {
                 write!(
                     fmt,
                     "{}{deref}{}",
@@ -2455,17 +2458,16 @@ impl Display for Symbol {
                     },
                     &self.lab[1..]
                 )?;
-            }
-        } else if !self.is_one() {
-            write!(fmt, "{}", self.var)?;
-            if self.alt != Self::NIL {
-                write!(fmt, "{}", self.alt)?;
-            }
-            if self.cdm != Self::NIL {
-                write!(fmt, "{}", self.cdm)?;
+            } else {
+                write!(fmt, "{}", self.var)?;
+                if self.alt != Self::NIL {
+                    write!(fmt, "{}", self.alt)?;
+                }
+                if self.cdm != Self::NIL {
+                    write!(fmt, "{}", self.cdm)?;
+                }
             }
         }
-
         Ok(())
     }
 }
