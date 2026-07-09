@@ -1592,7 +1592,7 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     }
     /// The multivector of norm $`n \equiv s + P`$.
     ///
-    /// Quadvector $`P`$ does square to a scalar, therefore $`n`$ is a Study number.
+    /// Quadvector $`P`$ does square to a scalar, therefore $`n`$ is a generalized complex number.
     ///
     /// ```
     /// use vee::{format_eq, PgaP4 as Vee};
@@ -2166,7 +2166,8 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     }
     /// The multivector of norm $`n \equiv s + \ell`$.
     ///
-    /// Quadvector $`\ell`$ does not square to a scalar, therefore $`n`$ is **not** a Study number.
+    /// Quadvector $`\ell`$ does not square to a scalar, therefore $`n`$ is **not** a generalized
+    /// complex number.
     ///
     /// ```
     /// use vee::{format_eq, PgaP5 as Vee};
@@ -3079,7 +3080,8 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     }
     /// The multivector of norm $`n \equiv s + p`$.
     ///
-    /// Quadvector $`p`$ does not square to a scalar, therefore $`n`$ is **not** a Study number.
+    /// Quadvector $`p`$ does not square to a scalar, therefore $`n`$ is **not** a generalized
+    /// complex number.
     ///
     /// ```
     /// use vee::{format_eq, PgaP6 as Vee};
@@ -5032,7 +5034,8 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     }
     /// The multivector of norm $`n \equiv s + v + S`$.
     ///
-    /// Quadvector $`v`$ does not square to a scalar, therefore $`n`$ is **not** a Study number.
+    /// Quadvector $`v`$ does not square to a scalar, therefore $`n`$ is **not** a generalized
+    /// complex number.
     ///
     /// ```
     /// use vee::{format_eq, PgaP7 as Vee};
