@@ -350,6 +350,44 @@
 //!     r"\end{aligned}",
 //! ]);
 //! ```
+//!
+//! Generate DOT graphs (i.e., [`text/vnd.graphviz`]) with `{:o}`:
+//!
+//! [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
+//!
+//! ```
+//! use vee::{format_eq, PgaP3 as Vee};
+//!
+//! format_eq!("{:o}", Vee::plane(), [
+//!     r#"digraph vee {"#,
+//!     r#"  n0 [label="∑" shape=box]"#,
+//!     r#"  n1 [label="∏" shape=box]"#,
+//!     r#"  n0 -> n1"#,
+//!     r#"  n2 [label="W" shape=ellipse]"#,
+//!     r#"  n1 -> n2"#,
+//!     r#"  n3 [label="e0" shape=diamond]"#,
+//!     r#"  n1 -> n3"#,
+//!     r#"  n4 [label="∏" shape=box]"#,
+//!     r#"  n0 -> n4"#,
+//!     r#"  n5 [label="x" shape=ellipse]"#,
+//!     r#"  n4 -> n5"#,
+//!     r#"  n6 [label="e1" shape=diamond]"#,
+//!     r#"  n4 -> n6"#,
+//!     r#"  n7 [label="∏" shape=box]"#,
+//!     r#"  n0 -> n7"#,
+//!     r#"  n8 [label="y" shape=ellipse]"#,
+//!     r#"  n7 -> n8"#,
+//!     r#"  n9 [label="e2" shape=diamond]"#,
+//!     r#"  n7 -> n9"#,
+//!     r#"  n10 [label="∏" shape=box]"#,
+//!     r#"  n0 -> n10"#,
+//!     r#"  n11 [label="z" shape=ellipse]"#,
+//!     r#"  n10 -> n11"#,
+//!     r#"  n12 [label="e3" shape=diamond]"#,
+//!     r#"  n10 -> n12"#,
+//!     r#"}"#,
+//! ]);
+//! ```
 
 /// Formats the `$lhs` expression using [`Display`] and asserts the `$rhs` string literals.
 ///
