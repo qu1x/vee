@@ -316,6 +316,40 @@
 //!     "o.e12 = l.e * r.e12 + r.e * l.e12 - l.e23 * r.e31 + r.e23 * l.e31;",
 //! ]);
 //! ```
+//!
+//! Generate $`\LaTeX`$ documentation as in
+//!
+//! ```math
+//! \begin{aligned}
+//!   (-r_{01} l_1 - r_{02} l_2 - r_{03} l_3) & \boldsymbol{e}_0 \\
+//!   + (-l_2 r_{12} + r_{31} l_3) & \boldsymbol{e}_1 \\
+//!   + (l_1 r_{12} - r_{23} l_3) & \boldsymbol{e}_2 \\
+//!   + (-l_1 r_{31} + r_{23} l_2) & \boldsymbol{e}_3 \\
+//!   + (l_1 r_{23} + l_2 r_{31} + l_3 r_{12}) & \boldsymbol{e}_{123} \\
+//!   + (-l_0 r_{23} - r_{02} l_3 + r_{03} l_2) & \boldsymbol{e}_{032} \\
+//!   + (-l_0 r_{31} + r_{01} l_3 - r_{03} l_1) & \boldsymbol{e}_{013} \\
+//!   + (-l_0 r_{12} - r_{01} l_2 + r_{02} l_1) & \boldsymbol{e}_{021}
+//! \end{aligned}
+//! ```
+//!
+//! with `{:$>}`, using only the standard `amsmath` package:
+//!
+//! ```
+//! use vee::{format_eq, PgaP3 as Vee};
+//!
+//! format_eq!("{:$>}", Vee::plane().lhs() * Vee::line().rhs(), [
+//!     r"\begin{aligned}",
+//!     r"  (-r_{01} l_1 - r_{02} l_2 - r_{03} l_3) & \boldsymbol{e}_0 \\",
+//!     r"  + (-l_2 r_{12} + r_{31} l_3) & \boldsymbol{e}_1 \\",
+//!     r"  + (l_1 r_{12} - r_{23} l_3) & \boldsymbol{e}_2 \\",
+//!     r"  + (-l_1 r_{31} + r_{23} l_2) & \boldsymbol{e}_3 \\",
+//!     r"  + (l_1 r_{23} + l_2 r_{31} + l_3 r_{12}) & \boldsymbol{e}_{123} \\",
+//!     r"  + (-l_0 r_{23} - r_{02} l_3 + r_{03} l_2) & \boldsymbol{e}_{032} \\",
+//!     r"  + (-l_0 r_{31} + r_{01} l_3 - r_{03} l_1) & \boldsymbol{e}_{013} \\",
+//!     r"  + (-l_0 r_{12} - r_{01} l_2 + r_{02} l_1) & \boldsymbol{e}_{021}",
+//!     r"\end{aligned}",
+//! ]);
+//! ```
 
 /// Formats the `$lhs` expression using [`Display`] and asserts the `$rhs` string literals.
 ///
@@ -591,11 +625,14 @@ where
 ///   * `"{:-}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
 ///   * `"{:+}"` for expanded form (i.e., no factorization),
 ///   * `"{:#}"` for alternative symbols labelled after basis blades,
-///   * `"{:0}"` for zero newlines,
+///   * `"{:0}"` for zero newlines (and no alignment environment in case of $`\LaTeX`$),
 ///   * `"{:.1}"` for floating points,
 ///   * `"{:<}"` for omitting plus signs,
 ///   * `"{:>}"` for omitting plus signs and surrounding operators with spaces,
-///   * `"{:^}"` for dereferencing input and output fields implying `"{:>#}"`.
+///   * `"{:^}"` for dereferencing input and output fields implying `"{:>#}"`,
+///   * `"{:$^}"` for $`\LaTeX`$,
+///   * `"{:$>}"` for $`\LaTeX`$ omitting top alignment argument,
+///   * `"{:$<}"` for $`\LaTeX`$ omitting environment begin and end.
 ///
 /// Generate code form (i.e., generic statements and Rust) with:
 ///
@@ -1173,10 +1210,12 @@ impl<B: Algebra> Display for Multivector<B> {
             tree: &Tree,
             depth: usize,
             grasp: bool,
+            close: bool,
             mut defer: &'a str,
         ) -> Result<&'a str, fmt::Error> {
-            let wide = matches!(fmt.align(), Some(Alignment::Center | Alignment::Right));
-            let code = fmt.alternate() || fmt.align() == Some(Alignment::Center);
+            let math = fmt.fill() == '$';
+            let wide = matches!(fmt.align(), Some(Alignment::Center | Alignment::Right)) || math;
+            let code = fmt.align() == Some(Alignment::Center) || fmt.alternate() || math;
             match tree {
                 Tree::Add(siblings) => {
                     let grasp = grasp || !(defer.is_empty() || defer == "+" || defer == " + ");
@@ -1189,7 +1228,8 @@ impl<B: Algebra> Display for Multivector<B> {
                         if fmt.align().is_none() || index != 0 {
                             defer = if wide { " + " } else { "+" };
                         }
-                        defer = traverse(fmt, sibling, depth + 1, grasp, defer)?;
+                        let close = index + 1 != siblings.len();
+                        defer = traverse(fmt, sibling, depth + 1, grasp, close, defer)?;
                         write!(fmt, "{defer}")?;
                     }
                     if grasp {
@@ -1205,12 +1245,18 @@ impl<B: Algebra> Display for Multivector<B> {
                         defer = if index == 0 {
                             defer
                         } else if code && defer.is_empty() && !is_one {
-                            if wide { " * " } else { "*" }
+                            if math {
+                                " "
+                            } else if wide {
+                                " * "
+                            } else {
+                                "*"
+                            }
                         } else {
                             ""
                         };
                         let grasp = !(index == 0 && is_one);
-                        defer = traverse(fmt, sibling, depth + 1, grasp, defer)?;
+                        defer = traverse(fmt, sibling, depth + 1, grasp, close, defer)?;
                     }
                     defer = "";
                 }
@@ -1247,12 +1293,25 @@ impl<B: Algebra> Display for Multivector<B> {
                 }
                 Tree::Sym(sym) => {
                     write!(fmt, "{defer}")?;
+                    if sym.is_vec() && math && !fmt.sign_aware_zero_pad() {
+                        if defer != " " {
+                            write!(fmt, " ")?;
+                        }
+                        write!(fmt, "& ")?;
+                    }
                     if !(sym.is_one() || sym.is_scalar()) || depth == 0 {
                         Display::fmt(sym, fmt)?;
                         defer = "";
                     }
                     if !fmt.sign_aware_zero_pad() && sym.is_vec() {
-                        writeln!(fmt)?;
+                        if close && math {
+                            write!(fmt, " \\\\\n ")?;
+                            if let Some(width) = fmt.width() {
+                                write!(fmt, "{:width$}", "")?;
+                            }
+                        } else {
+                            writeln!(fmt)?;
+                        }
                     }
                 }
             }
@@ -1270,7 +1329,26 @@ impl<B: Algebra> Display for Multivector<B> {
             Tree::with_factorization(self.clone(), fmt.sign_minus())
         };
         let defer = if fmt.align().is_none() { "+" } else { "" };
-        traverse(fmt, &tree, 0, false, defer)?;
+        let math = fmt.fill() == '$';
+        let wide = matches!(fmt.align(), Some(Alignment::Center | Alignment::Right));
+        if math && wide && !fmt.sign_aware_zero_pad() {
+            let align = if fmt.align() == Some(Alignment::Center) {
+                "[t]"
+            } else {
+                ""
+            };
+            write!(fmt, "\\begin{{aligned}}{align}\n  ")?;
+            if let Some(width) = fmt.width() {
+                write!(fmt, "{:width$}", "")?;
+            }
+        }
+        traverse(fmt, &tree, 0, false, false, defer)?;
+        if math && wide && !fmt.sign_aware_zero_pad() {
+            if let Some(width) = fmt.width() {
+                write!(fmt, "{:width$}", "")?;
+            }
+            writeln!(fmt, "\\end{{aligned}}")?;
+        }
         Ok(())
     }
 }
@@ -2431,7 +2509,20 @@ impl Not for Symbol {
 impl Display for Symbol {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         if self.is_vec() {
-            if fmt.align() == Some(Alignment::Center) {
+            if fmt.fill() == '$' {
+                if self.is_pseudoscalar() {
+                    write!(fmt, "\\boldsymbol{{I}}")?;
+                } else {
+                    let lab = &self.lab[1..];
+                    if lab.is_empty() {
+                        write!(fmt, "\\boldsymbol{{e}}")?;
+                    } else if lab.len() == 1 {
+                        write!(fmt, "\\boldsymbol{{e}}_{lab}")?;
+                    } else {
+                        write!(fmt, "\\boldsymbol{{e}}_{{{lab}}}")?;
+                    }
+                }
+            } else if fmt.align() == Some(Alignment::Center) {
                 write!(fmt, "o.{}", &self.lab)?;
             } else if self.is_scalar() {
                 write!(fmt, "1")?;
@@ -2441,23 +2532,27 @@ impl Display for Symbol {
                 write!(fmt, "{}", &self.lab)?;
             }
         } else if !self.is_one() {
-            let deref = if fmt.align() == Some(Alignment::Center) {
-                ".e"
-            } else {
-                ""
-            };
-            if fmt.alternate() || !deref.is_empty() {
-                write!(
-                    fmt,
-                    "{}{deref}{}",
-                    match self.cdm {
-                        Self::PIN => 'p',
-                        Self::LHS => 'l',
-                        Self::RHS => 'r',
-                        _ => 'v',
-                    },
-                    &self.lab[1..]
-                )?;
+            if fmt.alternate() || fmt.align() == Some(Alignment::Center) || fmt.fill() == '$' {
+                let var = match self.cdm {
+                    Self::PIN => 'p',
+                    Self::LHS => 'l',
+                    Self::RHS => 'r',
+                    _ => 'v',
+                };
+                let lab = &self.lab[1..];
+                if fmt.fill() == '$' {
+                    if lab.is_empty() {
+                        write!(fmt, "{var}")?;
+                    } else if lab.len() == 1 {
+                        write!(fmt, "{var}_{lab}")?;
+                    } else {
+                        write!(fmt, "{var}_{{{lab}}}")?;
+                    }
+                } else if fmt.align() == Some(Alignment::Center) {
+                    write!(fmt, "{var}.e{lab}")?;
+                } else {
+                    write!(fmt, "{var}{lab}")?;
+                }
             } else {
                 write!(fmt, "{}", self.var)?;
                 if self.alt != Self::NIL {
