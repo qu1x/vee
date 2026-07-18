@@ -630,7 +630,8 @@ where
 ///   * `"{:<}"` for omitting plus signs,
 ///   * `"{:>}"` for omitting plus signs and surrounding operators with spaces,
 ///   * `"{:^}"` for dereferencing input and output fields implying `"{:>#}"`,
-///   * `"{:$^}"` for $`\LaTeX`$,
+///   * `"{:$^}"` for $`\LaTeX`$ where the [`width`](std::fmt#width) parameter as in
+///     `r"  \boldsymbol{{\ell}} = {:$^2}"` indents successive lines by additional two spaces,
 ///   * `"{:$>}"` for $`\LaTeX`$ omitting top alignment argument,
 ///   * `"{:$<}"` for $`\LaTeX`$ omitting environment begin and end.
 ///
