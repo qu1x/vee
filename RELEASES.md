@@ -1,3 +1,12 @@
+# Version 0.2.0 (2026-07-18)
+
+  * Generate expressions in LaTeX text form (`"{:$^}"` and `"{:$^0}"`).
+      * Use `>` over `^` for omitting top alignment argument.
+      * Use `<` over `^` for omitting environment begin and end.
+  * Improve documentation.
+  * Update KaTeX.
+  * Bump MSRV.
+
 # Version 0.1.7 (2026-02-01)
 
   * Generate expressions in code form (i.e., generic statements and Rust).

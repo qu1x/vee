@@ -21,7 +21,7 @@ The goal of this crate is to generate optimized code for geometric algebra flavo
 ## Features
 
   * Uniquely reduce symbolic multivector expressions.
-  * Generate expressions in text form.
+  * Generate expressions in text form (i.e., Unicode and LaTeX).
   * Generate expressions in code form (i.e., generic statements and Rust).
   * Generate expressions in DOT form (i.e., [`text/vnd.graphviz`]).
   * Eliminate orthonormalization conditions from expressions using reflection/projection operator by
@@ -37,7 +37,7 @@ The goal of this crate is to generate optimized code for geometric algebra flavo
 
   * Further optimize expressions to reduce operation count by domain-specific common subexpression
     elimination (CSE) targeting exterior products.
-  * Generate expressions in LaTeX and SIMD code form.
+  * Generate expressions in SIMD code form.
   * Define other geometric algebra flavors.
 
 See the [release history](RELEASES.md) to keep track of the development.
