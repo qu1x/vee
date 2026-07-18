@@ -9,26 +9,26 @@
 //! this crate implements the symbolic reduction of multivector expressions up to polynomials with
 //! rational coefficients. In contrast, rational polynomials and hence polynomial division is not
 //! required for lower dimensional geometric algebra flavors as the inverse of a multivector is
-//! given by multiplying it with the inverse of its mixed-grade norm, i.e., a generalized complex
-//! number for dimensions $`D < 6`$.[^1] See the [examples](#examples) below where the symbolic
-//! expressions are generated in text and code form. The next releases will implement further code
-//! forms (e.g., Rust code in various profiles based on SIMD using [`lav`] with and without generics
-//! or arbitrary precision types using [`rug`]). The pre-generated code forms will be provided along
-//! with the code generator behind respective feature gates. When [`packages_as_namespaces`] is
-//! stable, each code form will become a crate. Currently, the plane-based pistachio flavor --
-//! Projective Geometric Algebra (PGA) -- is implemented for $`D \equiv N + 1 \le 8`$ in all three
-//! metrics, i.e., elliptic, hyperbolic, and parabolic (Euclidean).[^2] The 5D, 6D, and 7D PGAs
-//! (i.e., $`N = 5`$, $`N = 6`$, and $`N = 7`$) are exploratory as there are no inverses based on
-//! generalized complex numbers. They provide dimension-agnostic insights regarding duality, the
-//! choice of basis blades, and grade-preserving conditions among orthonormalization conditions. The
-//! PGA is especially of interest for computer graphics (e.g., game and physics engines) as it is
-//! the most compact flavor (i.e., a one-up flavor) unifying the established but scattered
-//! frameworks, e.g., homogeneous coordinates, Plücker coordinates, (dual) quaternions, and screw
-//! theory. Even without any knowledge of geometric algebra, an API can be more intuitive as it
-//! unifies the positional and directional aspects of geometric entities (e.g., planes, lines,
-//! points) and the linear and angular aspects of rigid-body dynamics in a dimension-agnostic as
-//! well as metric-agnostic way with closed-form (i.e., non-iterative) solutions up to 4D (e.g.,
-//! [`PgaP2`], [`PgaP3`], [`PgaP4`]).[^3]
+//! given by multiplying it with the inverse of its mixed-grade norm realizing a Study number for
+//! dimensions $`D < 6`$, i.e., a generalized complex number.[^1] See the [examples](#examples)
+//! below where the symbolic expressions are generated in text and code form. The next releases will
+//! implement further code forms (e.g., Rust code in various profiles based on SIMD using [`lav`]
+//! with and without generics or arbitrary precision types using [`rug`]). The pre-generated code
+//! forms will be provided along with the code generator behind respective feature gates. When
+//! [`packages_as_namespaces`] is stable, each code form will become a crate. Currently, the
+//! plane-based pistachio flavor -- Projective Geometric Algebra (PGA) -- is implemented for
+//! $`D \equiv N + 1 \le 8`$ in all three metrics, i.e., elliptic, hyperbolic, and parabolic
+//! (Euclidean).[^2] The 5D, 6D, and 7D PGAs (i.e., $`N = 5`$, $`N = 6`$, and $`N = 7`$) are
+//! exploratory as there are no inverses based on generalized complex numbers. They provide
+//! dimension-agnostic insights regarding duality, the choice of basis blades, and grade-preserving
+//! conditions among orthonormalization conditions. The PGA is especially of interest for computer
+//! graphics (e.g., game and physics engines) as it is the most compact flavor (i.e., a one-up
+//! flavor) unifying the established but scattered frameworks, e.g., homogeneous coordinates,
+//! Plücker coordinates, (dual) quaternions, and screw theory. Even without any knowledge of
+//! geometric algebra, an API can be more intuitive as it unifies the positional and directional
+//! aspects of geometric entities (e.g., planes, lines, points) and the linear and angular aspects
+//! of rigid-body dynamics in a dimension-agnostic as well as metric-agnostic way with closed-form
+//! (i.e., non-iterative) solutions up to 4D (e.g., [`PgaP2`], [`PgaP3`], [`PgaP4`]).[^3]
 //!
 //! [`packages_as_namespaces`]:
 //! https://rust-lang.github.io/rfcs/3243-packages-as-optional-namespaces.html
