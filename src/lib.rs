@@ -278,7 +278,7 @@
 //! ]);
 //! ```
 //!
-//! Generate generic statements with `{:x}`:
+//! Generate generic statements with `"{:x}"`:
 //!
 //! ```
 //! use vee::{format_eq, PgaP3 as Vee};
@@ -291,7 +291,7 @@
 //! ]);
 //! ```
 //!
-//! Generate Rust code with `{:#x}`:
+//! Generate Rust code with `"{:#x}"`:
 //!
 //! ```
 //! use vee::{format_eq, PgaP3 as Vee};
@@ -304,7 +304,7 @@
 //! ]);
 //! ```
 //!
-//! Generate Rust code dereferencing fields with `{:^x}`:
+//! Generate Rust code dereferencing fields with `"{:^x}"`:
 //!
 //! ```
 //! use vee::{format_eq, PgaP3 as Vee};
@@ -332,7 +332,7 @@
 //! \end{aligned}
 //! ```
 //!
-//! with `{:$>}`, using only the standard `amsmath` package:
+//! with `"{:$>}"`, using only the standard `amsmath` package:
 //!
 //! ```
 //! use vee::{format_eq, PgaP3 as Vee};
@@ -351,7 +351,7 @@
 //! ]);
 //! ```
 //!
-//! Generate DOT graphs (i.e., [`text/vnd.graphviz`]) with `{:o}`:
+//! Generate DOT graphs (i.e., [`text/vnd.graphviz`]) with `"{:o}"`:
 //!
 //! [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
 //!
