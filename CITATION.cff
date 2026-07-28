@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: Citation
+title: Vector Expression Emitter (VEE)
+abstract: Geometric Algebra Code Generator
+authors:
+  - family-names: Spreckels
+    given-names: Rouven
+    orcid: https://orcid.org/0009-0003-6190-9795
+license: MPL-2.0
+keywords:
+  - geometric-algebra
+type: software
+doi: 10.5281/zenodo.21433093
