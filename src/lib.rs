@@ -2741,7 +2741,9 @@ impl From<Factorization> for Tree {
                 if is_mul[2] {
                     mul.push(m.into());
                 }
-                if len == 1 {
+                if len == 0 {
+                    Self::ONE
+                } else if len == 1 {
                     mul.pop().expect("unreachable")
                 } else {
                     Self::Mul(mul)
