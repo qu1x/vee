@@ -1267,6 +1267,15 @@ impl<B: Algebra> Display for Multivector<B> {
                         if fmt.align().is_none() || index != 0 {
                             defer = if wide { " + " } else { "+" };
                         }
+                        if let Some(sym) = sibling.as_sym()
+                            && sym.is_scalar()
+                        {
+                            defer = if fmt.precision().is_some() {
+                                "1.0"
+                            } else {
+                                "1"
+                            };
+                        }
                         let close = index + 1 != siblings.len();
                         defer = traverse(fmt, sibling, depth + 1, grasp, close, defer)?;
                         write!(fmt, "{defer}")?;
@@ -1277,6 +1286,10 @@ impl<B: Algebra> Display for Multivector<B> {
                     defer = "";
                 }
                 Tree::Mul(siblings) => {
+                    let is_num = siblings
+                        .first()
+                        .and_then(Tree::as_num)
+                        .is_some_and(|num| num.abs().is_one());
                     let is_one = siblings.last().and_then(Tree::as_sym).is_some_and(|sym| {
                         (sym.is_one() || sym.is_scalar()) && depth <= 1 && siblings.len() == 2
                     });
@@ -1290,6 +1303,12 @@ impl<B: Algebra> Display for Multivector<B> {
                                 " * "
                             } else {
                                 "*"
+                            }
+                        } else if is_num && is_one {
+                            if fmt.precision().is_some() {
+                                "1.0"
+                            } else {
+                                "1"
                             }
                         } else {
                             ""
@@ -1338,9 +1357,9 @@ impl<B: Algebra> Display for Multivector<B> {
                         }
                         write!(fmt, "& ")?;
                     }
+                    defer = "";
                     if !(sym.is_one() || sym.is_scalar()) || depth == 0 {
                         Display::fmt(sym, fmt)?;
-                        defer = "";
                     }
                     if !fmt.sign_aware_zero_pad() && sym.is_vec() {
                         if close && math {
@@ -2564,7 +2583,15 @@ impl Display for Symbol {
             } else if fmt.align() == Some(Alignment::Center) {
                 write!(fmt, "o.{}", &self.lab)?;
             } else if self.is_scalar() {
-                write!(fmt, "1")?;
+                write!(
+                    fmt,
+                    "{}",
+                    if fmt.precision().is_some() {
+                        "1.0"
+                    } else {
+                        "1"
+                    }
+                )?;
             } else if self.is_pseudoscalar() {
                 write!(fmt, "I")?;
             } else {
