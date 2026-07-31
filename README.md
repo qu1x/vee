@@ -22,6 +22,7 @@ The goal of this crate is to generate optimized code for geometric algebra flavo
 
 ## Features
 
+  * Zero non-optional dependencies.
   * Uniquely reduce symbolic multivector expressions.
   * Generate expressions in text form (i.e., Unicode and LaTeX).
   * Generate expressions in code form (i.e., generic statements and Rust).
