@@ -8067,23 +8067,72 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
 
 #[test]
 fn cnv() {
-    use super::{PgaP4 as Vee, Tree};
+    use super::Tree;
+    {
+        use super::PgaP4 as Vee;
 
-    let zero = Vee::zero();
-    assert_eq!(Vee::try_from(Tree::from(zero.clone())), Ok(zero));
+        let zero = Vee::zero();
+        assert_eq!(Vee::try_from(Tree::from(zero.clone())), Ok(zero));
 
-    let one = Vee::one();
-    assert_eq!(Vee::try_from(Tree::from(one.clone())), Ok(one));
+        let one = Vee::one();
+        assert_eq!(Vee::try_from(Tree::from(one.clone())), Ok(one));
 
-    let point = Vee::point().pin() << Vee::double_motor().unit();
-    assert_eq!(
-        Vee::try_from(Tree::with_factorization(point.clone(), true)),
-        Ok(point.clone())
-    );
-    assert_eq!(
-        Vee::try_from(Tree::with_factorization(point.clone(), false)),
-        Ok(point)
-    );
+        let point = Vee::point().pin() << Vee::double_motor().unit();
+        assert_eq!(
+            Vee::try_from(Tree::with_factorization(point.clone(), true)),
+            Ok(point.clone())
+        );
+        assert_eq!(
+            Vee::try_from(Tree::with_factorization(point.clone(), false)),
+            Ok(point)
+        );
+    }
+    {
+        use super::PgaP3 as Vee;
+
+        let norm = Vee::norm().eval([(('V', "e0123"), 2)]);
+        assert_eq!(
+            Tree::from(norm.clone()),
+            Tree::with_factorization(norm, false)
+        );
+
+        let norm = Vee::norm().eval([(('v', "e"), 1)]);
+        format_eq!("{}", norm, ["1", "+VI",]);
+
+        let norm = Vee::norm().eval([(('v', "e"), -1)]);
+        format_eq!("{}", norm, ["-1", "+VI",]);
+
+        format_eq!(
+            "{:#x}",
+            Vee::norm().eval([(('v', "e"), 1)]),
+            ["let e = 1.0;", "let e0123 = v0123;",]
+        );
+        format_eq!(
+            "{:#x}",
+            Vee::norm().eval([(('v', "e"), -1)]),
+            ["let e = -1.0;", "let e0123 = v0123;"]
+        );
+        format_eq!(
+            "{:#x}",
+            Vee::norm().eval([(('v', "e"), 2)]),
+            ["let e = 2.0;", "let e0123 = v0123;"]
+        );
+        format_eq!(
+            "{:#x}",
+            Vee::norm().eval([(('V', "e0123"), 1)]),
+            ["let e = v;", "let e0123 = 1.0;"]
+        );
+        format_eq!(
+            "{:#x}",
+            Vee::norm().eval([(('V', "e0123"), -1)]),
+            ["let e = v;", "let e0123 = -1.0;"]
+        );
+        format_eq!(
+            "{:#x}",
+            Vee::norm().eval([(('V', "e0123"), 2)]),
+            ["let e = v;", "let e0123 = 2.0;"]
+        );
+    }
 }
 
 #[test]
