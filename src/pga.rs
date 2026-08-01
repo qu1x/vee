@@ -8066,8 +8066,7 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
 // }
 
 #[test]
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::needless_raw_string_hashes)]
+#[allow(clippy::too_many_lines, clippy::needless_raw_string_hashes)]
 fn cnv() {
     use super::Tree;
     {
