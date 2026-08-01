@@ -38,8 +38,11 @@ The goal of this crate is to generate optimized code for geometric algebra flavo
 
 ## Roadmap
 
+  * Simplify emitter by flattening expression tree into token stream and perform defer logic during
+    stream iteration rather than tree traversal.
   * Further optimize expressions to reduce operation count by domain-specific common subexpression
-    elimination (CSE) targeting exterior products.
+    elimination (CSE) targeting exterior products. Reduce search space by leveraging applicable
+    geometric decomposition, e.g., Euclidean decomposition for parabolic reflection operator.
   * Generate expressions in SIMD code form.
   * Define other geometric algebra flavors.
 
