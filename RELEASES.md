@@ -1,3 +1,11 @@
+# Version 0.3.0 (2026-08-01)
+
+  * Add further tests.
+  * Improve indentation via width parameter.
+  * Fix code form dereferencing fields for evaluated symbol.
+  * Fix omitted plus sign by concatenating defer for evaluated symbol.
+  * Bump MSRV.
+
 # Version 0.2.1 (2026-08-01)
 
   * Add Zenodo badge with citation.
