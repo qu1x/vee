@@ -1271,9 +1271,9 @@ impl<B: Algebra> Display for Multivector<B> {
                             && sym.is_scalar()
                         {
                             defer = if fmt.precision().is_some() {
-                                "1.0"
+                                if defer == "+" { "+1.0" } else { "1.0" }
                             } else {
-                                "1"
+                                if defer == "+" { "+1" } else { "1" }
                             };
                         }
                         let close = index + 1 != siblings.len();

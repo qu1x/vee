@@ -8097,7 +8097,7 @@ fn cnv() {
         );
 
         let norm = Vee::norm().eval([(('v', "e"), 1)]);
-        format_eq!("{}", norm, ["1", "+VI",]);
+        format_eq!("{}", norm, ["+1", "+VI",]);
 
         let norm = Vee::norm().eval([(('v', "e"), -1)]);
         format_eq!("{}", norm, ["-1", "+VI",]);
