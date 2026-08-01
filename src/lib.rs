@@ -2583,8 +2583,6 @@ impl Display for Symbol {
                         write!(fmt, "\\boldsymbol{{e}}_{{{lab}}}")?;
                     }
                 }
-            } else if fmt.align() == Some(Alignment::Center) {
-                write!(fmt, "o.{}", self.lab)?;
             } else if self.is_scalar() {
                 write!(
                     fmt,
@@ -2595,6 +2593,8 @@ impl Display for Symbol {
                         "1"
                     }
                 )?;
+            } else if fmt.align() == Some(Alignment::Center) {
+                write!(fmt, "o.{}", self.lab)?;
             } else if self.is_pseudoscalar() {
                 write!(fmt, "I")?;
             } else {
