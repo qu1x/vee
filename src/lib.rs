@@ -1363,7 +1363,10 @@ impl<B: Algebra> Display for Multivector<B> {
                     }
                     if !fmt.sign_aware_zero_pad() && sym.is_vec() {
                         if close && math {
-                            write!(fmt, " \\\\\n ")?;
+                            if !sym.is_scalar() {
+                                write!(fmt, " ")?;
+                            }
+                            write!(fmt, "\\\\\n ")?;
                             if let Some(width) = fmt.width() {
                                 write!(fmt, "{:width$}", "")?;
                             }
