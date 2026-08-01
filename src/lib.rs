@@ -1352,7 +1352,7 @@ impl<B: Algebra> Display for Multivector<B> {
                 Tree::Sym(sym) => {
                     write!(fmt, "{defer}")?;
                     if sym.is_vec() && math && !fmt.sign_aware_zero_pad() {
-                        if defer != " " {
+                        if sym.is_scalar() {
                             write!(fmt, " ")?;
                         }
                         write!(fmt, "& ")?;
@@ -1392,19 +1392,24 @@ impl<B: Algebra> Display for Multivector<B> {
         let defer = if fmt.align().is_none() { "+" } else { "" };
         let math = fmt.fill() == '$';
         let wide = matches!(fmt.align(), Some(Alignment::Center | Alignment::Right));
-        if math && wide && !fmt.sign_aware_zero_pad() {
+        if math && !fmt.sign_aware_zero_pad() && wide {
             let align = if fmt.align() == Some(Alignment::Center) {
                 "[t]"
             } else {
                 ""
             };
-            write!(fmt, "\\begin{{aligned}}{align}\n  ")?;
-            if let Some(width) = fmt.width() {
+            writeln!(fmt, "\\begin{{aligned}}{align}")?;
+        }
+        if math && !fmt.sign_aware_zero_pad() {
+            write!(fmt, "  ")?;
+            if let Some(width) = fmt.width()
+                && wide
+            {
                 write!(fmt, "{:width$}", "")?;
             }
         }
         traverse(fmt, &tree, 0, false, false, defer)?;
-        if math && wide && !fmt.sign_aware_zero_pad() {
+        if math && !fmt.sign_aware_zero_pad() && wide {
             if let Some(width) = fmt.width() {
                 write!(fmt, "{:width$}", "")?;
             }

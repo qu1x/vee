@@ -8096,16 +8096,128 @@ fn cnv() {
             Tree::with_factorization(norm, false)
         );
 
-        let norm = Vee::norm().eval([(('v', "e"), 1)]);
-        format_eq!("{}", norm, ["+1", "+VI",]);
+        format_eq!("{}", Vee::norm().eval([(('v', "e"), 1)]), ["+1", "+VI"]);
+        format_eq!("{}", Vee::norm().eval([(('v', "e"), -1)]), ["-1", "+VI"]);
+        format_eq!("{}", Vee::norm().eval([(('v', "e"), 2)]), ["+2", "+VI"]);
+        format_eq!("{}", Vee::norm().eval([(('V', "e0123"), 1)]), ["+v", "+I"]);
+        format_eq!("{}", Vee::norm().eval([(('V', "e0123"), -1)]), ["+v", "-I"]);
+        format_eq!("{}", Vee::norm().eval([(('V', "e0123"), 2)]), ["+v", "+2I"]);
 
-        let norm = Vee::norm().eval([(('v', "e"), -1)]);
-        format_eq!("{}", norm, ["-1", "+VI",]);
+        format_eq!("{:0}\n", Vee::norm().eval([(('v', "e"), 1)]), ["+1+VI"]);
+        format_eq!("{:0}\n", Vee::norm().eval([(('v', "e"), -1)]), ["-1+VI"]);
+        format_eq!("{:0}\n", Vee::norm().eval([(('v', "e"), 2)]), ["+2+VI"]);
+        format_eq!("{:0}\n", Vee::norm().eval([(('V', "e0123"), 1)]), ["+v+I"]);
+        format_eq!("{:0}\n", Vee::norm().eval([(('V', "e0123"), -1)]), ["+v-I"]);
+        format_eq!("{:0}\n", Vee::norm().eval([(('V', "e0123"), 2)]), ["+v+2I"]);
+
+        format_eq!("{:<}", Vee::norm().eval([(('v', "e"), 1)]), ["1", "+VI"]);
+        format_eq!("{:<}", Vee::norm().eval([(('v', "e"), -1)]), ["-1", "+VI"]);
+        format_eq!("{:<}", Vee::norm().eval([(('v', "e"), 2)]), ["2", "+VI"]);
+        format_eq!("{:<}", Vee::norm().eval([(('V', "e0123"), 1)]), ["v", "+I"]);
+        format_eq!(
+            "{:<}",
+            Vee::norm().eval([(('V', "e0123"), -1)]),
+            ["v", "-I"]
+        );
+        format_eq!(
+            "{:<}",
+            Vee::norm().eval([(('V', "e0123"), 2)]),
+            ["v", "+2I"]
+        );
+
+        format_eq!(
+            "{:#}",
+            Vee::norm().eval([(('v', "e"), 1)]),
+            ["+1", "+v0123*I"]
+        );
+        format_eq!(
+            "{:#}",
+            Vee::norm().eval([(('v', "e"), -1)]),
+            ["-1", "+v0123*I"]
+        );
+        format_eq!(
+            "{:#}",
+            Vee::norm().eval([(('v', "e"), 2)]),
+            ["+2", "+v0123*I"]
+        );
+        format_eq!(
+            "{:#}",
+            Vee::norm().eval([(('V', "e0123"), 1)]),
+            ["+v", "+I"]
+        );
+        format_eq!(
+            "{:#}",
+            Vee::norm().eval([(('V', "e0123"), -1)]),
+            ["+v", "-I"]
+        );
+        format_eq!(
+            "{:#}",
+            Vee::norm().eval([(('V', "e0123"), 2)]),
+            ["+v", "+2*I"]
+        );
+
+        format_eq!(
+            "    {:$^4}",
+            Vee::norm().eval([(('v', "e"), 1)]),
+            [
+                r"    \begin{aligned}[t]",
+                r"      1 & \\",
+                r"      + v_{0123} & \boldsymbol{I}",
+                r"    \end{aligned}",
+            ]
+        );
+        format_eq!(
+            "    {:$<4}",
+            Vee::norm().eval([(('v', "e"), 1)]),
+            [r"      1 & \\", r"      + v_{0123} & \boldsymbol{I}"]
+        );
+        format_eq!(
+            "{:$<0}\n",
+            Vee::norm().eval([(('v', "e"), 1)]),
+            [r"1 + v_{0123} \boldsymbol{I}"]
+        );
+
+        format_eq!(
+            "{:$<}",
+            Vee::norm().eval([(('v', "e"), 1)]),
+            [r"  1 & \\", r"  + v_{0123} & \boldsymbol{I}"]
+        );
+        format_eq!(
+            "{:$<}",
+            Vee::norm().eval([(('v', "e"), -1)]),
+            [r"  -1 & \\", r"  + v_{0123} & \boldsymbol{I}"]
+        );
+        format_eq!(
+            "{:$<}",
+            Vee::norm().eval([(('v', "e"), 2)]),
+            [r"  2 & \\", r"  + v_{0123} & \boldsymbol{I}"]
+        );
+        format_eq!(
+            "{:$<}",
+            Vee::norm().eval([(('V', "e0123"), 1)]),
+            [r"  v & \\", r"  + & \boldsymbol{I}"]
+        );
+        format_eq!(
+            "{:$<}",
+            Vee::norm().eval([(('V', "e0123"), -1)]),
+            [r"  v & \\", r"  - & \boldsymbol{I}"]
+        );
+        format_eq!(
+            "{:$<}",
+            Vee::norm().eval([(('V', "e0123"), 2)]),
+            [r"  v & \\", r"  + 2 & \boldsymbol{I}"]
+        );
+
+        format_eq!(
+            "{:>#4x}",
+            Vee::norm().eval([(('v', "e"), 1)]),
+            ["    let e = 1.0;", "    let e0123 = v0123;"]
+        );
 
         format_eq!(
             "{:#x}",
             Vee::norm().eval([(('v', "e"), 1)]),
-            ["let e = 1.0;", "let e0123 = v0123;",]
+            ["let e = 1.0;", "let e0123 = v0123;"]
         );
         format_eq!(
             "{:#x}",
@@ -8134,34 +8246,159 @@ fn cnv() {
         );
 
         format_eq!(
-            "{:#^x}",
+            "{:^4x}",
             Vee::norm().eval([(('v', "e"), 1)]),
-            ["o.e = 1.0;", "o.e0123 = v.e0123;",]
+            ["    o.e = 1.0;", "    o.e0123 = v.e0123;"]
+        );
+
+        format_eq!(
+            "{:^x}",
+            Vee::norm().eval([(('v', "e"), 1)]),
+            ["o.e = 1.0;", "o.e0123 = v.e0123;"]
         );
         format_eq!(
-            "{:#^x}",
+            "{:^x}",
             Vee::norm().eval([(('v', "e"), -1)]),
             ["o.e = -1.0;", "o.e0123 = v.e0123;"]
         );
         format_eq!(
-            "{:#^x}",
+            "{:^x}",
             Vee::norm().eval([(('v', "e"), 2)]),
             ["o.e = 2.0;", "o.e0123 = v.e0123;"]
         );
         format_eq!(
-            "{:#^x}",
+            "{:^x}",
             Vee::norm().eval([(('V', "e0123"), 1)]),
             ["o.e = v.e;", "o.e0123 = 1.0;"]
         );
         format_eq!(
-            "{:#^x}",
+            "{:^x}",
             Vee::norm().eval([(('V', "e0123"), -1)]),
             ["o.e = v.e;", "o.e0123 = -1.0;"]
         );
         format_eq!(
-            "{:#^x}",
+            "{:^x}",
             Vee::norm().eval([(('V', "e0123"), 2)]),
             ["o.e = v.e;", "o.e0123 = 2.0;"]
+        );
+
+        format_eq!(
+            "{:#o}",
+            Vee::norm().eval([(('v', "e"), 1)]),
+            [
+                r#"digraph vee {"#,
+                r#"  n0 [label="+" shape=box]"#,
+                r#"  n1 [label="1" shape=diamond]"#,
+                r#"  n0 -> n1"#,
+                r#"  n2 [label="*" shape=box]"#,
+                r#"  n0 -> n2"#,
+                r#"  n3 [label="v0123" shape=ellipse]"#,
+                r#"  n2 -> n3"#,
+                r#"  n4 [label="I" shape=diamond]"#,
+                r#"  n2 -> n4"#,
+                r#"}"#,
+            ]
+        );
+        format_eq!(
+            "{:#o}",
+            Vee::norm().eval([(('v', "e"), -1)]),
+            [
+                r#"digraph vee {"#,
+                r#"  n0 [label="+" shape=box]"#,
+                r#"  n1 [label="*" shape=box]"#,
+                r#"  n0 -> n1"#,
+                r#"  n2 [label="-1" shape=circle]"#,
+                r#"  n1 -> n2"#,
+                r#"  n3 [label="1" shape=diamond]"#,
+                r#"  n1 -> n3"#,
+                r#"  n4 [label="*" shape=box]"#,
+                r#"  n0 -> n4"#,
+                r#"  n5 [label="v0123" shape=ellipse]"#,
+                r#"  n4 -> n5"#,
+                r#"  n6 [label="I" shape=diamond]"#,
+                r#"  n4 -> n6"#,
+                r#"}"#,
+            ]
+        );
+        format_eq!(
+            "{:#o}",
+            Vee::norm().eval([(('v', "e"), 2)]),
+            [
+                r#"digraph vee {"#,
+                r#"  n0 [label="+" shape=box]"#,
+                r#"  n1 [label="*" shape=box]"#,
+                r#"  n0 -> n1"#,
+                r#"  n2 [label="2" shape=circle]"#,
+                r#"  n1 -> n2"#,
+                r#"  n3 [label="1" shape=diamond]"#,
+                r#"  n1 -> n3"#,
+                r#"  n4 [label="*" shape=box]"#,
+                r#"  n0 -> n4"#,
+                r#"  n5 [label="v0123" shape=ellipse]"#,
+                r#"  n4 -> n5"#,
+                r#"  n6 [label="I" shape=diamond]"#,
+                r#"  n4 -> n6"#,
+                r#"}"#,
+            ]
+        );
+        format_eq!(
+            "{:#o}",
+            Vee::norm().eval([(('V', "e0123"), 1)]),
+            [
+                r#"digraph vee {"#,
+                r#"  n0 [label="+" shape=box]"#,
+                r#"  n1 [label="*" shape=box]"#,
+                r#"  n0 -> n1"#,
+                r#"  n2 [label="v" shape=ellipse]"#,
+                r#"  n1 -> n2"#,
+                r#"  n3 [label="1" shape=diamond]"#,
+                r#"  n1 -> n3"#,
+                r#"  n4 [label="I" shape=diamond]"#,
+                r#"  n0 -> n4"#,
+                r#"}"#,
+            ]
+        );
+        format_eq!(
+            "{:#o}",
+            Vee::norm().eval([(('V', "e0123"), -1)]),
+            [
+                r#"digraph vee {"#,
+                r#"  n0 [label="+" shape=box]"#,
+                r#"  n1 [label="*" shape=box]"#,
+                r#"  n0 -> n1"#,
+                r#"  n2 [label="v" shape=ellipse]"#,
+                r#"  n1 -> n2"#,
+                r#"  n3 [label="1" shape=diamond]"#,
+                r#"  n1 -> n3"#,
+                r#"  n4 [label="*" shape=box]"#,
+                r#"  n0 -> n4"#,
+                r#"  n5 [label="-1" shape=circle]"#,
+                r#"  n4 -> n5"#,
+                r#"  n6 [label="I" shape=diamond]"#,
+                r#"  n4 -> n6"#,
+                r#"}"#,
+            ]
+        );
+        format_eq!(
+            "{:#o}",
+            Vee::norm().eval([(('V', "e0123"), 2)]),
+            [
+                r#"digraph vee {"#,
+                r#"  n0 [label="+" shape=box]"#,
+                r#"  n1 [label="*" shape=box]"#,
+                r#"  n0 -> n1"#,
+                r#"  n2 [label="v" shape=ellipse]"#,
+                r#"  n1 -> n2"#,
+                r#"  n3 [label="1" shape=diamond]"#,
+                r#"  n1 -> n3"#,
+                r#"  n4 [label="*" shape=box]"#,
+                r#"  n0 -> n4"#,
+                r#"  n5 [label="2" shape=circle]"#,
+                r#"  n4 -> n5"#,
+                r#"  n6 [label="I" shape=diamond]"#,
+                r#"  n4 -> n6"#,
+                r#"}"#,
+            ]
         );
     }
 }
