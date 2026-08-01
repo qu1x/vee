@@ -14,7 +14,7 @@ Vector Expression Emitter (VEE): Geometric Algebra Code Generator
 [Documentation]: https://docs.rs/vee/badge.svg
 [Downloads]: https://img.shields.io/crates/d/vee.svg
 [Version]: https://img.shields.io/crates/v/vee.svg
-[Rust]: https://img.shields.io/badge/rust-v1.91.1-brightgreen.svg
+[Rust]: https://img.shields.io/badge/rust-v1.94.1-brightgreen.svg
 [License]: https://img.shields.io/crates/l/vee
 [DOI]: https://img.shields.io/badge/DOI-5281/zenodo.21433093-blue.svg
 

@@ -2584,7 +2584,7 @@ impl Display for Symbol {
                     }
                 }
             } else if fmt.align() == Some(Alignment::Center) {
-                write!(fmt, "o.{}", &self.lab)?;
+                write!(fmt, "o.{}", self.lab)?;
             } else if self.is_scalar() {
                 write!(
                     fmt,
@@ -2598,7 +2598,7 @@ impl Display for Symbol {
             } else if self.is_pseudoscalar() {
                 write!(fmt, "I")?;
             } else {
-                write!(fmt, "{}", &self.lab)?;
+                write!(fmt, "{}", self.lab)?;
             }
         } else if !self.is_one() {
             if fmt.alternate() || fmt.align() == Some(Alignment::Center) || fmt.fill() == '$' {
