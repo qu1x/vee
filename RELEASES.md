@@ -1,3 +1,13 @@
+# Version 0.2.1 (2026-08-01)
+
+  * Add Zenodo badge with citation.
+  * Update KaTeX.
+  * Update features and roadmap.
+  * Fix DOT form for factorized polynomial of evaluated symbol.
+  * Fix text and code forms for polynomial of evaluated symbol.
+  * Collapse space for scalar in aligned LaTeX form.
+  * Add further tests.
+
 # Version 0.2.0 (2026-07-18)
 
   * Generate expressions in LaTeX text form (`"{:$^}"` and `"{:$^0}"`).

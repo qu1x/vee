@@ -1,6 +1,6 @@
 [package]
 name = "vee"
-version = "0.2.0"
+version = "0.2.1"
 rust-version = "1.91.1"
 edition = "2024"
 description = "Vector Expression Emitter (VEE): Geometric Algebra Code Generator"
