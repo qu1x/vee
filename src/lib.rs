@@ -633,7 +633,7 @@ where
     /// The number $`n`$ of basis blades with the same grade $`g`$ of this basis blade.
     ///
     /// ```math
-    /// n = { N + 1  \choose g }
+    /// n = { N + 1 \choose g }
     /// ```
     #[must_use]
     fn blade_len(&self) -> usize;
