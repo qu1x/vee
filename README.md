@@ -32,7 +32,8 @@ The goal of this crate is to generate optimized code for geometric algebra flavo
   * Evaluate symbols as rationals.
   * Count operations (i.e., multiplications and additions).
   * Define the metric-agnostic basis (i.e., elliptic, parabolic, hyperbolic) and the multivector
-    entities of the projective geometric algebra (PGA) for dimensions D = N + 1 < 8.
+    entities for dimensions D = N + 1 < 8 of the plane-based pistachio flavor, i.e., projective
+    geometric algebra (PGA).
 
 [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
 
