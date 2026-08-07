@@ -150,8 +150,11 @@
 //! alias of [`Multivector`] parameterized for the Parabolic (Euclidean) 3D PGA. The
 //! [`PgaP3::pin()`] method pins symbols of [`PgaP3::point()`] with the *combining x below* (i.e.,
 //! the Unicode *combining diacritical mark* `"◌͓"`) to distinguish them from the symbols of
-//! [`PgaP3::motor()`](struct.Multivector.html#method.rotator-1). This isometry (i.e., up to a screw
-//! motion) is isomorphic to the transformation of a homogeneoous point by a dual quaternion.
+//! [`PgaP3::motor()`]. This isometry (i.e., up to a screw motion) is isomorphic to the
+//! transformation of a homogeneoous point by a dual quaternion.
+//!
+//! [`PgaP3::point()`]: struct.Multivector.html#method.point-2
+//! [`PgaP3::motor()`]: struct.Multivector.html#method.motor-1
 //!
 //! ```
 //! use vee::{format_eq, PgaP3 as Vee};
