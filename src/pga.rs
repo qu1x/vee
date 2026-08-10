@@ -8248,6 +8248,11 @@ fn cnv() {
 
         format_eq!(
             "{:#x}",
+            Vee::norm().eval([(('v', "e"), 0)]),
+            ["let e0123 = v0123;"]
+        );
+        format_eq!(
+            "{:#x}",
             Vee::norm().eval([(('v', "e"), (1, 2))]),
             ["let e = 1.0 / 2.0;", "let e0123 = v0123;"]
         );
