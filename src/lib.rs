@@ -929,7 +929,7 @@ impl<B: Algebra> Multivector<B> {
                     if new_m.map.is_empty() {
                         new_m = Monomial::one();
                     }
-                    new_p.map.insert(new_m, new_r);
+                    *new_p.map.entry(new_m).or_default() += new_r;
                     new_p.map.retain(|_m, c| !c.is_zero());
                 }
                 *old_p = new_p;
