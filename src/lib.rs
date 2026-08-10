@@ -1322,7 +1322,6 @@ impl<B: Algebra> Display for Multivector<B> {
                     defer = "";
                 }
                 Tree::Num(num) => {
-                    let suffix = if fmt.precision().is_some() { ".0" } else { "" };
                     if num.abs().is_one() {
                         if num.is_negative() {
                             if wide && !defer.is_empty() {
@@ -1338,17 +1337,19 @@ impl<B: Algebra> Display for Multivector<B> {
                         } else {
                             "1"
                         };
-                    } else if num.is_negative() {
-                        if wide && !defer.is_empty() {
-                            write!(fmt, " - ")?;
-                        } else {
-                            write!(fmt, "-")?;
+                    } else {
+                        if num.is_negative() {
+                            if wide && !defer.is_empty() {
+                                write!(fmt, " - ")?;
+                            } else {
+                                write!(fmt, "-")?;
+                            }
+                            defer = "";
                         }
-                        let num = num.abs();
-                        write!(fmt, "{num}{suffix}")?;
-                        defer = "";
-                    } else if !num.is_zero() {
-                        write!(fmt, "{defer}{num}{suffix}")?;
+                        if !num.is_zero() {
+                            write!(fmt, "{defer}")?;
+                            Display::fmt(&num.abs(), fmt)?;
+                        }
                         defer = "";
                     }
                 }
@@ -2001,6 +2002,18 @@ impl Rational {
             q: self.q,
         }
     }
+    /// Whether this rational number is rational.
+    #[must_use]
+    #[inline]
+    pub const fn is_rational(&self) -> bool {
+        !self.is_integer()
+    }
+    /// Whether this rational number is integer.
+    #[must_use]
+    #[inline]
+    pub const fn is_integer(&self) -> bool {
+        self.q == 1
+    }
     /// Whether this rational number is negative.
     #[must_use]
     #[inline]
@@ -2249,9 +2262,17 @@ impl Ord for Rational {
 
 impl Display for Rational {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        Display::fmt(&self.p, fmt)?;
-        if self.q != 1 {
-            write!(fmt, "/{}", self.q)?;
+        let suffix = if fmt.precision().is_some() { ".0" } else { "" };
+        write!(fmt, "{}{suffix}", self.p)?;
+        if self.is_rational() {
+            let math = fmt.fill() == '$';
+            let wide = matches!(fmt.align(), Some(Alignment::Center | Alignment::Right)) || math;
+            if wide {
+                write!(fmt, " / {}", self.q)?;
+            } else {
+                write!(fmt, "/{}", self.q)?;
+            }
+            write!(fmt, "{suffix}")?;
         }
         Ok(())
     }
