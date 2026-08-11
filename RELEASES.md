@@ -1,3 +1,13 @@
+# Version 0.3.1 (2026-08-11)
+
+  * Format examples.
+  * Predefine symbols for evaluation as rationals.
+  * Fix evaluation and code form. Thank you, [Lars Hadidi](https://github.com/LarsHadidi).
+      * Fix evaluating multiple symbols.
+      * Fix evaluating symbol to zero.
+      * Fix code form for non-integer rationals.
+  * Fix links.
+
 # Version 0.3.0 (2026-08-01)
 
   * Add further tests.
