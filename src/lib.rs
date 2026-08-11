@@ -157,7 +157,7 @@
 //! [`PgaP3::motor()`]: struct.Multivector.html#method.motor-1
 //!
 //! ```
-//! use vee::{format_eq, PgaP3 as Vee, pga::PgaP3 as Bee, Symbol};
+//! use vee::{PgaP3 as Vee, Symbol, format_eq, pga::PgaP3 as Bee};
 //!
 //! // Assumes motor is not orthonormalized.
 //! format_eq!(Vee::point().pin() << Vee::motor(), [
@@ -196,7 +196,7 @@
 //! duality equivalences.
 //!
 //! ```
-//! use vee::{format_eq, PgaP3 as Vee};
+//! use vee::{PgaP3 as Vee, format_eq};
 //!
 //! format_eq!(Vee::plane(), ["+We0", "+xe1", "+ye2", "+ze3"]);
 //! format_eq!(Vee::point(), ["+we123", "+Xe032", "+Ye013", "+Ze021"]);
@@ -213,7 +213,7 @@
 //!   * `'v'` otherwise.
 //!
 //! ```
-//! use vee::{format_eq, PgaP3 as Vee};
+//! use vee::{PgaP3 as Vee, format_eq};
 //!
 //! format_eq!("{:#}", Vee::point().pin() << Vee::motor().unit(), [
 //!     "+p123*e123",
@@ -240,7 +240,7 @@
 //! Optional plus signs are skipped with `"{:<}"`:
 //!
 //! ```
-//! use vee::{format_eq, PgaP3 as Vee};
+//! use vee::{PgaP3 as Vee, format_eq};
 //!
 //! format_eq!("{:<}", Vee::point().pin() << Vee::motor().unit(), [
 //!     "w͓e123",
@@ -253,7 +253,7 @@
 //! The predominant sign is factored as well with `"{:-}"`:
 //!
 //! ```
-//! use vee::{format_eq, PgaP3 as Vee};
+//! use vee::{PgaP3 as Vee, format_eq};
 //!
 //! // Unfactored predominant sign.
 //! format_eq!(Vee::point().pin() << Vee::motor(), [
@@ -277,7 +277,7 @@
 //! The factorization is skipped with `"{:+}"`:
 //!
 //! ```
-//! use vee::{format_eq, PgaP3 as Vee};
+//! use vee::{PgaP3 as Vee, format_eq};
 //!
 //! format_eq!("{:+}", Vee::point().pin() << Vee::motor(), [
 //!     "+(+vvw͓+w͓xx+w͓yy+w͓zz)e123",
@@ -290,7 +290,7 @@
 //! Generate generic statements with `"{:x}"`:
 //!
 //! ```
-//! use vee::{format_eq, PgaP3 as Vee};
+//! use vee::{PgaP3 as Vee, format_eq};
 //!
 //! format_eq!("{:x}", Vee::rotator().lhs() * Vee::rotator().rhs(), [
 //!     "e=l*r-l23*r23-l31*r31-l12*r12",
@@ -303,7 +303,7 @@
 //! Generate Rust code with `"{:#x}"`:
 //!
 //! ```
-//! use vee::{format_eq, PgaP3 as Vee};
+//! use vee::{PgaP3 as Vee, format_eq};
 //!
 //! format_eq!("{:#x}", Vee::rotator().lhs() * Vee::rotator().rhs(), [
 //!     "let e = l * r - l23 * r23 - l31 * r31 - l12 * r12;",
@@ -316,7 +316,7 @@
 //! Generate Rust code dereferencing fields with `"{:^x}"`:
 //!
 //! ```
-//! use vee::{format_eq, PgaP3 as Vee};
+//! use vee::{PgaP3 as Vee, format_eq};
 //!
 //! format_eq!("{:^x}", Vee::rotator().lhs() * Vee::rotator().rhs(), [
 //!     "o.e = l.e * r.e - l.e23 * r.e23 - l.e31 * r.e31 - l.e12 * r.e12;",
@@ -344,7 +344,7 @@
 //! with `"{:$>}"`, using only the standard `amsmath` package:
 //!
 //! ```
-//! use vee::{format_eq, PgaP3 as Vee};
+//! use vee::{PgaP3 as Vee, format_eq};
 //!
 //! format_eq!("{:$>}", Vee::plane().lhs() * Vee::line().rhs(), [
 //!     r"\begin{aligned}",
@@ -365,7 +365,7 @@
 //! [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
 //!
 //! ```
-//! use vee::{format_eq, PgaP3 as Vee};
+//! use vee::{PgaP3 as Vee, format_eq};
 //!
 //! format_eq!("{:o}", Vee::plane(), [
 //!     r#"digraph vee {"#,
@@ -756,7 +756,7 @@ impl<B: Algebra> Multivector<B> {
     /// Creates a new multivector from an iterator over tuples of symbols and basis blades.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP3 as Vee, pga::PgaP3 as Bee};
+    /// use vee::{PgaP3 as Vee, format_eq, pga::PgaP3 as Bee};
     ///
     /// let plane = Vee::new([
     ///     (('W', "e0"), Bee::new("e0")),
@@ -824,7 +824,7 @@ impl<B: Algebra> Multivector<B> {
     /// This example appends *combining double breve below* (i.e., `"◌͜◌"`) to plane $`p`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP3 as Vee};
+    /// use vee::{PgaP3 as Vee, format_eq};
     ///
     /// format_eq!(Vee::plane(), ["+We0", "+xe1", "+ye2", "+ze3"]);
     /// format_eq!(Vee::plane().cdm('\u{035c}'), ["+W͜e0", "+x͜e1", "+y͜e2", "+z͜e3"]);
@@ -967,7 +967,7 @@ impl<B: Algebra> Multivector<B> {
     /// The mixed-grade squared norm (i.e., a generalized complex number).
     ///
     /// ```
-    /// use vee::{format_eq, PgaP3 as Vee};
+    /// use vee::{PgaP3 as Vee, format_eq};
     ///
     /// format_eq!(Vee::plane().norm_squared(), ["+xx+yy+zz"]);
     /// format_eq!(Vee::point().norm_squared(), ["+ww"]);

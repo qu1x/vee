@@ -39,11 +39,11 @@ pretty_assertions = { version = "1.4.1", optional = true }
 vee = { path = ".", features = ["pretty_assertions"] }
 
 [lints.rust]
-missing-docs = "forbid"
+missing_docs = "forbid"
 confusable_idents = "allow"
 
 [lints.rustdoc]
-broken-intra-doc-links = "forbid"
+broken_intra_doc_links = "forbid"
 
 [lints.clippy]
 all = { level = "deny", priority = -1 }

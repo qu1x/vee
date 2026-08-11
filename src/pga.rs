@@ -1012,7 +1012,7 @@ impl<const M: i8> Multivector<Pga<M, 1>> {
     /// The multivector of translator $`t \equiv s + S`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP1 as Vee};
+    /// use vee::{PgaP1 as Vee, format_eq};
     ///
     /// let translator = Vee::point().lhs() * Vee::point().rhs();
     ///
@@ -1072,7 +1072,7 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     /// The multivector of line $`\ell \equiv \ell_0 + \ell_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP2 as Vee};
+    /// use vee::{PgaP2 as Vee, format_eq};
     ///
     /// let line = Vee::point().lhs() & Vee::point().rhs();
     ///
@@ -1103,7 +1103,7 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     /// The multivector of point $`P \equiv P_0 + P_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP2 as Vee};
+    /// use vee::{PgaP2 as Vee, format_eq};
     ///
     /// let point = Vee::line().lhs() ^ Vee::line().rhs();
     ///
@@ -1122,7 +1122,7 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     /// The multivector of rotator $`r \equiv s + P_0`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP2 as Vee};
+    /// use vee::{PgaP2 as Vee, format_eq};
     ///
     /// let rotator = Vee::displacement().lhs() * Vee::displacement().rhs();
     ///
@@ -1140,7 +1140,7 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     /// The multivector of translator $`t \equiv s + P_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP2 as Vee};
+    /// use vee::{PgaP2 as Vee, format_eq};
     ///
     /// let translator = Vee::point().lhs() * Vee::point().rhs();
     ///
@@ -1159,7 +1159,7 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     /// The multivector of motor $`m \equiv s + P`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP2 as Vee};
+    /// use vee::{PgaP2 as Vee, format_eq};
     ///
     /// let motor = Vee::line().lhs() * Vee::line().rhs();
     ///
@@ -1188,11 +1188,14 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     /// The multivector of rotoreflector $`f_r \equiv \ell_0`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP2 as Vee};
+    /// use vee::{PgaP2 as Vee, format_eq};
     ///
     /// let rotoreflector = Vee::displacement().lhs() * Vee::rotator().rhs();
     ///
-    /// assert_eq!(rotoreflector.basis_blades(), Vee::rotoreflector().basis_blades());
+    /// assert_eq!(
+    ///     rotoreflector.basis_blades(),
+    ///     Vee::rotoreflector().basis_blades()
+    /// );
     /// format_eq!(rotoreflector, [
     ///     "+(+v͕x͔-w͕y͔)e1",
     ///     "+(+v͕y͔+w͕x͔)e2",
@@ -1214,7 +1217,7 @@ impl<const M: i8> Multivector<Pga<M, 2>> {
     /// The multivector of flector $`f \equiv \ell + S`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP2 as Vee};
+    /// use vee::{PgaP2 as Vee, format_eq};
     ///
     /// let flector = Vee::line().lhs() * Vee::motor().rhs();
     ///
@@ -1259,7 +1262,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// The multivector of norm $`n \equiv s + S`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP3 as Vee};
+    /// use vee::{PgaP3 as Vee, format_eq};
     ///
     /// let norm_squared = Vee::line().norm_squared();
     ///
@@ -1289,7 +1292,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// The multivector of plane $`p \equiv p_0 + p_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP3 as Vee};
+    /// use vee::{PgaP3 as Vee, format_eq};
     ///
     /// let plane = Vee::line().lhs() & Vee::point().rhs();
     ///
@@ -1309,12 +1312,15 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// The multivector of displacement $`\ell_0 \equiv x\e_{23} + y\e_{31} + z\e_{12}`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP3 as Vee};
+    /// use vee::{PgaP3 as Vee, format_eq};
     ///
     /// // A line through the origin as the join of a point and the origin.
     /// let displacement = Vee::point().lhs() & Vee::weight().rhs();
     ///
-    /// assert_eq!(displacement.basis_blades(), Vee::displacement().basis_blades());
+    /// assert_eq!(
+    ///     displacement.basis_blades(),
+    ///     Vee::displacement().basis_blades()
+    /// );
     /// format_eq!(displacement, [
     ///     "-X͔w͕e23",
     ///     "-Y͔w͕e31",
@@ -1324,7 +1330,10 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// // A line through the origin as the meet of two planes through the origin.
     /// let displacement = Vee::normal().lhs() ^ Vee::normal().rhs();
     ///
-    /// assert_eq!(displacement.basis_blades(), Vee::displacement().basis_blades());
+    /// assert_eq!(
+    ///     displacement.basis_blades(),
+    ///     Vee::displacement().basis_blades()
+    /// );
     /// format_eq!(displacement, [
     ///     "+(+y͔z͕-y͕z͔)e23",
     ///     "+(-x͔z͕+x͕z͔)e31",
@@ -1345,7 +1354,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// The multivector of line $`\ell \equiv \ell_0 + \ell_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP3 as Vee};
+    /// use vee::{PgaP3 as Vee, format_eq};
     ///
     /// // A line as the join of two points.
     /// let line = Vee::point().lhs() & Vee::point().rhs();
@@ -1393,7 +1402,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// The multivector of point $`P \equiv P_0 + P_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP3 as Vee};
+    /// use vee::{PgaP3 as Vee, format_eq};
     ///
     /// // A point as the meet of a plane and a line.
     /// let point = Vee::plane().lhs() ^ Vee::line().rhs();
@@ -1414,7 +1423,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// The multivector of rotator $`r \equiv s + \ell_0`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP3 as Vee};
+    /// use vee::{PgaP3 as Vee, format_eq};
     ///
     /// let rotator = Vee::normal().lhs() * Vee::normal().rhs();
     ///
@@ -1444,7 +1453,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// The multivector of translator $`t \equiv s + \ell_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP3 as Vee};
+    /// use vee::{PgaP3 as Vee, format_eq};
     ///
     /// let translator = Vee::point().lhs() * Vee::point().rhs();
     ///
@@ -1464,11 +1473,14 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// The multivector of simple motor $`m_s \equiv s + \ell`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP3 as Vee};
+    /// use vee::{PgaP3 as Vee, format_eq};
     ///
     /// let simple_motor = Vee::plane().lhs() * Vee::plane().rhs();
     ///
-    /// assert_eq!(simple_motor.basis_blades(), Vee::simple_motor().basis_blades());
+    /// assert_eq!(
+    ///     simple_motor.basis_blades(),
+    ///     Vee::simple_motor().basis_blades()
+    /// );
     /// format_eq!(simple_motor, [
     ///     "+x͔x͕+y͔y͕+z͔z͕",
     ///     "+(+W͔x͕-W͕x͔)e01",
@@ -1545,11 +1557,14 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// The multivector of rotoreflector $`f_r \equiv p_0 + P_0`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP3 as Vee};
+    /// use vee::{PgaP3 as Vee, format_eq};
     ///
     /// let rotoreflector = Vee::normal().lhs() * Vee::rotator().rhs();
     ///
-    /// assert_eq!(rotoreflector.basis_blades(), Vee::rotoreflector().basis_blades());
+    /// assert_eq!(
+    ///     rotoreflector.basis_blades(),
+    ///     Vee::rotoreflector().basis_blades()
+    /// );
     /// format_eq!(rotoreflector, [
     ///     "+(+v͕x͔-y͔z͕+y͕z͔)e1",
     ///     "+(+v͕y͔+x͔z͕-x͕z͔)e2",
@@ -1565,11 +1580,14 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// The multivector of transflector $`f_t \equiv p + P_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP3 as Vee};
+    /// use vee::{PgaP3 as Vee, format_eq};
     ///
     /// let transflector = Vee::normal().lhs() * Vee::translator().rhs();
     ///
-    /// assert_eq!(transflector.basis_blades(), Vee::transflector().basis_blades());
+    /// assert_eq!(
+    ///     transflector.basis_blades(),
+    ///     Vee::transflector().basis_blades()
+    /// );
     /// format_eq!(transflector, [
     ///     "+(-X͕x͔-Y͕y͔-Z͕z͔)e0",
     ///     "+v͕x͔e1",
@@ -1588,7 +1606,7 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     /// The multivector of flector $`f \equiv p + P`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP3 as Vee};
+    /// use vee::{PgaP3 as Vee, format_eq};
     ///
     /// let flector = Vee::plane().lhs() * Vee::motor().rhs();
     ///
@@ -1630,11 +1648,14 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     /// Quadvector $`P`$ does square to a scalar, therefore $`n`$ is a generalized complex number.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP4 as Vee};
+    /// use vee::{PgaP4 as Vee, format_eq};
     ///
     /// let quadvector_norm_squared = Vee::point().norm_squared();
     ///
-    /// assert_eq!(quadvector_norm_squared.basis_blades(), Vee::scalar().basis_blades());
+    /// assert_eq!(
+    ///     quadvector_norm_squared.basis_blades(),
+    ///     Vee::scalar().basis_blades()
+    /// );
     /// format_eq!(quadvector_norm_squared, ["+ww"]);
     /// ```
     #[must_use]
@@ -1726,11 +1747,14 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     /// The multivector of single rotator $`r_1 \equiv s + \ell_0`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP4 as Vee};
+    /// use vee::{PgaP4 as Vee, format_eq};
     ///
     /// let single_rotator = Vee::normal().lhs() * Vee::normal().rhs();
     ///
-    /// assert_eq!(single_rotator.basis_blades(), Vee::single_rotator().basis_blades());
+    /// assert_eq!(
+    ///     single_rotator.basis_blades(),
+    ///     Vee::single_rotator().basis_blades()
+    /// );
     /// format_eq!(single_rotator, [
     ///     "+x͔x͕+y͔y͕+z͔z͕+ð͔ð͕",
     ///     "+(+x͔y͕-x͕y͔)e12",
@@ -1743,7 +1767,10 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// let single_rotator = Vee::line_displacement().lhs() * Vee::line_displacement().rhs();
     ///
-    /// assert_eq!(single_rotator.basis_blades(), Vee::single_rotator().basis_blades());
+    /// assert_eq!(
+    ///     single_rotator.basis_blades(),
+    ///     Vee::single_rotator().basis_blades()
+    /// );
     /// format_eq!(single_rotator, [
     ///     "-ẋ͔ẋ͕-ẏ͔ẏ͕-ż͔ż͕-ð͔̇ð͕̇",
     ///     "+(-ẋ͔ẏ͕+ẋ͕ẏ͔)e12",
@@ -1755,7 +1782,10 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     /// ]);
     ///
     /// let norm_squared = Vee::single_rotator().norm_squared();
-    /// assert_eq!(norm_squared.basis_blades(), (Vee::scalar() + Vee::weight()).basis_blades());
+    /// assert_eq!(
+    ///     norm_squared.basis_blades(),
+    ///     (Vee::scalar() + Vee::weight()).basis_blades()
+    /// );
     /// format_eq!(norm_squared, [
     ///     "+ȧȧ+ḃḃ+ċċ+ḋḋ+ėė+ḟḟ+vv",
     ///     "+2(-ȧḟ+ḃė-ċḋ)e1234",
@@ -1769,11 +1799,14 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     /// The multivector of double rotator $`r_2 \equiv s + \ell_0 + P_0`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP4 as Vee};
+    /// use vee::{PgaP4 as Vee, format_eq};
     ///
     /// let double_rotator = Vee::single_rotator().lhs() * Vee::single_rotator().rhs();
     ///
-    /// assert_eq!(double_rotator.basis_blades(), Vee::double_rotator().basis_blades());
+    /// assert_eq!(
+    ///     double_rotator.basis_blades(),
+    ///     Vee::double_rotator().basis_blades()
+    /// );
     /// format_eq!(double_rotator, [
     ///     "-ȧ͔ȧ͕-ḃ͔ḃ͕-ċ͔ċ͕-ḋ͔ḋ͕-ė͔ė͕-ḟ͔ḟ͕+v͔v͕",
     ///     "+(+ȧ͔v͕+ȧ͕v͔-ḃ͔ḋ͕+ḃ͕ḋ͔-ċ͔ė͕+ċ͕ė͔)e12",
@@ -1787,7 +1820,10 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// let double_rotator = Vee::plane_displacement().lhs() * Vee::plane_displacement().rhs();
     ///
-    /// assert_eq!(double_rotator.basis_blades(), Vee::double_rotator().basis_blades());
+    /// assert_eq!(
+    ///     double_rotator.basis_blades(),
+    ///     Vee::double_rotator().basis_blades()
+    /// );
     /// format_eq!(double_rotator, [
     ///     "-ȧ͔ȧ͕-ḃ͔ḃ͕-ċ͔ċ͕-ḋ͔ḋ͕-ė͔ė͕-ḟ͔ḟ͕",
     ///     "+(-ḃ͔ḋ͕+ḃ͕ḋ͔-ċ͔ė͕+ċ͕ė͔)e12",
@@ -1800,7 +1836,10 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     /// ]);
     ///
     /// let norm_squared = Vee::double_rotator().norm_squared();
-    /// assert_eq!(norm_squared.basis_blades(), (Vee::scalar() + Vee::weight()).basis_blades());
+    /// assert_eq!(
+    ///     norm_squared.basis_blades(),
+    ///     (Vee::scalar() + Vee::weight()).basis_blades()
+    /// );
     /// format_eq!(norm_squared, [
     ///     "+ȧȧ+ḃḃ+ċċ+ḋḋ+ėė+ḟḟ+vv+ww",
     ///     "+2(-ȧḟ+ḃė-ċḋ+vw)e1234",
@@ -1814,7 +1853,7 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     /// The multivector of translator $`t \equiv s + p_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP4 as Vee};
+    /// use vee::{PgaP4 as Vee, format_eq};
     ///
     /// let translator = Vee::point().lhs() * Vee::point().rhs();
     ///
@@ -1932,11 +1971,14 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     /// The multivector of single motor $`m_1 \equiv s + p + P_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP4 as Vee};
+    /// use vee::{PgaP4 as Vee, format_eq};
     ///
     /// let single_motor = Vee::single_rotator().lhs() * Vee::translator().rhs();
     ///
-    /// assert_eq!(single_motor.basis_blades(), Vee::single_motor().basis_blades());
+    /// assert_eq!(
+    ///     single_motor.basis_blades(),
+    ///     Vee::single_motor().basis_blades()
+    /// );
     /// format_eq!(single_motor, [
     ///     "+v͔v͕",
     ///     "+(+Ẋ͕v͔+Ẏ͕ȧ͔+Ż͕ḃ͔+ċ͔Ð͕̇)e01",
@@ -1957,7 +1999,10 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// let single_motor = Vee::line().lhs() * Vee::line().rhs();
     ///
-    /// assert_eq!(single_motor.basis_blades(), Vee::single_motor().basis_blades());
+    /// assert_eq!(
+    ///     single_motor.basis_blades(),
+    ///     Vee::single_motor().basis_blades()
+    /// );
     /// format_eq!(single_motor, [
     ///     "-ẋ͔ẋ͕-ẏ͔ẏ͕-ż͔ż͕-ð͔̇ð͕̇",
     ///     "+(+Ȧ͔ẏ͕-Ȧ͕ẏ͔+Ḃ͔ż͕-Ḃ͕ż͔+Ċ͔ð͕̇-Ċ͕ð͔̇)e01",
@@ -1984,11 +2029,14 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     /// The multivector of double motor $`m_2 \equiv s + p + P`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP4 as Vee};
+    /// use vee::{PgaP4 as Vee, format_eq};
     ///
     /// let double_motor = Vee::double_rotator().lhs() * Vee::translator().rhs();
     ///
-    /// assert_eq!(double_motor.basis_blades(), Vee::double_motor().basis_blades());
+    /// assert_eq!(
+    ///     double_motor.basis_blades(),
+    ///     Vee::double_motor().basis_blades()
+    /// );
     /// format_eq!(double_motor, [
     ///     "+v͔v͕",
     ///     "+(+Ẋ͕v͔+Ẏ͕ȧ͔+Ż͕ḃ͔+ċ͔Ð͕̇)e01",
@@ -2010,7 +2058,10 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     ///
     /// let double_motor = Vee::plane().lhs() * Vee::plane().rhs();
     ///
-    /// assert_eq!(double_motor.basis_blades(), Vee::double_motor().basis_blades());
+    /// assert_eq!(
+    ///     double_motor.basis_blades(),
+    ///     Vee::double_motor().basis_blades()
+    /// );
     /// format_eq!(double_motor, [
     ///     "-ȧ͔ȧ͕-ḃ͔ḃ͕-ċ͔ċ͕-ḋ͔ḋ͕-ė͔ė͕-ḟ͔ḟ͕",
     ///     "+(-Ẏ͔ȧ͕+Ẏ͕ȧ͔-Ż͔ḃ͕+Ż͕ḃ͔+ċ͔Ð͕̇-ċ͕Ð͔̇)e01",
@@ -2096,11 +2147,14 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     /// The multivector of transflector $`f_t \equiv v + P_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP4 as Vee};
+    /// use vee::{PgaP4 as Vee, format_eq};
     ///
     /// let transflector = Vee::normal().lhs() * Vee::translator().rhs();
     ///
-    /// assert_eq!(transflector.basis_blades(), Vee::transflector().basis_blades());
+    /// assert_eq!(
+    ///     transflector.basis_blades(),
+    ///     Vee::transflector().basis_blades()
+    /// );
     /// format_eq!(transflector, [
     ///     "+(-Ẋ͕x͔-Ẏ͕y͔-Ż͕z͔-Ð͕̇ð͔)e0",
     ///     "+v͕x͔e1",
@@ -2123,7 +2177,7 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     /// The multivector of flector $`f_s \equiv v + \ell`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP4 as Vee};
+    /// use vee::{PgaP4 as Vee, format_eq};
     ///
     /// let flector = Vee::volume().lhs() * Vee::simple_motor().rhs();
     ///
@@ -2154,7 +2208,7 @@ impl<const M: i8> Multivector<Pga<M, 4>> {
     /// The multivector of flector $`f \equiv v + \ell + S`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP4 as Vee};
+    /// use vee::{PgaP4 as Vee, format_eq};
     ///
     /// let flector = Vee::volume().lhs() * Vee::single_motor().rhs();
     ///
@@ -2205,12 +2259,14 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// complex number.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP5 as Vee};
+    /// use vee::{PgaP5 as Vee, format_eq};
     ///
     /// let quadvector_norm_squared = Vee::line().norm_squared();
     ///
-    /// assert_eq!(quadvector_norm_squared.basis_blades(),
-    ///     (Vee::scalar() + Vee::line_moment()).basis_blades());
+    /// assert_eq!(
+    ///     quadvector_norm_squared.basis_blades(),
+    ///     (Vee::scalar() + Vee::line_moment()).basis_blades()
+    /// );
     /// format_eq!(quadvector_norm_squared, [
     ///     "+xx+yy+zz+ðð+øø",
     ///     "+2(-Hø+Ið-Jz)e0345",
@@ -2391,11 +2447,14 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of single rotator $`r_1 \equiv s + v_0`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP5 as Vee};
+    /// use vee::{PgaP5 as Vee, format_eq};
     ///
     /// let single_rotator = Vee::normal().lhs() * Vee::normal().rhs();
     ///
-    /// assert_eq!(single_rotator.basis_blades(), Vee::single_rotator().basis_blades());
+    /// assert_eq!(
+    ///     single_rotator.basis_blades(),
+    ///     Vee::single_rotator().basis_blades()
+    /// );
     /// format_eq!(single_rotator, [
     ///     "+x͔x͕+y͔y͕+z͔z͕+ð͔ð͕+ø͔ø͕",
     ///     "+(+x͔y͕-x͕y͔)e12",
@@ -2412,7 +2471,10 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// let single_rotator = Vee::line_displacement().lhs() * Vee::line_displacement().rhs();
     ///
-    /// assert_eq!(single_rotator.basis_blades(), Vee::single_rotator().basis_blades());
+    /// assert_eq!(
+    ///     single_rotator.basis_blades(),
+    ///     Vee::single_rotator().basis_blades()
+    /// );
     /// format_eq!(single_rotator, [
     ///     "+x͔x͕+y͔y͕+z͔z͕+ð͔ð͕+ø͔ø͕",
     ///     "+(+x͔y͕-x͕y͔)e12",
@@ -2435,11 +2497,14 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of double rotator $`r_2 \equiv s + v_0 + \ell_0`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP5 as Vee};
+    /// use vee::{PgaP5 as Vee, format_eq};
     ///
     /// let double_rotator = Vee::single_rotator().lhs() * Vee::single_rotator().rhs();
     ///
-    /// assert_eq!(double_rotator.basis_blades(), Vee::double_rotator().basis_blades());
+    /// assert_eq!(
+    ///     double_rotator.basis_blades(),
+    ///     Vee::double_rotator().basis_blades()
+    /// );
     /// format_eq!(double_rotator, [
     ///     "-a͔a͕-b͔b͕-c͔c͕-d͔d͕-e͔e͕-f͔f͕-g͔g͕-h͔h͕-i͔i͕-j͔j͕+v͔v͕",
     ///     "+(+a͔v͕+a͕v͔-b͔e͕+b͕e͔-c͔f͕+c͕f͔-d͔g͕+d͕g͔)e12",
@@ -2461,7 +2526,10 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// let double_rotator = Vee::volume_displacement().lhs() * Vee::volume_displacement().rhs();
     ///
-    /// assert_eq!(double_rotator.basis_blades(), Vee::double_rotator().basis_blades());
+    /// assert_eq!(
+    ///     double_rotator.basis_blades(),
+    ///     Vee::double_rotator().basis_blades()
+    /// );
     /// format_eq!(double_rotator, [
     ///     "-a͔a͕-b͔b͕-c͔c͕-d͔d͕-e͔e͕-f͔f͕-g͔g͕-h͔h͕-i͔i͕-j͔j͕",
     ///     "+(-b͔e͕+b͕e͔-c͔f͕+c͕f͔-d͔g͕+d͕g͔)e12",
@@ -2483,7 +2551,10 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// let double_rotator = Vee::plane_displacement().lhs() * Vee::plane_displacement().rhs();
     ///
-    /// assert_eq!(double_rotator.basis_blades(), Vee::double_rotator().basis_blades());
+    /// assert_eq!(
+    ///     double_rotator.basis_blades(),
+    ///     Vee::double_rotator().basis_blades()
+    /// );
     /// format_eq!(double_rotator, [
     ///     "-a͔a͕-b͔b͕-c͔c͕-d͔d͕-e͔e͕-f͔f͕-g͔g͕-h͔h͕-i͔i͕-j͔j͕",
     ///     "+(-b͔e͕+b͕e͔-c͔f͕+c͕f͔-d͔g͕+d͕g͔)e12",
@@ -2511,7 +2582,7 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of translator $`t \equiv s + v_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP5 as Vee};
+    /// use vee::{PgaP5 as Vee, format_eq};
     ///
     /// let translator = Vee::point().lhs() * Vee::point().rhs();
     ///
@@ -2533,11 +2604,14 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of simple single motor $`m_{s1} \equiv s + v`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP5 as Vee};
+    /// use vee::{PgaP5 as Vee, format_eq};
     ///
     /// let simple_single_motor = Vee::volume4().lhs() * Vee::volume4().rhs();
     ///
-    /// assert_eq!(simple_single_motor.basis_blades(), Vee::simple_single_motor().basis_blades());
+    /// assert_eq!(
+    ///     simple_single_motor.basis_blades(),
+    ///     Vee::simple_single_motor().basis_blades()
+    /// );
     /// format_eq!(simple_single_motor, [
     ///     "+x͔x͕+y͔y͕+z͔z͕+ð͔ð͕+ø͔ø͕",
     ///     "+(+W͔x͕-W͕x͔)e01",
@@ -2565,11 +2639,14 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of single motor $`m_1 \equiv s + v + \ell_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP5 as Vee};
+    /// use vee::{PgaP5 as Vee, format_eq};
     ///
     /// let single_motor = Vee::single_rotator().lhs() * Vee::translator().rhs();
     ///
-    /// assert_eq!(single_motor.basis_blades(), Vee::single_motor().basis_blades());
+    /// assert_eq!(
+    ///     single_motor.basis_blades(),
+    ///     Vee::single_motor().basis_blades()
+    /// );
     /// format_eq!(single_motor, [
     ///     "+v͔v͕",
     ///     "+(+X͕v͔+Y͕a͔+Z͕b͔+c͔Ð͕+d͔Ø͕)e01",
@@ -2601,7 +2678,10 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// let single_motor = Vee::line().lhs() * Vee::line().rhs();
     ///
-    /// assert_eq!(single_motor.basis_blades(), Vee::single_motor().basis_blades());
+    /// assert_eq!(
+    ///     single_motor.basis_blades(),
+    ///     Vee::single_motor().basis_blades()
+    /// );
     /// format_eq!(single_motor, [
     ///     "+x͔x͕+y͔y͕+z͔z͕+ð͔ð͕+ø͔ø͕",
     ///     "+(-A͔y͕+A͕y͔-B͔z͕+B͕z͔-C͔ð͕+C͕ð͔-D͔ø͕+D͕ø͔)e01",
@@ -2639,11 +2719,14 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of simple double motor $`m_{s2} \equiv s + v + \ell`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP5 as Vee};
+    /// use vee::{PgaP5 as Vee, format_eq};
     ///
     /// let simple_double_motor = Vee::volume().lhs() * Vee::volume().rhs();
     ///
-    /// assert_eq!(simple_double_motor.basis_blades(), Vee::simple_double_motor().basis_blades());
+    /// assert_eq!(
+    ///     simple_double_motor.basis_blades(),
+    ///     Vee::simple_double_motor().basis_blades()
+    /// );
     /// format_eq!(simple_double_motor, [
     ///     "-a͔a͕-b͔b͕-c͔c͕-d͔d͕-e͔e͕-f͔f͕-g͔g͕-h͔h͕-i͔i͕-j͔j͕",
     ///     "+(-Y͔a͕+Y͕a͔-Z͔b͕+Z͕b͔+c͔Ð͕-c͕Ð͔+d͔Ø͕-d͕Ø͔)e01",
@@ -2827,11 +2910,14 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of single rotoreflector $`f_{r1} \equiv v^4_0 + p_0`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP5 as Vee};
+    /// use vee::{PgaP5 as Vee, format_eq};
     ///
     /// let single_rotoreflector = Vee::normal().lhs() * Vee::single_rotator().rhs();
     ///
-    /// assert_eq!(single_rotoreflector.basis_blades(), Vee::single_rotoreflector().basis_blades());
+    /// assert_eq!(
+    ///     single_rotoreflector.basis_blades(),
+    ///     Vee::single_rotoreflector().basis_blades()
+    /// );
     /// format_eq!(single_rotoreflector, [
     ///     "+(-a͕y͔-b͕z͔-c͕ð͔-d͕ø͔+v͕x͔)e1",
     ///     "+(+a͕x͔-e͕z͔-f͕ð͔-g͕ø͔+v͕y͔)e2",
@@ -2858,11 +2944,14 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of double rotoreflector $`f_{r2} \equiv v^4_0 + p_0 + P_0`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP5 as Vee};
+    /// use vee::{PgaP5 as Vee, format_eq};
     ///
     /// let double_rotoreflector = Vee::normal().lhs() * Vee::double_rotator().rhs();
     ///
-    /// assert_eq!(double_rotoreflector.basis_blades(), Vee::double_rotoreflector().basis_blades());
+    /// assert_eq!(
+    ///     double_rotoreflector.basis_blades(),
+    ///     Vee::double_rotoreflector().basis_blades()
+    /// );
     /// format_eq!(double_rotoreflector, [
     ///     "+(-a͕y͔-b͕z͔-c͕ð͔-d͕ø͔+v͕x͔)e1",
     ///     "+(+a͕x͔-e͕z͔-f͕ð͔-g͕ø͔+v͕y͔)e2",
@@ -2890,11 +2979,14 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of transflector $`f_t \equiv v^4 + p_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP5 as Vee};
+    /// use vee::{PgaP5 as Vee, format_eq};
     ///
     /// let transflector = Vee::normal().lhs() * Vee::translator().rhs();
     ///
-    /// assert_eq!(transflector.basis_blades(), Vee::transflector().basis_blades());
+    /// assert_eq!(
+    ///     transflector.basis_blades(),
+    ///     Vee::transflector().basis_blades()
+    /// );
     /// format_eq!(transflector, [
     ///     "+(-X͕x͔-Y͕y͔-Z͕z͔-Ð͕ð͔-Ø͕ø͔)e0",
     ///     "+v͕x͔e1",
@@ -2922,12 +3014,14 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of simple single flector $`f_{s1} \equiv v^4 + p`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP5 as Vee};
+    /// use vee::{PgaP5 as Vee, format_eq};
     ///
     /// let simple_single_flector = Vee::volume4().lhs() * Vee::simple_single_motor().rhs();
     ///
-    /// assert_eq!(simple_single_flector.basis_blades(),
-    ///     Vee::simple_single_flector().basis_blades());
+    /// assert_eq!(
+    ///     simple_single_flector.basis_blades(),
+    ///     Vee::simple_single_flector().basis_blades()
+    /// );
     /// format_eq!(simple_single_flector, [
     ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔-Ð͕ð͔-Ø͕ø͔)e0",
     ///     "+(-a͕y͔-b͕z͔-c͕ð͔-d͕ø͔+v͕x͔)e1",
@@ -2965,11 +3059,14 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of single flector $`f_1 \equiv v^4 + p + P_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP5 as Vee};
+    /// use vee::{PgaP5 as Vee, format_eq};
     ///
     /// let single_flector = Vee::volume4().lhs() * Vee::single_motor().rhs();
     ///
-    /// assert_eq!(single_flector.basis_blades(), Vee::single_flector().basis_blades());
+    /// assert_eq!(
+    ///     single_flector.basis_blades(),
+    ///     Vee::single_flector().basis_blades()
+    /// );
     /// format_eq!(single_flector, [
     ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔-Ð͕ð͔-Ø͕ø͔)e0",
     ///     "+(-a͕y͔-b͕z͔-c͕ð͔-d͕ø͔+v͕x͔)e1",
@@ -3012,12 +3109,14 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of simple double flector $`f_{s2} \equiv v^4 + p + P`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP5 as Vee};
+    /// use vee::{PgaP5 as Vee, format_eq};
     ///
     /// let simple_double_flector = Vee::volume4().lhs() * Vee::simple_double_motor().rhs();
     ///
-    /// assert_eq!(simple_double_flector.basis_blades(),
-    ///     Vee::simple_double_flector().basis_blades());
+    /// assert_eq!(
+    ///     simple_double_flector.basis_blades(),
+    ///     Vee::simple_double_flector().basis_blades()
+    /// );
     /// format_eq!(simple_double_flector, [
     ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔-Ð͕ð͔-Ø͕ø͔)e0",
     ///     "+(-a͕y͔-b͕z͔-c͕ð͔-d͕ø͔+v͕x͔)e1",
@@ -3055,8 +3154,10 @@ impl<const M: i8> Multivector<Pga<M, 5>> {
     ///
     /// let simple_double_flector = Vee::volume4().lhs() * Vee::double_motor().rhs();
     ///
-    /// assert_eq!(simple_double_flector.basis_blades(),
-    ///     Vee::simple_double_flector().basis_blades());
+    /// assert_eq!(
+    ///     simple_double_flector.basis_blades(),
+    ///     Vee::simple_double_flector().basis_blades()
+    /// );
     /// format_eq!(simple_double_flector, [
     ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔-Ð͕ð͔-Ø͕ø͔)e0",
     ///     "+(-a͕y͔-b͕z͔-c͕ð͔-d͕ø͔+v͕x͔)e1",
@@ -3388,11 +3489,14 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     /// The multivector of single rotator $`r_1 \equiv s + v^4_0`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP6 as Vee};
+    /// use vee::{PgaP6 as Vee, format_eq};
     ///
     /// let single_rotator = Vee::normal().lhs() * Vee::normal().rhs();
     ///
-    /// assert_eq!(single_rotator.basis_blades(), Vee::single_rotator().basis_blades());
+    /// assert_eq!(
+    ///     single_rotator.basis_blades(),
+    ///     Vee::single_rotator().basis_blades()
+    /// );
     /// format_eq!(single_rotator, [
     ///     "+x͔x͕+y͔y͕+z͔z͕+ð͔ð͕+ø͔ø͕+þ͔þ͕",
     ///     "+(+x͔y͕-x͕y͔)e12",
@@ -3414,7 +3518,10 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     ///
     /// let single_rotator = Vee::line_displacement().lhs() * Vee::line_displacement().rhs();
     ///
-    /// assert_eq!(single_rotator.basis_blades(), Vee::single_rotator().basis_blades());
+    /// assert_eq!(
+    ///     single_rotator.basis_blades(),
+    ///     Vee::single_rotator().basis_blades()
+    /// );
     /// format_eq!(single_rotator, [
     ///     "+ẋ͔ẋ͕+ẏ͔ẏ͕+ż͔ż͕+ð͔̇ð͕̇+ø͔̇ø͕̇+þ͔̇þ͕̇",
     ///     "+(+ẋ͔ẏ͕-ẋ͕ẏ͔)e12",
@@ -3649,7 +3756,7 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     /// The multivector of translator $`t \equiv s + v^4_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP6 as Vee};
+    /// use vee::{PgaP6 as Vee, format_eq};
     ///
     /// let translator = Vee::point().lhs() * Vee::point().rhs();
     ///
@@ -4635,11 +4742,14 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     /// The multivector of single rotoreflector $`f_{r1} \equiv v^5_0 + v_0`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP6 as Vee};
+    /// use vee::{PgaP6 as Vee, format_eq};
     ///
     /// let single_rotoreflector = Vee::normal().lhs() * Vee::single_rotator().rhs();
     ///
-    /// assert_eq!(single_rotoreflector.basis_blades(), Vee::single_rotoreflector().basis_blades());
+    /// assert_eq!(
+    ///     single_rotoreflector.basis_blades(),
+    ///     Vee::single_rotoreflector().basis_blades()
+    /// );
     /// format_eq!(single_rotoreflector, [
     ///     "+(+v͕x͔-y͔α͕-z͔β͕-ð͔γ͕-ø͔δ͕-þ͔ε͕)e1",
     ///     "+(+v͕y͔+x͔α͕-z͔ζ͕-ð͔η͕-ø͔θ͕-þ͔ι͕)e2",
@@ -4677,11 +4787,14 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     /// The multivector of double rotoreflector $`f_{r2} \equiv v^5_0 + v_0 + \ell_0`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP6 as Vee};
+    /// use vee::{PgaP6 as Vee, format_eq};
     ///
     /// let double_rotoreflector = Vee::normal().lhs() * Vee::double_rotator().rhs();
     ///
-    /// assert_eq!(double_rotoreflector.basis_blades(), Vee::double_rotoreflector().basis_blades());
+    /// assert_eq!(
+    ///     double_rotoreflector.basis_blades(),
+    ///     Vee::double_rotoreflector().basis_blades()
+    /// );
     /// format_eq!(double_rotoreflector, [
     ///     "+(+v͕x͔-y͔α͕-z͔β͕-ð͔γ͕-ø͔δ͕-þ͔ε͕)e1",
     ///     "+(+v͕y͔+x͔α͕-z͔ζ͕-ð͔η͕-ø͔θ͕-þ͔ι͕)e2",
@@ -4725,11 +4838,14 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     /// The multivector of transflector $`f_t \equiv v^5 + p_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP6 as Vee};
+    /// use vee::{PgaP6 as Vee, format_eq};
     ///
     /// let transflector = Vee::normal().lhs() * Vee::translator().rhs();
     ///
-    /// assert_eq!(transflector.basis_blades(), Vee::transflector().basis_blades());
+    /// assert_eq!(
+    ///     transflector.basis_blades(),
+    ///     Vee::transflector().basis_blades()
+    /// );
     /// format_eq!(transflector, [
     ///     "+(-X͕x͔-Y͕y͔-Z͕z͔-Ð͕ð͔-Ø͕ø͔-Þ͕þ͔)e0",
     ///     "+v͕x͔e1",
@@ -4763,11 +4879,14 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     /// The multivector of single flector $`f_1 \equiv v^5 + v`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP6 as Vee};
+    /// use vee::{PgaP6 as Vee, format_eq};
     ///
     /// let single_flector = Vee::volume5().lhs() * Vee::single_motor().rhs();
     ///
-    /// assert_eq!(single_flector.basis_blades(), Vee::single_flector().basis_blades());
+    /// assert_eq!(
+    ///     single_flector.basis_blades(),
+    ///     Vee::single_flector().basis_blades()
+    /// );
     /// format_eq!(single_flector, [
     ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔-Ð͕ð͔-Ø͕ø͔-Þ͕þ͔)e0",
     ///     "+(+v͕x͔-y͔α͕-z͔β͕-ð͔γ͕-ø͔δ͕-þ͔ε͕)e1",
@@ -4821,12 +4940,14 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     /// The multivector of simple double flector $`f_{s2} \equiv v^5 + v + \ell_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP6 as Vee};
+    /// use vee::{PgaP6 as Vee, format_eq};
     ///
     /// let simple_double_flector = Vee::volume5().lhs() * Vee::simple_double_motor().rhs();
     ///
-    /// assert_eq!(simple_double_flector.basis_blades(),
-    ///     Vee::simple_double_flector().basis_blades());
+    /// assert_eq!(
+    ///     simple_double_flector.basis_blades(),
+    ///     Vee::simple_double_flector().basis_blades()
+    /// );
     /// format_eq!(simple_double_flector, [
     ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔-Ð͕ð͔-Ø͕ø͔-Þ͕þ͔)e0",
     ///     "+(+v͕x͔-y͔α͕-z͔β͕-ð͔γ͕-ø͔δ͕-þ͔ε͕)e1",
@@ -4895,11 +5016,14 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     /// The multivector of double flector $`f_2 \equiv v^5 + v + \ell`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP6 as Vee};
+    /// use vee::{PgaP6 as Vee, format_eq};
     ///
     /// let double_flector = Vee::volume5().lhs() * Vee::double_motor().rhs();
     ///
-    /// assert_eq!(double_flector.basis_blades(), Vee::double_flector().basis_blades());
+    /// assert_eq!(
+    ///     double_flector.basis_blades(),
+    ///     Vee::double_flector().basis_blades()
+    /// );
     /// format_eq!(double_flector, [
     ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔-Ð͕ð͔-Ø͕ø͔-Þ͕þ͔)e0",
     ///     "+(+v͕x͔-y͔α͕-z͔β͕-ð͔γ͕-ø͔δ͕-þ͔ε͕)e1",
@@ -4974,11 +5098,14 @@ impl<const M: i8> Multivector<Pga<M, 6>> {
     /// The multivector of triple flector $`f_3 \equiv v^5 + v + \ell + S`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP6 as Vee};
+    /// use vee::{PgaP6 as Vee, format_eq};
     ///
     /// let triple_flector = Vee::volume5().lhs() * Vee::triple_motor().rhs();
     ///
-    /// assert_eq!(triple_flector.basis_blades(), Vee::triple_flector().basis_blades());
+    /// assert_eq!(
+    ///     triple_flector.basis_blades(),
+    ///     Vee::triple_flector().basis_blades()
+    /// );
     /// format_eq!(triple_flector, [
     ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔-Ð͕ð͔-Ø͕ø͔-Þ͕þ͔)e0",
     ///     "+(+v͕x͔-y͔α͕-z͔β͕-ð͔γ͕-ø͔δ͕-þ͔ε͕)e1",
@@ -5073,11 +5200,14 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     /// complex number.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP7 as Vee};
+    /// use vee::{PgaP7 as Vee, format_eq};
     ///
     /// let quadvector_norm_squared = Vee::volume().norm_squared();
     ///
-    /// assert_eq!(quadvector_norm_squared.basis_blades(), Vee::norm().basis_blades());
+    /// assert_eq!(
+    ///     quadvector_norm_squared.basis_blades(),
+    ///     Vee::norm().basis_blades()
+    /// );
     /// format_eq!(quadvector_norm_squared, [
     ///     "+aa+bb+cc+dd+ee+ff+gg+hh+ii+jj+kk+ll+mm+nn+oo+pp+qq\
     ///      +rr+ss+tt+uu+áá+ää+åå+ææ+çç+éé+ëë+íí+ïï+ññ+óó+öö+úú+üü",
@@ -5525,11 +5655,14 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     /// The multivector of single rotator $`r_1 \equiv s + v^5_0`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP7 as Vee};
+    /// use vee::{PgaP7 as Vee, format_eq};
     ///
     /// let single_rotator = Vee::normal().lhs() * Vee::normal().rhs();
     ///
-    /// assert_eq!(single_rotator.basis_blades(), Vee::single_rotator().basis_blades());
+    /// assert_eq!(
+    ///     single_rotator.basis_blades(),
+    ///     Vee::single_rotator().basis_blades()
+    /// );
     /// format_eq!(single_rotator, [
     ///     "+x͔x͕+y͔y͕+z͔z͕+ð͔ð͕+ø͔ø͕+þ͔þ͕+œ͔œ͕",
     ///     "+(+x͔y͕-x͕y͔)e12",
@@ -5557,7 +5690,10 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     ///
     /// let single_rotator = Vee::line_displacement().lhs() * Vee::line_displacement().rhs();
     ///
-    /// assert_eq!(single_rotator.basis_blades(), Vee::single_rotator().basis_blades());
+    /// assert_eq!(
+    ///     single_rotator.basis_blades(),
+    ///     Vee::single_rotator().basis_blades()
+    /// );
     /// format_eq!(single_rotator, [
     ///     "-x͔x͕-y͔y͕-z͔z͕-ð͔ð͕-ø͔ø͕-þ͔þ͕-œ͔œ͕",
     ///     "+(-x͔y͕+x͕y͔)e12",
@@ -5944,7 +6080,7 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     /// The multivector of translator $`t \equiv s + v^5_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP7 as Vee};
+    /// use vee::{PgaP7 as Vee, format_eq};
     ///
     /// let translator = Vee::point().lhs() * Vee::point().rhs();
     ///
@@ -5968,11 +6104,14 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     /// The multivector of simple single motor $`m_{s1} \equiv s + v^5`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP7 as Vee};
+    /// use vee::{PgaP7 as Vee, format_eq};
     ///
     /// let simple_single_motor = Vee::volume6().lhs() * Vee::volume6().rhs();
     ///
-    /// assert_eq!(simple_single_motor.basis_blades(), Vee::simple_single_motor().basis_blades());
+    /// assert_eq!(
+    ///     simple_single_motor.basis_blades(),
+    ///     Vee::simple_single_motor().basis_blades()
+    /// );
     /// format_eq!(simple_single_motor, [
     ///     "+x͔x͕+y͔y͕+z͔z͕+ð͔ð͕+ø͔ø͕+þ͔þ͕+œ͔œ͕",
     ///     "+(+W͔x͕-W͕x͔)e01",
@@ -6698,11 +6837,14 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     /// The multivector of triple motor $`m_3 \equiv s + v^5 + v + \ell + S`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP7 as Vee};
+    /// use vee::{PgaP7 as Vee, format_eq};
     ///
     /// let triple_motor = Vee::triple_rotator().lhs() * Vee::translator().rhs();
     ///
-    /// assert_eq!(triple_motor.basis_blades(), Vee::triple_motor().basis_blades());
+    /// assert_eq!(
+    ///     triple_motor.basis_blades(),
+    ///     Vee::triple_motor().basis_blades()
+    /// );
     /// format_eq!(triple_motor, [
     ///     "+v͔v͕",
     ///     "+(+X͕v͔+Y͕α͔+Z͕β͔+Ð͕γ͔+Ø͕δ͔+Þ͕ε͔+Œ͕ζ͔)e01",
@@ -7065,11 +7207,14 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     /// The multivector of single rotoreflector $`r_1 \equiv v^6 + v^4`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP7 as Vee};
+    /// use vee::{PgaP7 as Vee, format_eq};
     ///
     /// let single_rotoreflector = Vee::volume6().lhs() * Vee::single_rotator().rhs();
     ///
-    /// assert_eq!(single_rotoreflector.basis_blades(), Vee::single_rotoreflector().basis_blades());
+    /// assert_eq!(
+    ///     single_rotoreflector.basis_blades(),
+    ///     Vee::single_rotoreflector().basis_blades()
+    /// );
     /// format_eq!(single_rotoreflector, [
     ///     "+W͔v͕e0",
     ///     "+(+v͕x͔-y͔α͕-z͔β͕-ð͔γ͕-ø͔δ͕-þ͔ε͕-œ͔ζ͕)e1",
@@ -7145,11 +7290,14 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     /// The multivector of double rotoreflector $`r_2 \equiv v^6 + v^4 + p`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP7 as Vee};
+    /// use vee::{PgaP7 as Vee, format_eq};
     ///
     /// let double_rotoreflector = Vee::volume6().lhs() * Vee::double_rotator().rhs();
     ///
-    /// assert_eq!(double_rotoreflector.basis_blades(), Vee::double_rotoreflector().basis_blades());
+    /// assert_eq!(
+    ///     double_rotoreflector.basis_blades(),
+    ///     Vee::double_rotoreflector().basis_blades()
+    /// );
     /// format_eq!(double_rotoreflector, [
     ///     "+W͔v͕e0",
     ///     "+(+v͕x͔-y͔α͕-z͔β͕-ð͔γ͕-ø͔δ͕-þ͔ε͕-œ͔ζ͕)e1",
@@ -7281,11 +7429,14 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     /// The multivector of triple rotoreflector $`r_3 \equiv v^6 + v^4 + p + P`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP7 as Vee};
+    /// use vee::{PgaP7 as Vee, format_eq};
     ///
     /// let triple_rotoreflector = Vee::volume6().lhs() * Vee::triple_rotator().rhs();
     ///
-    /// assert_eq!(triple_rotoreflector.basis_blades(), Vee::triple_rotoreflector().basis_blades());
+    /// assert_eq!(
+    ///     triple_rotoreflector.basis_blades(),
+    ///     Vee::triple_rotoreflector().basis_blades()
+    /// );
     /// format_eq!(triple_rotoreflector, [
     ///     "+W͔v͕e0",
     ///     "+(+v͕x͔-y͔α͕-z͔β͕-ð͔γ͕-ø͔δ͕-þ͔ε͕-œ͔ζ͕)e1",
@@ -7425,11 +7576,14 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     /// The multivector of transflector $`f_t \equiv s + v^6 + v^4_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP7 as Vee};
+    /// use vee::{PgaP7 as Vee, format_eq};
     ///
     /// let transflector = Vee::volume6().lhs() * Vee::translator().rhs();
     ///
-    /// assert_eq!(transflector.basis_blades(), Vee::transflector().basis_blades());
+    /// assert_eq!(
+    ///     transflector.basis_blades(),
+    ///     Vee::transflector().basis_blades()
+    /// );
     /// format_eq!(transflector, [
     ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔-Ð͕ð͔-Ø͕ø͔-Þ͕þ͔-Œ͕œ͔)e0",
     ///     "+v͕x͔e1",
@@ -7470,12 +7624,14 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     /// The multivector of simple single flector $`f_{s1} \equiv v^6 + v^4`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP7 as Vee};
+    /// use vee::{PgaP7 as Vee, format_eq};
     ///
     /// let simple_single_flector = Vee::volume6().lhs() * Vee::simple_single_motor().rhs();
     ///
-    /// assert_eq!(simple_single_flector.basis_blades(),
-    ///     Vee::simple_single_flector().basis_blades());
+    /// assert_eq!(
+    ///     simple_single_flector.basis_blades(),
+    ///     Vee::simple_single_flector().basis_blades()
+    /// );
     /// format_eq!(simple_single_flector, [
     ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔-Ð͕ð͔-Ø͕ø͔-Þ͕þ͔-Œ͕œ͔)e0",
     ///     "+(+v͕x͔-y͔α͕-z͔β͕-ð͔γ͕-ø͔δ͕-þ͔ε͕-œ͔ζ͕)e1",
@@ -7551,11 +7707,14 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     /// The multivector of single flector $`f_1 \equiv v^6 + v^4 + p_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP7 as Vee};
+    /// use vee::{PgaP7 as Vee, format_eq};
     ///
     /// let single_flector = Vee::volume6().lhs() * Vee::single_motor().rhs();
     ///
-    /// assert_eq!(single_flector.basis_blades(), Vee::single_flector().basis_blades());
+    /// assert_eq!(
+    ///     single_flector.basis_blades(),
+    ///     Vee::single_flector().basis_blades()
+    /// );
     /// format_eq!(single_flector, [
     ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔-Ð͕ð͔-Ø͕ø͔-Þ͕þ͔-Œ͕œ͔)e0",
     ///     "+(+v͕x͔-y͔α͕-z͔β͕-ð͔γ͕-ø͔δ͕-þ͔ε͕-œ͔ζ͕)e1",
@@ -7666,12 +7825,14 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     /// The multivector of simple double flector $`f_{s2} \equiv v^6 + v^4 + p`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP7 as Vee};
+    /// use vee::{PgaP7 as Vee, format_eq};
     ///
     /// let simple_double_flector = Vee::volume6().lhs() * Vee::simple_double_motor().rhs();
     ///
-    /// assert_eq!(simple_double_flector.basis_blades(),
-    ///     Vee::simple_double_flector().basis_blades());
+    /// assert_eq!(
+    ///     simple_double_flector.basis_blades(),
+    ///     Vee::simple_double_flector().basis_blades()
+    /// );
     /// format_eq!(simple_double_flector, [
     ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔-Ð͕ð͔-Ø͕ø͔-Þ͕þ͔-Œ͕œ͔)e0",
     ///     "+(+v͕x͔-y͔α͕-z͔β͕-ð͔γ͕-ø͔δ͕-þ͔ε͕-œ͔ζ͕)e1",
@@ -7803,11 +7964,14 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     /// The multivector of double flector $`f_2 \equiv v^6 + v^4 + p + P_\infty`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP7 as Vee};
+    /// use vee::{PgaP7 as Vee, format_eq};
     ///
     /// let double_flector = Vee::volume6().lhs() * Vee::double_motor().rhs();
     ///
-    /// assert_eq!(double_flector.basis_blades(), Vee::double_flector().basis_blades());
+    /// assert_eq!(
+    ///     double_flector.basis_blades(),
+    ///     Vee::double_flector().basis_blades()
+    /// );
     /// format_eq!(double_flector, [
     ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔-Ð͕ð͔-Ø͕ø͔-Þ͕þ͔-Œ͕œ͔)e0",
     ///     "+(+v͕x͔-y͔α͕-z͔β͕-ð͔γ͕-ø͔δ͕-þ͔ε͕-œ͔ζ͕)e1",
@@ -7946,12 +8110,14 @@ impl<const M: i8> Multivector<Pga<M, 7>> {
     /// The multivector of simple triple flector $`f_{s3} \equiv v^6 + v^4 + p + P`$.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP7 as Vee};
+    /// use vee::{PgaP7 as Vee, format_eq};
     ///
     /// let simple_triple_flector = Vee::volume6().lhs() * Vee::simple_triple_motor().rhs();
     ///
-    /// assert_eq!(simple_triple_flector.basis_blades(),
-    ///     Vee::simple_triple_flector().basis_blades());
+    /// assert_eq!(
+    ///     simple_triple_flector.basis_blades(),
+    ///     Vee::simple_triple_flector().basis_blades()
+    /// );
     /// format_eq!(simple_triple_flector, [
     ///     "+(+W͔v͕-X͕x͔-Y͕y͔-Z͕z͔-Ð͕ð͔-Ø͕ø͔-Þ͕þ͔-Œ͕œ͔)e0",
     ///     "+(+v͕x͔-y͔α͕-z͔β͕-ð͔γ͕-ø͔δ͕-þ͔ε͕-œ͔ζ͕)e1",
