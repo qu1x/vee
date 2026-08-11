@@ -157,7 +157,7 @@
 //! [`PgaP3::motor()`]: struct.Multivector.html#method.motor-1
 //!
 //! ```
-//! use vee::{format_eq, PgaP3 as Vee};
+//! use vee::{format_eq, PgaP3 as Vee, pga::PgaP3 as Bee, Symbol};
 //!
 //! // Assumes motor is not orthonormalized.
 //! format_eq!(Vee::point().pin() << Vee::motor(), [
@@ -176,12 +176,18 @@
 //! ]);
 //!
 //! // Assumes motor and point are (ortho)normalized where point has positive orientation.
-//! format_eq!(Vee::point().eval([(('w', "e123"), 1)]).pin() << Vee::motor().unit(), [
+//! format_eq!(Vee::point().eval([(Bee::e123(), 1)]).pin() << Vee::motor().unit(), [
 //!     "+e123",
 //!     "+(+2(-Vx-Xv-Yz+Zy)+(+1-2yy-2zz)X͓+2(+vz+xy)Y͓+2(-vy+xz)Z͓)e032",
 //!     "+(+2(-Vy+Xz-Yv-Zx)+2(-vz+xy)X͓+(+1-2xx-2zz)Y͓+2(+vx+yz)Z͓)e013",
 //!     "+(+2(-Vz-Xy+Yx-Zv)+2(+vy+xz)X͓+2(-vx+yz)Y͓+(+1-2xx-2yy)Z͓)e021",
 //! ]);
+//!
+//! // The `eval()` method accepts `Into<Symbol>` which is implemented for `(Symbol, Bee)`.
+//! assert_eq!(
+//!     const { Bee::e123() },
+//!     const { (Symbol::new('w', "e123"), Bee::new("e123")) },
+//! );
 //! ```
 //!
 //! The symbols are assigned to basis blades such that lowercase symbols are dual to their
@@ -750,15 +756,19 @@ impl<B: Algebra> Multivector<B> {
     /// Creates a new multivector from an iterator over tuples of symbols and basis blades.
     ///
     /// ```
-    /// use vee::{format_eq, PgaP3 as Vee, pga::Pga};
+    /// use vee::{format_eq, PgaP3 as Vee, pga::PgaP3 as Bee};
     ///
     /// let plane = Vee::new([
-    ///     (("W", "e0"), Pga::new("e0")),
-    ///     (("x", "e1"), Pga::new("e1")),
-    ///     (("y", "e2"), Pga::new("e2")),
-    ///     (("z", "e3"), Pga::new("e3")),
+    ///     (('W', "e0"), Bee::new("e0")),
+    ///     (('x', "e1"), Bee::new("e1")),
+    ///     (('y', "e2"), Bee::new("e2")),
+    ///     (('z', "e3"), Bee::new("e3")),
     /// ]);
     ///
+    /// assert_eq!(
+    ///     plane,
+    ///     Vee::new([Bee::e0(), Bee::e1(), Bee::e2(), Bee::e3()]),
+    /// );
     /// assert_eq!(plane, Vee::plane());
     /// format_eq!(plane, ["+We0", "+xe1", "+ye2", "+ze3"]);
     /// ```
@@ -2429,7 +2439,11 @@ pub struct Symbol {
 
 impl PartialEq for Symbol {
     fn eq(&self, other: &Self) -> bool {
-        self.var == other.var && self.alt == other.alt && self.cdm == other.cdm
+        if self.is_vec() && other.is_vec() {
+            self.lab == other.lab
+        } else {
+            self.var == other.var && self.alt == other.alt && self.cdm == other.cdm
+        }
     }
 }
 
@@ -2437,10 +2451,14 @@ impl Eq for Symbol {}
 
 impl Ord for Symbol {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.var
-            .cmp(&other.var)
-            .then(self.alt.cmp(&other.alt))
-            .then(self.cdm.cmp(&other.cdm))
+        if self.is_vec() && other.is_vec() {
+            self.lab.cmp(other.lab)
+        } else {
+            self.var
+                .cmp(&other.var)
+                .then(self.alt.cmp(&other.alt))
+                .then(self.cdm.cmp(&other.cdm))
+        }
     }
 }
 
