@@ -1957,13 +1957,13 @@ impl Rational {
     /// Panics if denominator is zero.
     #[must_use]
     pub fn new(mut p: i32, mut q: i32) -> Self {
+        assert_ne!(q, 0, "division by zero");
         if p == 0 {
             Self::ZERO
         } else if p == q {
             Self::ONE
         } else {
             let mut g = p.gcd(q);
-            assert_ne!(g, 0, "division by zero");
             if q < 0 {
                 g = -g;
             }
@@ -1986,30 +1986,55 @@ impl Rational {
     }
     /// Inverts the fraction.
     ///
+    /// ```
+    /// use vee::Rational;
+    ///
+    /// let pos = Rational::new(3, 4);
+    /// let neg = -pos;
+    ///
+    /// assert_eq!(pos * pos.inv(), Rational::ONE);
+    /// assert_eq!(neg * neg.inv(), Rational::ONE);
+    /// ```
+    ///
     /// # Panics
     ///
-    /// Panics if numerator is zero.
+    /// Panics if numerator is zero or [`i32::MIN`].
+    ///
+    /// ```should_panic
+    /// use vee::Rational;
+    ///
+    /// Rational::ZERO.inv();
+    /// ```
+    ///
+    /// ```should_panic
+    /// use vee::Rational;
+    ///
+    /// Rational::from(i32::MIN).inv();
+    /// ```
     #[must_use]
     pub fn inv(&self) -> Self {
         assert_ne!(self.p, 0, "division by zero");
-        if self.p < 0 {
-            Self {
-                p: -self.p,
-                q: -self.q,
-            }
-        } else {
-            Self {
-                p: self.q,
-                q: self.p,
-            }
+        Self {
+            p: self.q * self.p.signum(),
+            q: self.p.strict_abs(),
         }
     }
     /// The absolute.
+    ///
+    /// # Panics
+    ///
+    /// Panics if numerator is [`i32::MIN`].
+    ///
+    /// ```should_panic
+    /// use vee::Rational;
+    ///
+    /// Rational::from(i32::MIN).abs();
+    /// ```
     #[must_use]
     #[inline]
     pub const fn abs(&self) -> Self {
         Self {
-            p: self.p.abs(),
+            p: self.p.strict_abs(),
             q: self.q,
         }
     }
@@ -2142,7 +2167,7 @@ impl Neg for Rational {
     #[inline]
     fn neg(self) -> Self {
         Self {
-            p: -self.p,
+            p: self.p.strict_neg(),
             q: self.q,
         }
     }
