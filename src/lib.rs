@@ -853,6 +853,49 @@ impl<B: Algebra> Multivector<B> {
             .then(|| grades.first().copied())
             .flatten()
     }
+    /// Whether all grades are odd.
+    ///
+    /// ```
+    /// use vee::PgaP3 as Vee;
+    ///
+    /// assert!(Vee::flector().is_odd());
+    /// ```
+    ///
+    /// Mixed-parity multivectors are neither [`Self::is_odd()`] nor [`Self::is_even()`] whereas the
+    /// zero multivector is both.
+    ///
+    /// ```
+    /// use vee::PgaP3 as Vee;
+    ///
+    /// assert!(Vee::flector().is_odd());
+    ///
+    /// let mixed_parity = Vee::motor() + Vee::flector();
+    ///
+    /// assert!(!mixed_parity.is_odd());
+    /// assert!(!mixed_parity.is_even());
+    ///
+    /// let zero = Vee::zero();
+    ///
+    /// assert!(zero.is_odd());
+    /// assert!(zero.is_even());
+    /// ```
+    #[must_use]
+    pub fn is_odd(&self) -> bool {
+        self.map.keys().map(B::grade).all(|g| g & 1 != 0)
+    }
+    /// Whether all grades are even.
+    ///
+    /// ```
+    /// use vee::PgaP3 as Vee;
+    ///
+    /// assert!(Vee::motor().is_even());
+    /// ```
+    ///
+    /// See [`Self::is_odd()`] for mixed-parity and zero multivectors.
+    #[must_use]
+    pub fn is_even(&self) -> bool {
+        self.map.keys().map(B::grade).all(|g| g & 1 == 0)
+    }
     /// Whether being an entity (i.e., having unique symbols and exactly one per basis blade).
     #[must_use]
     pub fn is_entity(&self) -> bool {
@@ -1225,12 +1268,7 @@ impl<B: Algebra> Shl for Multivector<B> {
             let lhs = other.clone().norm_squared();
             (self.clone() | (Self::one() - lhs.clone()), lhs, Self::one())
         });
-        if self
-            .grade()
-            .zip(other.grade())
-            .map(|(lhs_grade, rhs_grade)| (lhs_grade * rhs_grade) % 2)
-            == Some(1)
-        {
+        if self.is_odd() && other.is_odd() {
             self = -self;
         }
         let shl = other.clone() * self * other.rev();

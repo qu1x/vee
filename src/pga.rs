@@ -1621,6 +1621,16 @@ impl<const M: i8> Multivector<Pga<M, 3>> {
     ///     "+(+V͕y͔-W͔y͕+X͕z͔-Z͕x͔)e013",
     ///     "+(+V͕z͔-W͔z͕-X͕y͔+Y͕x͔)e021",
     /// ]);
+    ///
+    /// let plane = Vee::plane().pin() << Vee::flector();
+    ///
+    /// assert_eq!(plane.basis_blades(), Vee::plane().basis_blades());
+    /// format_eq!(plane, [
+    ///     "+(+(+ww+xx+yy+zz)W͓+2(-Wx+Xw+Yz-Zy)x͓+2(-Wy-Xz+Yw+Zx)y͓+2(-Wz+Xy-Yx+Zw)z͓)e0",
+    ///     "+(+(-ww-xx+yy+zz)x͓+2(+wz-xy)y͓+2(-wy-xz)z͓)e1",
+    ///     "+(+2(-wz-xy)x͓+(-ww+xx-yy+zz)y͓+2(+wx-yz)z͓)e2",
+    ///     "+(+2(+wy-xz)x͓+2(-wx-yz)y͓+(-ww+xx+yy-zz)z͓)e3",
+    /// ]);
     /// ```
     #[must_use]
     #[inline]
