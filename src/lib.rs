@@ -112,7 +112,7 @@
 //! }
 //! \gdef\shl{
 //!   a \looparrowleft b
-//!     \equiv \sum_{s,t} (-1)^{st} \lang b \rang_t \lang a \rang_s \lang \tilde b \rang_t
+//!     \equiv (-1)^{\prod_{s,t} st} ba \tilde b
 //! }
 //! \gdef\shr{
 //!   a \curvearrowright b \equiv (a \mid b) \tilde b
