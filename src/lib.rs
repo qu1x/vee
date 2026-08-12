@@ -1695,6 +1695,22 @@ pub struct Polynomial {
 
 impl Polynomial {
     /// The one.
+    ///
+    /// ```
+    /// use vee::Polynomial;
+    ///
+    /// assert_eq!(Polynomial::one() * Polynomial::one(), Polynomial::one());
+    ///
+    /// assert_eq!(
+    ///     Polynomial::one() * Polynomial::default(),
+    ///     Polynomial::default()
+    /// );
+    /// assert_eq!(
+    ///     Polynomial::default() + Polynomial::default(),
+    ///     Polynomial::default()
+    /// );
+    /// assert_eq!(Polynomial::one() + Polynomial::default(), Polynomial::one());
+    /// ```
     #[must_use]
     pub fn one() -> Self {
         let mut map = BTreeMap::new();
@@ -1702,11 +1718,23 @@ impl Polynomial {
         Self { map }
     }
     /// Whether this polynomial is zero.
+    ///
+    /// ```
+    /// use vee::Polynomial;
+    ///
+    /// assert!(Polynomial::default().is_zero());
+    /// ```
     #[must_use]
     pub fn is_zero(&self) -> bool {
         self.map.is_empty() || self.map.iter().all(|(m, c)| m.is_zero() || c.is_zero())
     }
     /// Whether this polynomial is one.
+    ///
+    /// ```
+    /// use vee::Polynomial;
+    ///
+    /// assert!(Polynomial::one().is_one());
+    /// ```
     #[must_use]
     pub fn is_one(&self) -> bool {
         self.map
@@ -2333,12 +2361,24 @@ pub struct Monomial {
 
 impl Monomial {
     /// The one.
+    ///
+    /// ```
+    /// use vee::Monomial;
+    ///
+    /// assert_eq!(Monomial::one() * Monomial::one(), Monomial::one());
+    /// ```
     #[must_use]
     #[allow(clippy::missing_panics_doc)]
     pub fn one() -> Self {
         let mut map = BTreeMap::new();
         map.insert(Symbol::one(), NonZero::new(1).unwrap());
         Self { map }
+    }
+    /// The inverse.
+    #[must_use]
+    pub fn inv(mut self) -> Self {
+        self.map.values_mut().for_each(|e| *e = -*e);
+        self
     }
     /// Whether this monomial is zero.
     #[must_use]
@@ -2414,6 +2454,11 @@ impl MulAssign for Monomial {
         for (s, rhs_e) in other.map {
             if let Some(lhs_e) = self.map.get(&s) {
                 if let Some(e) = NonZeroI32::new(lhs_e.get() + rhs_e.get()) {
+                    let e = if s.is_one() {
+                        NonZeroI32::new(1).unwrap()
+                    } else {
+                        e
+                    };
                     assert!(self.map.insert(s, e).is_some());
                 } else {
                     assert!(self.map.remove(&s).is_some());
@@ -2422,7 +2467,9 @@ impl MulAssign for Monomial {
                 assert!(self.map.insert(s, rhs_e).is_none());
             }
         }
-        self.map.retain(|s, _e| !s.is_one());
+        if self.map.len() > 1 {
+            self.map.retain(|s, _e| !s.is_one());
+        }
     }
 }
 
@@ -2437,19 +2484,10 @@ impl Div for Monomial {
 }
 
 impl DivAssign for Monomial {
+    #[inline]
+    #[allow(clippy::suspicious_op_assign_impl)]
     fn div_assign(&mut self, other: Self) {
-        for (s, rhs_e) in other.map {
-            if let Some(lhs_e) = self.map.get(&s) {
-                if let Some(e) = NonZeroI32::new(lhs_e.get() - rhs_e.get()) {
-                    assert!(self.map.insert(s, e).is_some());
-                } else {
-                    assert!(self.map.remove(&s).is_some());
-                }
-            } else {
-                assert!(self.map.insert(s, rhs_e).is_none());
-            }
-        }
-        self.map.retain(|s, _e| !s.is_one());
+        *self *= other.inv();
     }
 }
 
