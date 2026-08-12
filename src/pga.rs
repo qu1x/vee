@@ -164,7 +164,7 @@ impl<const M: i8, const N: u32> TryFrom<Symbol> for Pga<M, N> {
     #[inline]
     fn try_from(s: Symbol) -> Result<Self, Symbol> {
         let b = Self::new(s.lab);
-        if s.lab == LUT[N as usize][b.idx as usize].sym {
+        if Some(s.lab) == LUT[N as usize].get(b.idx as usize).map(|s| s.sym) {
             Ok(b)
         } else {
             Err(s)
