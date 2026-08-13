@@ -470,6 +470,21 @@ where
     /// The zero constant.
     const ZERO: Self;
 
+    /// The three-way parity.[^1]
+    ///
+    /// ```
+    /// use vee::{Factor, Rational};
+    ///
+    /// assert_eq!(Rational::new(2, 1).parity(), Some(false)); // even
+    /// assert_eq!(Rational::new(1, 1).parity(), Some(true)); // odd
+    /// assert_eq!(Rational::new(1, 2).parity(), None); // none
+    /// ```
+    ///
+    /// [^1]: P. Lynch and M. Mackey, “Parity and Partition of the Rational Numbers”, [The College
+    /// Mathematics Journal, 55(5), 387–399](https://doi.org/10.1080/07468342.2024.2311632).
+    #[must_use]
+    fn parity(self) -> Option<bool>;
+
     /// Finds the greatest common divisor (GCD) of `self` and `other`.
     #[must_use]
     fn gcd(self, other: Self) -> Self;
@@ -530,6 +545,11 @@ impl Factor for Rational {
     const ZERO: Self = Self::ZERO;
 
     #[inline]
+    fn parity(self) -> Option<bool> {
+        let r_odd = self.p.parity().zip(self.q.parity());
+        r_odd.and_then(|(p_odd, q_odd)| q_odd.then_some(p_odd))
+    }
+    #[inline]
     fn gcd(self, other: Self) -> Self {
         Self {
             p: self.p.gcd(other.p),
@@ -555,6 +575,10 @@ impl Factor for i32 {
     const ZERO: Self = 0;
 
     #[inline]
+    fn parity(self) -> Option<bool> {
+        Some(self & 1 != 0)
+    }
+    #[inline]
     fn gcd(self, other: Self) -> Self {
         self.unsigned_abs()
             .gcd(other.unsigned_abs())
@@ -566,6 +590,10 @@ impl Factor for i32 {
 impl Factor for u32 {
     const ZERO: Self = 0;
 
+    #[inline]
+    fn parity(self) -> Option<bool> {
+        Some(self & 1 != 0)
+    }
     #[allow(clippy::many_single_char_names, clippy::debug_assert_with_mut_call)]
     fn gcd(self, other: Self) -> Self {
         let mut a = self;
