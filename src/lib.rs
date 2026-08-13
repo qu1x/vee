@@ -428,7 +428,7 @@ use core::{
     fmt::{self, Debug, Display, Octal},
     iter::{FromIterator, repeat_n},
     mem::{swap, take},
-    num::{NonZero, NonZeroI32},
+    num::NonZeroI32,
     ops::{
         Add, AddAssign, BitAnd, BitOr, BitXor, Div, DivAssign, Mul, MulAssign, Neg, Not, Rem, Shl,
         Shr, Sub, SubAssign,
@@ -773,7 +773,10 @@ impl<B: Algebra> TryFrom<Symbol> for Multivector<B> {
 
     fn try_from(s: Symbol) -> Result<Self, Self::Error> {
         if s.is_vec() {
-            Ok(Self::new([(Symbol::one(), s.try_into()?)]))
+            Ok(Self {
+                map: BTreeMap::from([(s.try_into()?, Polynomial::one())]),
+                onc: false,
+            })
         } else {
             Ok(Self::new([(s, B::scalar())]))
         }
@@ -977,13 +980,19 @@ impl<B: Algebra> Multivector<B> {
     /// The zero.
     #[must_use]
     #[inline]
-    pub fn zero() -> Self {
-        Self::default()
+    pub const fn zero() -> Self {
+        Self {
+            map: BTreeMap::new(),
+            onc: false,
+        }
     }
     /// The one.
     #[must_use]
     pub fn one() -> Self {
-        Self::new([(Symbol::one(), B::scalar())])
+        Self {
+            map: BTreeMap::from([(B::scalar(), Polynomial::one())]),
+            onc: false,
+        }
     }
     /// Evaluates each symbol `S` of map `M` as respective rational `R`.
     #[must_use]
@@ -1370,9 +1379,10 @@ impl<B: Algebra> Display for Multivector<B> {
                         .first()
                         .and_then(Tree::as_num)
                         .is_some_and(|num| num.abs().is_one());
-                    let is_one = siblings.last().and_then(Tree::as_sym).is_some_and(|sym| {
-                        (sym.is_one() || sym.is_scalar()) && depth <= 1 && siblings.len() == 2
-                    });
+                    let is_one = siblings
+                        .last()
+                        .and_then(Tree::as_sym)
+                        .is_some_and(|sym| (sym.is_scalar()) && depth <= 1 && siblings.len() == 2);
                     for (index, sibling) in siblings.iter().enumerate() {
                         defer = if index == 0 {
                             defer
@@ -1439,7 +1449,7 @@ impl<B: Algebra> Display for Multivector<B> {
                         write!(fmt, "& ")?;
                     }
                     defer = "";
-                    if !(sym.is_one() || sym.is_scalar()) || depth == 0 {
+                    if !sym.is_scalar() || depth == 0 {
                         Display::fmt(sym, fmt)?;
                     }
                     if !fmt.sign_aware_zero_pad() && sym.is_vec() {
@@ -1503,8 +1513,7 @@ impl<B: Algebra> Display for Multivector<B> {
 impl<B: Algebra> LowerHex for Multivector<B> {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         for (b, p) in &self.map {
-            let mut map = BTreeMap::new();
-            map.insert(B::scalar(), p.clone());
+            let map = BTreeMap::from([(B::scalar(), p.clone())]);
             let m = Self { map, onc: self.onc };
             if let Some(width) = fmt.width() {
                 write!(fmt, "{:width$}", "")?;
@@ -1694,7 +1703,7 @@ impl Factorization {
             || self
                 .map
                 .iter()
-                .all(|(m, (p, c))| m.is_zero() || p.is_zero() || c.is_zero())
+                .all(|(_m, (p, c))| p.is_zero() || c.is_zero())
     }
     /// Whether this factorization is one.
     #[must_use]
@@ -1704,7 +1713,7 @@ impl Factorization {
             && self
                 .map
                 .iter()
-                .filter(|(m, (p, c))| !(m.is_zero() || p.is_zero() || c.is_zero()))
+                .filter(|(_m, (p, c))| !(p.is_zero() || c.is_zero()))
                 .all(|(m, (p, c))| {
                     sum += 1;
                     m.is_one() && p.is_one() && c.is_one()
@@ -1779,9 +1788,9 @@ impl Polynomial {
     /// ```
     #[must_use]
     pub fn one() -> Self {
-        let mut map = BTreeMap::new();
-        map.insert(Monomial::one(), Rational::ONE);
-        Self { map }
+        Self {
+            map: BTreeMap::from([(Monomial::one(), Rational::ONE)]),
+        }
     }
     /// Whether this polynomial is zero.
     ///
@@ -1792,7 +1801,7 @@ impl Polynomial {
     /// ```
     #[must_use]
     pub fn is_zero(&self) -> bool {
-        self.map.is_empty() || self.map.iter().all(|(m, c)| m.is_zero() || c.is_zero())
+        self.map.is_empty() || self.map.iter().all(|(_m, c)| c.is_zero())
     }
     /// Whether this polynomial is one.
     ///
@@ -2434,11 +2443,12 @@ impl Monomial {
     /// assert_eq!(Monomial::one() * Monomial::one(), Monomial::one());
     /// ```
     #[must_use]
+    #[inline]
     #[allow(clippy::missing_panics_doc)]
-    pub fn one() -> Self {
-        let mut map = BTreeMap::new();
-        map.insert(Symbol::one(), NonZero::new(1).unwrap());
-        Self { map }
+    pub const fn one() -> Self {
+        Self {
+            map: BTreeMap::new(),
+        }
     }
     /// The inverse.
     #[must_use]
@@ -2446,18 +2456,10 @@ impl Monomial {
         self.map.values_mut().for_each(|e| *e = -*e);
         self
     }
-    /// Whether this monomial is zero.
-    #[must_use]
-    #[inline]
-    pub fn is_zero(&self) -> bool {
-        self.map.is_empty()
-    }
     /// Whether this monomial is one.
     #[must_use]
     pub fn is_one(&self) -> bool {
-        self.map
-            .iter()
-            .all(|(s, e)| s.is_one() && e.get().abs() == 1)
+        self.map.is_empty()
     }
     /// Extends the symbol space.
     #[must_use]
@@ -2520,11 +2522,6 @@ impl MulAssign for Monomial {
         for (s, rhs_e) in other.map {
             if let Some(lhs_e) = self.map.get(&s) {
                 if let Some(e) = NonZeroI32::new(lhs_e.get() + rhs_e.get()) {
-                    let e = if s.is_one() {
-                        NonZeroI32::new(1).unwrap()
-                    } else {
-                        e
-                    };
                     assert!(self.map.insert(s, e).is_some());
                 } else {
                     assert!(self.map.remove(&s).is_some());
@@ -2532,9 +2529,6 @@ impl MulAssign for Monomial {
             } else {
                 assert!(self.map.insert(s, rhs_e).is_none());
             }
-        }
-        if self.map.len() > 1 {
-            self.map.retain(|s, _e| !s.is_one());
         }
     }
 }
@@ -2558,7 +2552,7 @@ impl DivAssign for Monomial {
 }
 
 /// Symbol as Unicode character with optional *combining diacritical mark*.
-#[derive(Debug, Clone, Copy, Default)]
+#[derive(Debug, Clone, Copy)]
 pub struct Symbol {
     var: char,
     alt: char,
@@ -2612,17 +2606,6 @@ impl Symbol {
     /// Unicode *combining right arrowhead below* (i.e., `"◌͕"`).
     pub const RHS: char = '\u{0355}';
 
-    /// Creates empty [`Default`] symbol representing scalar one.
-    #[must_use]
-    #[inline]
-    pub const fn one() -> Self {
-        Self {
-            var: Self::NIL,
-            alt: Self::NIL,
-            cdm: Self::NIL,
-            lab: "",
-        }
-    }
     /// Whether this symbol is a basis blade.
     #[must_use]
     #[inline]
@@ -2640,12 +2623,6 @@ impl Symbol {
     #[inline]
     pub const fn is_pseudoscalar(&self) -> bool {
         self.is_vec() && self.alt == Self::ALT
-    }
-    /// Whether this symbol is [`Self::one()`].
-    #[must_use]
-    #[inline]
-    pub const fn is_one(&self) -> bool {
-        self.var == Self::NIL
     }
     /// Whether this symbol is pinned.
     #[must_use]
@@ -2680,7 +2657,7 @@ impl Symbol {
     /// Marks this symbol with Unicode *combining diacritical mark*.
     #[must_use]
     #[inline]
-    pub(crate) const fn cdm(mut self, cdm: char) -> Self {
+    pub const fn cdm(mut self, cdm: char) -> Self {
         self.cdm = cdm;
         self
     }
@@ -2777,7 +2754,7 @@ impl Display for Symbol {
             } else {
                 write!(fmt, "{}", self.lab)?;
             }
-        } else if !self.is_one() {
+        } else {
             if fmt.alternate() || fmt.align() == Some(Alignment::Center) || fmt.fill() == '$' {
                 let var = match self.cdm {
                     Self::PIN => 'p',
@@ -2934,7 +2911,7 @@ impl From<Factorization> for Tree {
         let add = f
             .map
             .into_iter()
-            .filter(|(m, (p, c))| !(m.is_zero() || p.is_zero() || c.is_zero()))
+            .filter(|(_m, (p, c))| !(p.is_zero() || c.is_zero()))
             .map(|(m, (p, c))| {
                 let is_mul = [c.is_one(), p.is_one(), m.is_one()].map(bool::not);
                 let len = is_mul.into_iter().map(usize::from).sum::<usize>();
@@ -2981,7 +2958,7 @@ impl From<Polynomial> for Tree {
         let add = p
             .map
             .into_iter()
-            .filter(|(p, c)| !(p.is_zero() || c.is_zero()))
+            .filter(|(_m, c)| !c.is_zero())
             .map(|(m, c)| {
                 if c.is_one() {
                     m.into()
@@ -3014,7 +2991,6 @@ impl From<Monomial> for Tree {
         let mul = m
             .map
             .into_iter()
-            .filter(|(s, _e)| !s.is_one())
             .flat_map(|(s, e)| {
                 repeat_n(s, e.get().try_into().expect("negative exponent")).map(From::from)
             })
@@ -3039,7 +3015,7 @@ impl From<Rational> for Tree {
 impl From<Symbol> for Tree {
     #[inline]
     fn from(s: Symbol) -> Self {
-        if s.is_one() { Self::ONE } else { Self::Sym(s) }
+        Self::Sym(s)
     }
 }
 
