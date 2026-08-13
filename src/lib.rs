@@ -2189,6 +2189,13 @@ impl Rational {
         self.p == 0
     }
     /// Power.
+    ///
+    /// ```
+    /// use vee::Rational;
+    ///
+    /// assert_eq!(Rational::new(3, 4).pow(2), Rational::new(9, 16));
+    /// assert_eq!(Rational::new(3, 4).pow(-2), Rational::new(16, 9));
+    /// ```
     #[must_use]
     pub fn pow(&self, exp: i32) -> Self {
         let abs = exp.unsigned_abs();
