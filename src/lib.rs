@@ -484,6 +484,18 @@ where
     /// Mathematics Journal, 55(5), 387–399](https://doi.org/10.1080/07468342.2024.2311632).
     #[must_use]
     fn parity(self) -> Option<bool>;
+    /// Whether the parity is odd, i.e., <code>[Self::parity()] == [Some]\([true]\)</code>.
+    #[must_use]
+    #[inline]
+    fn is_odd(self) -> bool {
+        self.parity() == Some(true)
+    }
+    /// Whether the parity is even, i.e., <code>[Self::parity()] == [Some]\([false]\)</code>.
+    #[must_use]
+    #[inline]
+    fn is_even(self) -> bool {
+        self.parity() == Some(false)
+    }
 
     /// Finds the greatest common divisor (GCD) of `self` and `other`.
     #[must_use]
@@ -546,8 +558,7 @@ impl Factor for Rational {
 
     #[inline]
     fn parity(self) -> Option<bool> {
-        let r_odd = self.p.parity().zip(self.q.parity());
-        r_odd.and_then(|(p_odd, q_odd)| q_odd.then_some(p_odd))
+        self.q.is_odd().then_some(self.p.is_odd())
     }
     #[inline]
     fn gcd(self, other: Self) -> Self {
@@ -678,7 +689,7 @@ where
     #[must_use]
     #[inline]
     fn rev(self) -> (i8, Self) {
-        (1 - (self.grade().choose(2) & 1) as i8 * 2, self)
+        (1 - i8::from(self.grade().choose(2).is_odd()) * 2, self)
     }
 }
 
@@ -912,7 +923,7 @@ impl<B: Algebra> Multivector<B> {
     /// ```
     #[must_use]
     pub fn is_odd(&self) -> bool {
-        self.map.keys().map(B::grade).all(|g| g & 1 != 0)
+        self.map.keys().map(B::grade).all(Factor::is_odd)
     }
     /// Whether all grades are even.
     ///
@@ -925,7 +936,7 @@ impl<B: Algebra> Multivector<B> {
     /// See [`Self::is_odd()`] for mixed-parity and zero multivectors.
     #[must_use]
     pub fn is_even(&self) -> bool {
-        self.map.keys().map(B::grade).all(|g| g & 1 == 0)
+        self.map.keys().map(B::grade).all(Factor::is_even)
     }
     /// Whether being an entity (i.e., having unique symbols and exactly one per basis blade).
     #[must_use]

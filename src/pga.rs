@@ -5,9 +5,7 @@
 
 //! Plane-Based Pistachio Flavor -- Projective Geometric Algebra (PGA)
 
-use crate::Symbol;
-
-use super::{Algebra, Choose, Multivector};
+use super::{Algebra, Choose, Factor, Multivector, Symbol};
 use core::{
     cmp::Ordering,
     fmt::{self, Debug, Display, Error, Write},
@@ -208,8 +206,8 @@ impl<const M: i8, const N: u32> Mul for Pga<M, N> {
                 .map(|b| u32::from(LUT[N as usize][b.idx as usize].cnt))
                 .into_iter()
                 .sum::<u32>();
-        let sig = if cnt & 1 == 0 { 1 } else { -1 };
-        let sig = if lhs & rhs & 1 == 0 { sig } else { sig * M };
+        let sig = if cnt.is_odd() { -1 } else { 1 };
+        let sig = if lhs & rhs & 1 != 0 { sig * M } else { sig };
         (sig, mul)
     }
 }
@@ -8992,7 +8990,7 @@ fn tab() {
             let lut = TAB[N as usize][i];
             if i >= basis_len / 2 {
                 let (_sig, not) = !*b;
-                let cnt = if not.cnt(*b) & 1 != 0 && sym.len() > 2 {
+                let cnt = if not.cnt(*b).is_odd() && sym.len() > 2 {
                     let len = sym.len();
                     sym.swap(len - 2, len - 1);
                     1
