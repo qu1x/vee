@@ -1,12 +1,21 @@
-# Version 0.3.1 (2026-08-11)
+# Version 0.4.0 (2026-08-13)
 
+  * Let empty monomial represent one rather than zero and drop symbolic one.
+  * Implement three-way parity.
   * Format examples.
   * Predefine symbols for evaluation as rationals.
-  * Fix evaluation and code form. Thank you, [Lars Hadidi](https://github.com/LarsHadidi).
+  * Fix formula of reflection operator.
+  * Fix operators, evaluation, and code form. Thank you, [Lars Hadidi].
+      * Fix sign of twisted Clifford-Lipschitz group for odd mixed-grade versor.
+      * Fix panic on foreign symbol.
+      * Fix multiplication for monomial one.
+      * Fix inverting negative rationals.
       * Fix evaluating multiple symbols.
       * Fix evaluating symbol to zero.
       * Fix code form for non-integer rationals.
   * Fix links.
+
+[Lars Hadidi]: https://github.com/LarsHadidi
 
 # Version 0.3.0 (2026-08-01)
 
