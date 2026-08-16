@@ -469,6 +469,8 @@ where
 {
     /// The zero constant.
     const ZERO: Self;
+    /// The one constant.
+    const ONE: Self;
 
     /// The three-way parity.[^1]
     ///
@@ -497,7 +499,20 @@ where
         self.parity() == Some(false)
     }
 
+    /// The absolute.
+    #[must_use]
+    fn abs(self) -> Self;
+
     /// Finds the greatest common divisor (GCD) of `self` and `other`.
+    ///
+    /// ```
+    /// use vee::{Factor, Rational};
+    ///
+    /// assert_eq!(2i32, (-2).gcd(4));
+    /// assert_eq!(Rational::from(2), Rational::from(-2).gcd(4.into()));
+    /// assert_eq!(Rational::from(2), Rational::from(-2).gcd((-4).into()));
+    /// assert_eq!(Rational::from(2), Rational::from(2).gcd((-4).into()));
+    /// ```
     #[must_use]
     fn gcd(self, other: Self) -> Self;
     /// Finds the least common multiple (LCM) of `self` and `other`.
@@ -514,51 +529,183 @@ where
     #[inline]
     #[must_use]
     fn gcd_lcm(self, other: Self) -> (Self, Self) {
-        if self == Self::ZERO && other == Self::ZERO {
-            (Self::ZERO, Self::ZERO)
-        } else {
-            let gcd = self.gcd(other);
-            let lcm = self * (other / gcd);
-            (gcd, lcm)
-        }
+        let gcd = self.gcd(other);
+        let lcm = (gcd != Self::ZERO)
+            .then(|| self * (other / gcd))
+            .map_or(Self::ZERO, Self::abs);
+        (gcd, lcm)
     }
-    /// Finds the GCD of iterator over `Self`.
+    /// Finds the GCD of iterator over [`Self`].
+    ///
+    /// ```
+    /// use vee::{Factor, Rational};
+    ///
+    /// assert_eq!(Rational::ZERO, Rational::gcd_reduce([]));
+    /// assert_eq!(Rational::from(2), Rational::gcd_reduce([Rational::from(-2),]));
+    /// assert_eq!(
+    ///     Rational::new(3, 1),
+    ///     Rational::gcd_reduce([
+    ///         Rational::new(-3, 1),
+    ///         Rational::new(-6, 1),
+    ///         Rational::new(9, 1),
+    ///     ])
+    /// );
+    /// ```
     #[inline]
     #[must_use]
-    fn gcd_bulk(r: impl IntoIterator<Item = Self>) -> Self {
-        r.into_iter().reduce(Self::gcd).unwrap_or_default()
+    fn gcd_reduce(r: impl IntoIterator<Item = Self>) -> Self {
+        r.into_iter()
+            .reduce(Self::gcd)
+            .map_or(Self::ZERO, Self::abs)
     }
-    /// Finds the LCM of iterator over `Self`.
+    /// Finds the LCM of iterator over [`Self`].
+    ///
+    /// ```
+    /// use vee::{Factor, Rational};
+    ///
+    /// assert_eq!(Rational::ONE, Rational::lcm_reduce([]));
+    /// assert_eq!(Rational::from(2), Rational::lcm_reduce([Rational::from(-2),]));
+    /// assert_eq!(
+    ///     Rational::new(18, 1),
+    ///     Rational::lcm_reduce([
+    ///         Rational::new(-3, 1),
+    ///         Rational::new(-6, 1),
+    ///         Rational::new(9, 1),
+    ///     ])
+    /// );
+    /// ```
     #[inline]
     #[must_use]
-    fn lcm_bulk(r: impl IntoIterator<Item = Self>) -> Self {
-        r.into_iter().reduce(Self::lcm).unwrap_or_default()
+    fn lcm_reduce(r: impl IntoIterator<Item = Self>) -> Self {
+        r.into_iter().reduce(Self::lcm).map_or(Self::ONE, Self::abs)
     }
-    /// Finds the [`Self::gcd`] or [`Self::lcm`] and the predominant sign of iterator over `Self`.
+    /// Finds the [`Self::gcd()`] or [`Self::lcm()`] (specified with function `f` and respective
+    /// identity `i`, i.e., [`Self::ZERO`] or [`Self::ONE`]) of iterator `r` over [`Self`].
+    ///
+    /// See [`Self::signed_gcd_reduce()`] and [`Self::signed_lcm_reduce()`] for convenience.
     #[must_use]
-    fn signed(f: impl Fn(Self, Self) -> Self, r: impl IntoIterator<Item = Self>) -> Self
+    fn signed_reduce(f: fn(Self, Self) -> Self, i: Self, r: impl IntoIterator<Item = Self>) -> Self
     where
         Self: Neg<Output = Self> + PartialOrd + Ord,
     {
-        let (acc, neg, len) = r
-            .into_iter()
-            .fold((Self::ZERO, 0, 0), |(acc, neg, len), r| {
-                (
-                    f(acc, r),
-                    if r < Self::ZERO { neg + 1 } else { neg },
-                    len + 1,
-                )
-            });
+        let (acc, neg, len) = r.into_iter().fold((i, 0, 0), |(acc, neg, len), r| {
+            (f(acc, r), neg + usize::from(r < Self::ZERO), len + 1)
+        });
         if neg > len / 2 { -acc } else { acc }
+    }
+    /// Finds the [`Self::gcd()`] and the predominant sign of iterator over [`Self`].
+    ///
+    /// ```
+    /// use vee::{Factor, Rational};
+    ///
+    /// assert_eq!(Rational::ZERO, Rational::signed_gcd_reduce([]));
+    /// assert_eq!(
+    ///     Rational::from(-2),
+    ///     Rational::signed_gcd_reduce([Rational::from(-2),])
+    /// );
+    /// assert_eq!(
+    ///     Rational::new(-3, 1),
+    ///     Rational::signed_gcd_reduce([
+    ///         Rational::new(-3, 1),
+    ///         Rational::new(-6, 1),
+    ///         Rational::new(9, 1),
+    ///     ])
+    /// );
+    /// assert_eq!(
+    ///     Rational::new(3, 1),
+    ///     Rational::signed_gcd_reduce(
+    ///         ([
+    ///             Rational::new(-3, 1),
+    ///             Rational::new(-6, 1),
+    ///             Rational::new(9, 1),
+    ///             Rational::new(9, 1),
+    ///         ])
+    ///     )
+    /// );
+    /// assert_eq!(
+    ///     Rational::new(-3, 1),
+    ///     Rational::signed_gcd_reduce(
+    ///         ([
+    ///             Rational::new(-3, 1),
+    ///             Rational::new(-6, 1),
+    ///             Rational::new(9, 1),
+    ///             Rational::new(9, 1),
+    ///             Rational::new(-9, 1),
+    ///         ])
+    ///     )
+    /// );
+    /// ```
+    #[inline]
+    #[must_use]
+    fn signed_gcd_reduce(r: impl IntoIterator<Item = Self>) -> Self
+    where
+        Self: Neg<Output = Self> + PartialOrd + Ord,
+    {
+        Self::signed_reduce(Self::gcd, Self::ZERO, r)
+    }
+    /// Finds the [`Self::lcm()`] and the predominant sign of iterator over [`Self`].
+    ///
+    /// ```
+    /// use vee::{Factor, Rational};
+    ///
+    /// assert_eq!(Rational::ONE, Rational::signed_lcm_reduce([]));
+    /// assert_eq!(
+    ///     Rational::from(-2),
+    ///     Rational::signed_lcm_reduce([Rational::from(-2),])
+    /// );
+    /// assert_eq!(
+    ///     Rational::new(-18, 1),
+    ///     Rational::signed_lcm_reduce([
+    ///         Rational::new(-3, 1),
+    ///         Rational::new(-6, 1),
+    ///         Rational::new(9, 1),
+    ///     ])
+    /// );
+    /// assert_eq!(
+    ///     Rational::new(18, 1),
+    ///     Rational::signed_lcm_reduce(
+    ///         ([
+    ///             Rational::new(-3, 1),
+    ///             Rational::new(-6, 1),
+    ///             Rational::new(9, 1),
+    ///             Rational::new(9, 1),
+    ///         ])
+    ///     )
+    /// );
+    /// assert_eq!(
+    ///     Rational::new(-18, 1),
+    ///     Rational::signed_lcm_reduce(
+    ///         ([
+    ///             Rational::new(-3, 1),
+    ///             Rational::new(-6, 1),
+    ///             Rational::new(9, 1),
+    ///             Rational::new(9, 1),
+    ///             Rational::new(-9, 1),
+    ///         ])
+    ///     )
+    /// );
+    /// ```
+    #[inline]
+    #[must_use]
+    fn signed_lcm_reduce(r: impl IntoIterator<Item = Self>) -> Self
+    where
+        Self: Neg<Output = Self> + PartialOrd + Ord,
+    {
+        Self::signed_reduce(Self::lcm, Self::ONE, r)
     }
 }
 
 impl Factor for Rational {
     const ZERO: Self = Self::ZERO;
+    const ONE: Self = Self::ONE;
 
     #[inline]
     fn parity(self) -> Option<bool> {
         self.q.is_odd().then_some(self.p.is_odd())
+    }
+    #[inline]
+    fn abs(self) -> Self {
+        Self::abs(&self)
     }
     #[inline]
     fn gcd(self, other: Self) -> Self {
@@ -584,10 +731,15 @@ impl Factor for Rational {
 
 impl Factor for i32 {
     const ZERO: Self = 0;
+    const ONE: Self = 1;
 
     #[inline]
     fn parity(self) -> Option<bool> {
         Some(self & 1 != 0)
+    }
+    #[inline]
+    fn abs(self) -> Self {
+        self.abs()
     }
     #[inline]
     fn gcd(self, other: Self) -> Self {
@@ -600,10 +752,15 @@ impl Factor for i32 {
 
 impl Factor for u32 {
     const ZERO: Self = 0;
+    const ONE: Self = 1;
 
     #[inline]
     fn parity(self) -> Option<bool> {
         Some(self & 1 != 0)
+    }
+    #[inline]
+    fn abs(self) -> Self {
+        self
     }
     #[allow(clippy::many_single_char_names, clippy::debug_assert_with_mut_call)]
     fn gcd(self, other: Self) -> Self {
@@ -1651,7 +1808,7 @@ impl<B: Algebra> Octal for Multivector<B> {
 ///
 /// Factors pinned symbols as monomials and factors the greatest common divisors (GCDs) of the
 /// remaining polynomials and the GCD among them. Optionally, the GCDs are
-/// [`signed`](`Factor::signed()`) comprising the factored predominant sign.
+/// [`signed`](`Factor::signed_reduce()`) comprising the factored predominant sign.
 ///
 /// Initially, a factorization is uniquely reduced but in contrast to [`Polynomial`], the invariants
 /// are no longer enforced by storage, making this form volatile. As the members are public, the
@@ -1689,19 +1846,18 @@ impl Factorization {
                 *r = Rational::ONE;
                 f
             });
-        let gcd = if signed {
-            Polynomial::signed_gcd
-        } else {
-            Polynomial::gcd
-        };
         f.map.values_mut().for_each(|(p, r)| {
-            *r = gcd(p);
+            *r = if signed || p.map.len() == 1 {
+                p.signed_gcd()
+            } else {
+                p.gcd()
+            };
             *p /= *r;
         });
         f.gcd = if signed {
-            Rational::signed(Rational::gcd, f.map.values().map(|(_p, r)| *r))
+            Rational::signed_gcd_reduce(f.map.values().map(|(_p, r)| *r))
         } else {
-            Rational::gcd_bulk(f.map.values().map(|(_p, r)| *r))
+            Rational::gcd_reduce(f.map.values().map(|(_p, r)| *r))
         };
         f.map.values_mut().for_each(|(_p, r)| *r /= f.gcd);
         f
@@ -1878,20 +2034,22 @@ impl Polynomial {
     /// GCD of coefficients.
     #[must_use]
     pub fn gcd(&self) -> Rational {
-        Rational::gcd_bulk(self.map.values().copied())
+        Rational::gcd_reduce(self.map.values().copied())
     }
     /// LCM of coefficients.
     #[must_use]
     pub fn lcm(&self) -> Rational {
-        Rational::lcm_bulk(self.map.values().copied())
+        Rational::lcm_reduce(self.map.values().copied())
     }
     /// GCD and predominant sign of coefficients.
+    #[must_use]
     pub fn signed_gcd(&self) -> Rational {
-        Rational::signed(Rational::gcd, self.map.values().copied())
+        Rational::signed_gcd_reduce(self.map.values().copied())
     }
     /// LCD and predominant sign of coefficients.
+    #[must_use]
     pub fn signed_lcd(&self) -> Rational {
-        Rational::signed(Rational::lcm, self.map.values().copied())
+        Rational::signed_lcm_reduce(self.map.values().copied())
     }
 }
 
