@@ -80,22 +80,37 @@ impl<const M: i8, const N: u32> Pga<M, N> {
     /// ```
     /// use vee::pga::PgaP3 as Bee;
     ///
-    /// let e = Bee::new("e");
-    /// let e0 = Bee::new("e0");
-    /// let e1 = Bee::new("e1");
-    /// let e2 = Bee::new("e2");
-    /// let e12 = Bee::new("e12");
+    /// let e = Bee::new("e").unwrap();
+    /// let e0 = Bee::new("e0").unwrap();
+    /// let e1 = Bee::new("e1").unwrap();
+    /// let e2 = Bee::new("e2").unwrap();
+    /// let e12 = Bee::new("e12").unwrap();
     ///
     /// assert_eq!(e1 * e2, (1, e12));
     /// assert_eq!(e2 * e1, (-1, e12));
     /// assert_eq!(e0 * e0, (0, e));
+    ///
+    /// // The basis blade must be part of the flavor.
+    ///
+    /// assert!(Bee::new("e3").is_some());
+    /// assert!(Bee::new("e4").is_none());
+    ///
+    /// // The basis blade must be postively permuted as defined by the flavor.
+    ///
+    /// assert!(Bee::new("e123").is_some());
+    /// assert!(Bee::new("e321").is_some());
+    /// assert!(Bee::new("e213").is_none());
     /// ```
     #[must_use]
     #[inline]
-    pub const fn new(sym: &str) -> Self {
+    pub const fn new(sym: &str) -> Option<Self> {
         const { Self::const_assert() };
-        Self {
-            idx: BasisBlade::new(sym).idx,
+        let lut = LUT[N as usize];
+        let BasisBlade { cnt, idx, .. } = BasisBlade::new(sym);
+        if (idx as usize) < lut.len() && (lut[idx as usize].cnt + cnt) & 1 == 0 {
+            Some(Self { idx })
+        } else {
+            None
         }
     }
     /// Creates basis blade for pseudoscalar.
@@ -167,12 +182,7 @@ impl<const M: i8, const N: u32> TryFrom<Symbol> for Pga<M, N> {
 
     #[inline]
     fn try_from(s: Symbol) -> Result<Self, Symbol> {
-        let b = Self::new(s.lab);
-        if Some(s.lab) == LUT[N as usize].get(b.idx as usize).map(|s| s.sym) {
-            Ok(b)
-        } else {
-            Err(s)
-        }
+        Self::new(s.lab).ok_or(s)
     }
 }
 
@@ -362,7 +372,7 @@ macro_rules! basis {
                 #[must_use]
                 #[inline]
                 pub const fn $b() -> (Symbol, Self) {
-                    (Symbol::new($s, stringify!($b)), Pga::new(stringify!($b)))
+                    (Symbol::new($s, stringify!($b)), Pga::new(stringify!($b)).unwrap())
                 }
             )*
         }

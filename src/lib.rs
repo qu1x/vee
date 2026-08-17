@@ -186,7 +186,7 @@
 //! // The `eval()` method accepts `Into<Symbol>` which is implemented for `(Symbol, Bee)`.
 //! assert_eq!(
 //!     const { Bee::e123() },
-//!     const { (Symbol::new('w', "e123"), Bee::new("e123")) },
+//!     const { (Symbol::new('w', "e123"), Bee::new("e123").unwrap()) },
 //! );
 //! ```
 //!
@@ -964,10 +964,10 @@ impl<B: Algebra> Multivector<B> {
     /// use vee::{PgaP3 as Vee, format_eq, pga::PgaP3 as Bee};
     ///
     /// let plane = Vee::new([
-    ///     (('W', "e0"), Bee::new("e0")),
-    ///     (('x', "e1"), Bee::new("e1")),
-    ///     (('y', "e2"), Bee::new("e2")),
-    ///     (('z', "e3"), Bee::new("e3")),
+    ///     (('W', "e0"), Bee::new("e0").unwrap()),
+    ///     (('x', "e1"), Bee::new("e1").unwrap()),
+    ///     (('y', "e2"), Bee::new("e2").unwrap()),
+    ///     (('z', "e3"), Bee::new("e3").unwrap()),
     /// ]);
     ///
     /// assert_eq!(
