@@ -541,7 +541,10 @@ where
     /// use vee::{Factor, Rational};
     ///
     /// assert_eq!(Rational::ZERO, Rational::gcd_reduce([]));
-    /// assert_eq!(Rational::from(2), Rational::gcd_reduce([Rational::from(-2),]));
+    /// assert_eq!(
+    ///     Rational::from(2),
+    ///     Rational::gcd_reduce([Rational::from(-2)])
+    /// );
     /// assert_eq!(
     ///     Rational::new(3, 1),
     ///     Rational::gcd_reduce([
@@ -564,7 +567,10 @@ where
     /// use vee::{Factor, Rational};
     ///
     /// assert_eq!(Rational::ONE, Rational::lcm_reduce([]));
-    /// assert_eq!(Rational::from(2), Rational::lcm_reduce([Rational::from(-2),]));
+    /// assert_eq!(
+    ///     Rational::from(2),
+    ///     Rational::lcm_reduce([Rational::from(-2)])
+    /// );
     /// assert_eq!(
     ///     Rational::new(18, 1),
     ///     Rational::lcm_reduce([
@@ -601,7 +607,7 @@ where
     /// assert_eq!(Rational::ZERO, Rational::signed_gcd_reduce([]));
     /// assert_eq!(
     ///     Rational::from(-2),
-    ///     Rational::signed_gcd_reduce([Rational::from(-2),])
+    ///     Rational::signed_gcd_reduce([Rational::from(-2)])
     /// );
     /// assert_eq!(
     ///     Rational::new(-3, 1),
@@ -651,7 +657,7 @@ where
     /// assert_eq!(Rational::ONE, Rational::signed_lcm_reduce([]));
     /// assert_eq!(
     ///     Rational::from(-2),
-    ///     Rational::signed_lcm_reduce([Rational::from(-2),])
+    ///     Rational::signed_lcm_reduce([Rational::from(-2)])
     /// );
     /// assert_eq!(
     ///     Rational::new(-18, 1),
