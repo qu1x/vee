@@ -1237,9 +1237,36 @@ impl<B: Algebra> Multivector<B> {
     }
     /// Applies `lhs == rhs` condition to `self`.
     ///
-    /// Factors the GCD and the predominant sign of `lhs`. The remaining polynomial is matched with
-    /// each remaining polynomial of <code>self.map.into_values().map([Factorization::from])</code>.
-    /// The matched polynomials are replaced with the `rhs` vector of the respective `lhs` vector.
+    ///  1. Factors the `gcd` inclusive the predominant sign of `lhs`.
+    ///  2. The remaining polynomial is matched with each remaining polynomial of
+    ///     <code>self.map.into_values().map([Factorization::from])</code>.
+    ///  3. The matched polynomials are replaced with `rhs / gcd` of the respective `lhs` vector.
+    ///
+    /// ```
+    /// use vee::{PgaP3 as Vee, format_eq};
+    ///
+    /// let l = || Vee::line().lhs();
+    /// let r = || Vee::line().rhs();
+    /// let mul = l() * r();
+    /// let lhs = (l() | r()) * 2 + (l() % r()) * 4 + (l() ^ r()) * 8;
+    /// let rhs = Vee::scalar() * 3 + Vee::line() * 5 + Vee::pseudoscalar() * 9;
+    ///
+    /// format_eq!("{:-#x}", mul.cond(&lhs, &rhs), [
+    ///     "let e = 3.0 / 2.0 * v;",
+    ///     "let e01 = 5.0 / 4.0 * v01;",
+    ///     "let e02 = 5.0 / 4.0 * v02;",
+    ///     "let e03 = 5.0 / 4.0 * v03;",
+    ///     "let e23 = 5.0 / 4.0 * v23;",
+    ///     "let e31 = 5.0 / 4.0 * v31;",
+    ///     "let e12 = 5.0 / 4.0 * v12;",
+    ///     "let e0123 = 9.0 / 8.0 * v0123;",
+    /// ]);
+    /// ```
+    ///
+    /// See [`PgaP4::simple_motor()`] where [`Self::cond()`] is used in [`Self::shl`] whenever
+    /// [`Self::onc`] is set with [`Self::unit()`] to eliminate orthonormalization conditions.
+    ///
+    /// [`PgaP4::simple_motor()`]: struct.Multivector.html#method.simple_motor-1
     #[must_use]
     pub fn cond(mut self, lhs: &Self, rhs: &Self) -> Self {
         for (lhs_b, lhs_p) in lhs.map.clone() {
@@ -1250,7 +1277,7 @@ impl<B: Algebra> Multivector<B> {
                 let mut f = Factorization::from(p.clone());
                 for (p, _r) in f.map.values_mut() {
                     if p == &lhs_p {
-                        *p = rhs_p.clone();
+                        *p = rhs_p.clone() / lhs_g;
                     }
                 }
                 *p = f.into();
