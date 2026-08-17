@@ -65,13 +65,16 @@ pub type PgaP6 = Pga<0, 6>;
 pub type PgaP7 = Pga<0, 7>;
 
 /// Basis blade of PGA with metric $`M\in\{\pm 1,0\}`$ and embedded dimension $`N\in[0, 7]`$.
-#[derive(Debug, Clone, Copy, Eq, PartialEq, Default)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub struct Pga<const M: i8, const N: u32> {
     idx: u8,
 }
 
 /// Flavor-specific methods.
 impl<const M: i8, const N: u32> Pga<M, N> {
+    const fn const_assert() {
+        assert!(M.abs() <= 1 && N <= 7);
+    }
     /// Creates basis blade from $`\e`$-notation.
     ///
     /// ```
@@ -90,6 +93,7 @@ impl<const M: i8, const N: u32> Pga<M, N> {
     #[must_use]
     #[inline]
     pub const fn new(sym: &str) -> Self {
+        const { Self::const_assert() };
         Self {
             idx: BasisBlade::new(sym).idx,
         }
@@ -98,6 +102,7 @@ impl<const M: i8, const N: u32> Pga<M, N> {
     #[must_use]
     #[inline]
     pub const fn pss() -> Self {
+        const { Self::const_assert() };
         Self {
             idx: u8::MAX >> (u8::BITS - (N + 1)),
         }
@@ -113,6 +118,7 @@ impl<const M: i8, const N: u32> Pga<M, N> {
     ///
     /// Fails in case of formatting errors.
     pub fn table() -> Result<String, Error> {
+        const { Self::const_assert() };
         let basis_len = Self::basis().len();
         let blade_len = N as usize + 3;
         let table_len = blade_len * basis_len.pow(2) + basis_len;
@@ -170,6 +176,13 @@ impl<const M: i8, const N: u32> TryFrom<Symbol> for Pga<M, N> {
     }
 }
 
+impl<const M: i8, const N: u32> Default for Pga<M, N> {
+    fn default() -> Self {
+        const { Self::const_assert() };
+        Self { idx: 0 }
+    }
+}
+
 impl<const M: i8, const N: u32> Algebra for Pga<M, N> {
     const N: u32 = N;
 
@@ -183,6 +196,7 @@ impl<const M: i8, const N: u32> Algebra for Pga<M, N> {
     }
     #[inline]
     fn basis() -> impl ExactSizeIterator<Item = Self> + DoubleEndedIterator<Item = Self> {
+        const { Self::const_assert() };
         TAB[N as usize].iter().map(|b| Self { idx: b.idx })
     }
     #[inline]
@@ -277,7 +291,7 @@ impl<'a> BasisBlade<'a> {
         let mut cnt = 0;
         let mut lst = 0;
         while i < sym.len() {
-            assert!(b'0' <= s[i] && s[i] <= b'9');
+            assert!(b'0' <= s[i] && s[i] <= b'7');
             idx |= 1 << (s[i] - b'0');
             if lst > b'0' && lst > s[i] {
                 cnt += 1;
