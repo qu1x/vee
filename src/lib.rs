@@ -1539,12 +1539,14 @@ impl<B: Algebra> Display for Multivector<B> {
             tree: &Tree,
             depth: usize,
             grasp: bool,
+            group: bool,
             close: bool,
             mut defer: &'a str,
         ) -> Result<&'a str, fmt::Error> {
             let math = fmt.fill() == '$';
             let wide = matches!(fmt.align(), Some(Alignment::Center | Alignment::Right)) || math;
             let code = fmt.align() == Some(Alignment::Center) || fmt.alternate() || math;
+            let rust = wide && !math && fmt.precision().is_some();
             match tree {
                 Tree::Add(siblings) => {
                     let grasp = grasp || !(defer.is_empty() || defer == "+" || defer == " + ");
@@ -1567,7 +1569,7 @@ impl<B: Algebra> Display for Multivector<B> {
                             };
                         }
                         let close = index + 1 != siblings.len();
-                        defer = traverse(fmt, sibling, depth + 1, grasp, close, defer)?;
+                        defer = traverse(fmt, sibling, depth + 1, grasp, false, close, defer)?;
                         write!(fmt, "{defer}")?;
                     }
                     if grasp {
@@ -1585,6 +1587,7 @@ impl<B: Algebra> Display for Multivector<B> {
                         .and_then(Tree::as_sym)
                         .is_some_and(|sym| (sym.is_scalar()) && depth <= 1 && siblings.len() == 2);
                     for (index, sibling) in siblings.iter().enumerate() {
+                        let group = group || index > 0;
                         defer = if index == 0 {
                             defer
                         } else if code && defer.is_empty() && !is_one {
@@ -1605,19 +1608,34 @@ impl<B: Algebra> Display for Multivector<B> {
                             ""
                         };
                         let grasp = !(index == 0 && is_one);
-                        defer = traverse(fmt, sibling, depth + 1, grasp, close, defer)?;
+                        defer = traverse(fmt, sibling, depth + 1, grasp, group, close, defer)?;
                     }
                     defer = "";
                 }
                 Tree::Num(num) => {
-                    if num.abs().is_one() {
-                        if num.is_negative() {
-                            if wide && !defer.is_empty() {
-                                write!(fmt, " - ")?;
-                            } else {
-                                write!(fmt, "-")?;
+                    if num.is_negative() {
+                        if group {
+                            if code {
+                                if wide {
+                                    write!(fmt, " * ")?;
+                                } else {
+                                    write!(fmt, "*")?;
+                                }
                             }
-                        } else if fmt.align().is_none() {
+                            if !rust {
+                                write!(fmt, "(")?;
+                            }
+                            write!(fmt, "-")?;
+                        } else if wide && !defer.is_empty() {
+                            write!(fmt, " - ")?;
+                        } else {
+                            write!(fmt, "-")?;
+                        }
+
+                        defer = "";
+                    }
+                    if !group && num.abs().is_one() {
+                        if !num.is_negative() && fmt.align().is_none() {
                             write!(fmt, "+")?;
                         }
                         defer = if fmt.precision().is_some() {
@@ -1626,19 +1644,14 @@ impl<B: Algebra> Display for Multivector<B> {
                             "1"
                         };
                     } else {
-                        if num.is_negative() {
-                            if wide && !defer.is_empty() {
-                                write!(fmt, " - ")?;
-                            } else {
-                                write!(fmt, "-")?;
-                            }
-                            defer = "";
-                        }
                         if !num.is_zero() {
                             write!(fmt, "{defer}")?;
                             Display::fmt(&num.abs(), fmt)?;
                         }
                         defer = "";
+                    }
+                    if num.is_negative() && group && !rust {
+                        write!(fmt, ")")?;
                     }
                 }
                 Tree::Sym(sym) => {
@@ -1700,7 +1713,7 @@ impl<B: Algebra> Display for Multivector<B> {
                 write!(fmt, "{:width$}", "")?;
             }
         }
-        traverse(fmt, &tree, 0, false, false, defer)?;
+        traverse(fmt, &tree, 0, false, false, false, defer)?;
         if math && !fmt.sign_aware_zero_pad() && wide {
             if let Some(width) = fmt.width() {
                 write!(fmt, "{:width$}", "")?;
