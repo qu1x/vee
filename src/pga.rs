@@ -433,14 +433,19 @@ use n7::TAB7;
 const TAB: [&[BasisBlade]; 8] = [&TAB0, &TAB1, &TAB2, &TAB3, &TAB4, &TAB5, &TAB6, &TAB7];
 const LUT: [&[BasisBlade]; 8] = [&LUT0, &LUT1, &LUT2, &LUT3, &LUT4, &LUT5, &LUT6, &LUT7];
 
-// #[test]
-// fn dim() {
-//     assert!(TAB.windows(2).all(|tab| {
-//         let a = tab[0];
-//         let b = tab[1];
-//         a.iter().all(|a| b.iter().any(|b| b.sym == a.sym))
-//     }));
-// }
+#[test]
+fn dim() {
+    let s = |l: &[BasisBlade], h: &[BasisBlade]| l.iter().all(|l| h.iter().any(|h| h.sym == l.sym));
+
+    assert!(s(TAB0.as_slice(), TAB1.as_slice()));
+    assert!(s(TAB1.as_slice(), TAB2.as_slice()));
+
+    assert!(!s(TAB2.as_slice(), TAB3.as_slice()));
+    assert!(!s(TAB3.as_slice(), TAB4.as_slice()));
+    assert!(!s(TAB4.as_slice(), TAB5.as_slice()));
+    assert!(!s(TAB5.as_slice(), TAB6.as_slice()));
+    assert!(!s(TAB6.as_slice(), TAB7.as_slice()));
+}
 
 #[test]
 #[allow(clippy::too_many_lines, clippy::needless_raw_string_hashes)]
