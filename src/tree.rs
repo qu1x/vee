@@ -45,7 +45,7 @@ pub enum Tree {
 
 impl Tree {
     /// The zero constant.
-    pub const ZERO: Self = Self::Num(Rational::ZERO);
+    pub const ZERO: Self = Self::Add(Vec::new());
     /// The one constant.
     pub const ONE: Self = Self::Num(Rational::ONE);
 
@@ -53,7 +53,6 @@ impl Tree {
     ///
     /// Optionally, the GCDs are `signed` comprising the factored predominant sign.
     #[must_use]
-    #[allow(clippy::missing_panics_doc)]
     pub fn with_factorization<B: Algebra>(v: Multivector<B>, signed: bool) -> Self {
         let mut add = Vec::with_capacity(v.map.len());
         for (b, p) in v.map {
@@ -64,20 +63,17 @@ impl Tree {
                 add.push(Self::Mul(vec![f.into(), b.into().into()]));
             }
         }
-        if add.is_empty() {
-            Self::ZERO
-        } else if add.len() == 1 {
-            add.pop().expect("unreachable")
-        } else {
-            Self::Add(add)
+        match TryInto::<[Self; 1]>::try_into(add) {
+            Ok([any]) => any,
+            Err(add) => Self::Add(add),
         }
     }
     /// Returns [`Rational`] if [`Self::Num`].
     #[must_use]
     #[inline]
     pub const fn as_num(&self) -> Option<Rational> {
-        if let Self::Num(num) = self {
-            Some(*num)
+        if let &Self::Num(num) = self {
+            Some(num)
         } else {
             None
         }
@@ -86,18 +82,11 @@ impl Tree {
     #[must_use]
     #[inline]
     pub const fn as_sym(&self) -> Option<Symbol> {
-        if let Self::Sym(sym) = self {
-            Some(*sym)
+        if let &Self::Sym(sym) = self {
+            Some(sym)
         } else {
             None
         }
-    }
-}
-
-impl Default for Tree {
-    #[inline]
-    fn default() -> Self {
-        Self::ZERO
     }
 }
 
@@ -106,7 +95,6 @@ impl<B: Algebra> From<Multivector<B>> for Tree {
         let add = v
             .map
             .into_iter()
-            .filter(|(_b, p)| !p.is_zero())
             .map(|(b, p)| {
                 if p.is_one() {
                     b.into().into()
@@ -115,12 +103,9 @@ impl<B: Algebra> From<Multivector<B>> for Tree {
                 }
             })
             .collect::<Vec<Self>>();
-        if add.is_empty() {
-            Self::ZERO
-        } else if add.len() == 1 {
-            add.into_iter().next().expect("unreachable")
-        } else {
-            Self::Add(add)
+        match TryInto::<[Self; 1]>::try_into(add) {
+            Ok([any]) => any,
+            Err(add) => Self::Add(add),
         }
     }
 }
@@ -130,13 +115,12 @@ impl From<Factorization> for Tree {
         let add = f
             .map
             .into_iter()
-            .filter(|(_m, (p, c))| !(p.is_zero() || c.is_zero()))
-            .map(|(m, (p, c))| {
-                let is_mul = [c.is_one(), p.is_one(), m.is_one()].map(bool::not);
+            .map(|(m, (p, q))| {
+                let is_mul = [q.is_one(), p.is_one(), m.is_one()].map(bool::not);
                 let len = is_mul.into_iter().map(usize::from).sum::<usize>();
                 let mut mul = Vec::with_capacity(len);
                 if is_mul[0] {
-                    mul.push(c.into());
+                    mul.push(q.into());
                 }
                 if is_mul[1] {
                     mul.push(p.into());
@@ -146,28 +130,31 @@ impl From<Factorization> for Tree {
                 }
                 if len == 0 {
                     Self::ONE
-                } else if len == 1 {
-                    mul.pop().expect("unreachable")
                 } else {
-                    Self::Mul(mul)
+                    match TryInto::<[Self; 1]>::try_into(mul) {
+                        Ok([any]) => any,
+                        Err(mul) => Self::Mul(mul),
+                    }
                 }
             })
             .collect::<Vec<Self>>();
-        if add.is_empty() {
-            Self::ZERO
-        } else if add.len() == 1 {
-            let any = add.into_iter().next().expect("unreachable");
-            if f.gcd.is_one() {
-                any
-            } else if let Self::Num(num) = any {
-                Self::Num(f.gcd * num)
-            } else {
-                Self::Mul(vec![f.gcd.into(), any])
+        match TryInto::<[Self; 1]>::try_into(add) {
+            Ok([any]) => {
+                if f.gcd.is_one() {
+                    any
+                } else if let Self::Num(num) = any {
+                    Self::Num(f.gcd * num)
+                } else {
+                    Self::Mul(vec![f.gcd.into(), any])
+                }
             }
-        } else if f.gcd.is_one() {
-            Self::Add(add)
-        } else {
-            Self::Mul(vec![f.gcd.into(), Self::Add(add)])
+            Err(add) => {
+                if f.gcd.is_one() {
+                    Self::Add(add)
+                } else {
+                    Self::Mul(vec![f.gcd.into(), Self::Add(add)])
+                }
+            }
         }
     }
 }
@@ -177,30 +164,26 @@ impl From<Polynomial> for Tree {
         let add = p
             .map
             .into_iter()
-            .filter(|(_m, c)| !c.is_zero())
-            .map(|(m, c)| {
-                if c.is_one() {
+            .map(|(m, q)| {
+                if q.is_one() {
                     m.into()
                 } else {
                     let m = Self::from(m);
                     if let Self::Mul(mul) = m {
-                        let mut vec = vec![Self::from(c)];
+                        let mut vec = vec![Self::from(q)];
                         vec.extend(mul);
                         Self::Mul(vec)
                     } else if let Self::Num(num) = m {
-                        Self::Num(c * num)
+                        Self::Num(q * num)
                     } else {
-                        Self::Mul(vec![c.into(), m])
+                        Self::Mul(vec![q.into(), m])
                     }
                 }
             })
             .collect::<Vec<Self>>();
-        if add.is_empty() {
-            Self::ZERO
-        } else if add.len() == 1 {
-            add.into_iter().next().expect("unreachable")
-        } else {
-            Self::Add(add)
+        match TryInto::<[Self; 1]>::try_into(add) {
+            Ok([any]) => any,
+            Err(add) => Self::Add(add),
         }
     }
 }
@@ -210,24 +193,32 @@ impl From<Monomial> for Tree {
         let mul = m
             .map
             .into_iter()
-            .flat_map(|(s, e)| {
-                repeat_n(s, e.get().try_into().expect("negative exponent")).map(From::from)
+            .flat_map(|(s, z)| {
+                repeat_n(
+                    s,
+                    isize::try_from(z.get())
+                        .expect("attempt to raise symbol to power with overflow")
+                        .try_into()
+                        .expect("attempt to raise symbol to power with negation"),
+                )
+                .map(Self::from)
             })
             .collect::<Vec<Self>>();
         if mul.is_empty() {
             Self::ONE
-        } else if mul.len() == 1 {
-            mul.into_iter().next().expect("unreachable")
         } else {
-            Self::Mul(mul)
+            match TryInto::<[Self; 1]>::try_into(mul) {
+                Ok([any]) => any,
+                Err(mul) => Self::Mul(mul),
+            }
         }
     }
 }
 
 impl From<Rational> for Tree {
     #[inline]
-    fn from(r: Rational) -> Self {
-        Self::Num(r)
+    fn from(q: Rational) -> Self {
+        Self::Num(q)
     }
 }
 

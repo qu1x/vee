@@ -3,16 +3,21 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of
 // the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-use super::{Algebra, Factor, Factorization, Monomial, Polynomial, Rational, Symbol, Tree};
+use super::{
+    Algebra, Factorization, Integer, NegAssign, Polynomial, Rational, Rev, RevAssign, Symbol, Tree,
+};
 use core::{
     fmt::{self, Alignment, Debug, Display, LowerHex, Octal},
-    mem::take,
+    mem::replace,
     ops::{
         Add, AddAssign, BitAnd, BitOr, BitXor, Div, DivAssign, Mul, MulAssign, Neg, Not, Rem, Shl,
         Shr, Sub, SubAssign,
     },
 };
-use std::collections::{BTreeMap, BTreeSet};
+use std::{
+    collections::{BTreeMap, BTreeSet, btree_map::Entry},
+    iter::{Product, Sum},
+};
 
 /// Uniquely reduced form of a symbolic multivector expression.
 ///
@@ -61,7 +66,7 @@ use std::collections::{BTreeMap, BTreeSet};
 ///   * `"{:0o}"` for left-to-right rank direction.
 ///
 /// [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Multivector<B: Algebra> {
     /// Symbolic storage.
     pub map: BTreeMap<B, Polynomial>,
@@ -87,16 +92,9 @@ impl<B: Algebra> TryFrom<Tree> for Multivector<B> {
 }
 
 impl<B: Algebra> From<Rational> for Multivector<B> {
-    fn from(r: Rational) -> Self {
-        if r.is_zero() {
-            Self::zero()
-        } else {
-            let mut p = Polynomial::default();
-            p.map.insert(Monomial::one(), r);
-            let mut v = Self::default();
-            v.map.insert(B::scalar(), p);
-            v
-        }
+    #[inline]
+    fn from(q: Rational) -> Self {
+        Self::from((B::scalar(), Polynomial::from(q)))
     }
 }
 
@@ -116,7 +114,7 @@ impl<B: Algebra> TryFrom<Symbol> for Multivector<B> {
 }
 
 impl<B: Algebra> Multivector<B> {
-    /// Creates a new multivector from an iterator over tuples of symbols and basis blades.
+    /// Creates a new multivector from `iter` over <code>([Into]<[Symbol]>, B)</code>.
     ///
     /// ```
     /// use vee::{PgaP3 as Vee, format_eq, pga::PgaP3 as Bee};
@@ -137,19 +135,21 @@ impl<B: Algebra> Multivector<B> {
     /// ```
     #[must_use]
     #[inline]
-    pub fn new<E, S>(iter: E) -> Self
+    pub fn new<I, S>(iter: I) -> Self
     where
-        E: IntoIterator<Item = (S, B)>,
+        I: IntoIterator<Item = (S, B)>,
         S: Into<Symbol>,
     {
-        iter.into_iter().map(|(s, b)| ([[s]], b)).collect()
+        iter.into_iter()
+            .map(|(s, b)| (b, [([(s, Integer::ONE)], Rational::ONE)]))
+            .collect()
     }
     /// Appends Unicode *combining dot above* (i.e., `"◌̇"`) to all symbols.
     ///
     /// This is orthogonal to [`Self::cdm()`] extending the symbol space.
     #[must_use]
     pub fn alt(mut self) -> Self {
-        self.map.values_mut().for_each(|p| *p = take(p).alt());
+        self.map.values_mut().for_each(Polynomial::alt_assign);
         self
     }
     /// Appends Unicode *combining x below* (i.e., `"◌͓"`) to all symbols.
@@ -194,13 +194,13 @@ impl<B: Algebra> Multivector<B> {
     /// ```
     #[must_use]
     pub fn cdm(mut self, mark: char) -> Self {
-        self.map.values_mut().for_each(|p| *p = take(p).cdm(mark));
+        self.map.values_mut().for_each(|p| p.cdm_assign(mark));
         self
     }
     /// Swaps lowercase and uppercase symbols.
     #[must_use]
     pub fn swp(mut self) -> Self {
-        self.map.values_mut().for_each(|p| *p = take(p).swp());
+        self.map.values_mut().for_each(Polynomial::swp_assign);
         self
     }
     /// Collects all grades.
@@ -244,7 +244,7 @@ impl<B: Algebra> Multivector<B> {
     /// ```
     #[must_use]
     pub fn is_odd(&self) -> bool {
-        self.map.keys().map(B::grade).all(Factor::is_odd)
+        self.map.keys().map(B::grade).all(|grade| grade & 1 != 0)
     }
     /// Whether all grades are even.
     ///
@@ -257,7 +257,7 @@ impl<B: Algebra> Multivector<B> {
     /// See [`Self::is_odd()`] for mixed-parity and zero multivectors.
     #[must_use]
     pub fn is_even(&self) -> bool {
-        self.map.keys().map(B::grade).all(Factor::is_even)
+        self.map.keys().map(B::grade).all(|grade| grade & 1 == 0)
     }
     /// Whether being an entity (i.e., having unique symbols and exactly one per basis blade).
     #[must_use]
@@ -300,14 +300,8 @@ impl<B: Algebra> Multivector<B> {
     }
     /// The reverse.
     #[must_use]
-    pub fn rev(mut self) -> Self {
-        self.map.iter_mut().for_each(|(b, p)| {
-            let (s, _b) = b.rev();
-            if s < 0 {
-                *p = -take(p);
-            }
-        });
-        self
+    pub fn rev(self) -> Self {
+        Rev::rev(self)
     }
     /// The zero.
     #[must_use]
@@ -321,47 +315,60 @@ impl<B: Algebra> Multivector<B> {
     /// The one.
     #[must_use]
     pub fn one() -> Self {
-        Self {
-            map: BTreeMap::from([(B::scalar(), Polynomial::one())]),
-            onc: false,
-        }
+        Self::from(Rational::ONE)
     }
-    /// Evaluates each symbol `S` of map `M` as respective rational `R`.
+    /// Evaluates each symbol `S` of map `M` as respective rational `Q`.
     #[must_use]
-    #[allow(clippy::missing_panics_doc)]
-    pub fn eval<M, S, R>(mut self, map: M) -> Self
+    pub fn eval<M, S, Q>(mut self, map: M) -> Self
     where
-        M: IntoIterator<Item = (S, R)>,
+        M: IntoIterator<Item = (S, Q)>,
         S: Into<Symbol>,
-        R: Into<Rational>,
+        Q: TryInto<Rational>,
     {
         // Using inner non-generic function as monomorphization barrier.
-        fn eval(vec: Vec<&mut Polynomial>, map: &BTreeMap<Symbol, Rational>) {
+        fn eval(vec: Vec<&mut Polynomial>, map: &BTreeMap<Symbol, Option<Rational>>) {
             for old_p in vec {
-                let mut new_p = Polynomial::default();
-                for (old_m, old_r) in &old_p.map {
+                let mut new_p = Polynomial::zero();
+                for (old_m, old_q) in &old_p.map {
                     let mut new_m = old_m.clone();
-                    let mut new_r = *old_r;
-                    for (old_s, old_e) in &old_m.map {
-                        if let Some(map_r) = map.get(old_s) {
+                    let mut new_q = Some(*old_q);
+                    for (old_s, old_z) in &old_m.map {
+                        if let Some(map_q) = map.get(old_s) {
                             new_m.map.remove(old_s);
-                            new_r *= map_r.pow(old_e.get());
+                            let old_z = old_z
+                                .get()
+                                .try_into()
+                                .expect("attempt to raise rational to power with overflow");
+                            new_q = new_q
+                                .zip(*map_q)
+                                .map(|(new_q, map_q)| new_q * map_q.pow(old_z));
                         }
                     }
-                    if new_m.map.is_empty() {
-                        new_m = Monomial::one();
+                    match new_p.map.entry(new_m) {
+                        Entry::Occupied(mut entry) => {
+                            match new_q.and_then(|new_q| *entry.get() + new_q) {
+                                Some(q) => *entry.get_mut() = q,
+                                None => {
+                                    entry.remove();
+                                }
+                            }
+                        }
+                        Entry::Vacant(entry) => {
+                            if let Some(new_q) = new_q {
+                                entry.insert(new_q);
+                            }
+                        }
                     }
-                    *new_p.map.entry(new_m).or_default() += new_r;
-                    new_p.map.retain(|_m, c| !c.is_zero());
                 }
                 *old_p = new_p;
             }
         }
         eval(
             self.map.values_mut().collect(),
-            &map.into_iter().map(|(s, r)| (s.into(), r.into())).collect(),
+            &map.into_iter()
+                .map(|(s, q)| (s.into(), q.try_into().ok()))
+                .collect(),
         );
-        self.map.retain(|_b, p| !p.map.is_empty());
         self
     }
     /// The polarity.
@@ -388,6 +395,7 @@ impl<B: Algebra> Multivector<B> {
     /// format_eq!(Vee::moment().norm_squared(), []);
     /// ```
     #[must_use]
+    #[inline]
     pub fn norm_squared(self) -> Self {
         self.clone() * self.rev()
     }
@@ -395,6 +403,7 @@ impl<B: Algebra> Multivector<B> {
     ///
     /// Assumes <code>[Self::norm_squared]\(self\) == [Self::one()]</code>.
     #[must_use]
+    #[inline]
     pub const fn unit(mut self) -> Self {
         self.onc = true;
         self
@@ -415,7 +424,7 @@ impl<B: Algebra> Multivector<B> {
     /// let lhs = (l() | r()) * 2 + (l() % r()) * 4 + (l() ^ r()) * 8;
     /// let rhs = Vee::scalar() * 3 + Vee::line() * 5 + Vee::pseudoscalar() * 9;
     ///
-    /// format_eq!("{:-#x}", mul.cond(&lhs, &rhs), [
+    /// format_eq!("{:#x}", mul.cond(&lhs, &rhs), [
     ///     "let e = 3.0 / 2.0 * v;",
     ///     "let e01 = 5.0 / 4.0 * v01;",
     ///     "let e02 = 5.0 / 4.0 * v02;",
@@ -434,20 +443,57 @@ impl<B: Algebra> Multivector<B> {
     #[must_use]
     pub fn cond(mut self, lhs: &Self, rhs: &Self) -> Self {
         for (lhs_b, lhs_p) in lhs.map.clone() {
-            let rhs_p = rhs.map.get(&lhs_b).cloned().unwrap_or_default();
-            let lhs_g = lhs_p.signed_gcd();
+            let rhs_p = rhs.map.get(&lhs_b).cloned();
+            let lhs_g = lhs_p.signed_gcd().unwrap_or(Rational::ONE);
             let lhs_p = lhs_p / lhs_g;
-            for p in self.map.values_mut() {
-                let mut f = Factorization::from(p.clone());
-                for (p, _r) in f.map.values_mut() {
-                    if p == &lhs_p {
-                        *p = rhs_p.clone() / lhs_g;
+            self.map.retain(|_b, p| {
+                if p.is_zero() {
+                    true
+                } else {
+                    let mut f = Factorization::from(p.clone());
+                    f.map.retain(|_m, (p, _q)| {
+                        if p == &lhs_p {
+                            rhs_p.as_ref().is_some_and(|rhs_p| {
+                                *p = rhs_p.clone() / lhs_g;
+                                true
+                            })
+                        } else {
+                            true
+                        }
+                    });
+                    if f.is_zero() {
+                        false
+                    } else {
+                        *p = f.into();
+                        true
                     }
                 }
-                *p = f.into();
-            }
+            });
         }
-        self.map.retain(|_b, p| !p.map.is_empty());
+        self
+    }
+    /// Omits zero vectors.
+    ///
+    /// ```
+    /// use vee::{PgaP3 as Vee, format_eq, pga::PgaP3 as Bee};
+    ///
+    /// let norm = Vee::norm().eval([(Bee::e0123(), 0)]);
+    ///
+    /// format_eq!("{:#x}", norm, [
+    ///     "let e = v;",
+    ///     "let e0123 = 0.0;",
+    /// ]);
+    ///
+    /// let simple_norm = norm.omit();
+    ///
+    /// format_eq!("{:#x}", simple_norm, [
+    ///     "let e = v;",
+    /// ]);
+    /// ```
+    #[must_use]
+    #[inline]
+    pub fn omit(mut self) -> Self {
+        self.map.retain(|_b, p| !p.is_zero());
         self
     }
     /// Returns the number of `(multiplications, additions)`.
@@ -458,11 +504,11 @@ impl<B: Algebra> Multivector<B> {
             let (f_muls, f_adds) =
                 f.map
                     .into_iter()
-                    .fold((0, 0), |(mut f_muls, f_adds), (m, (p, r))| {
+                    .fold((0, 0), |(mut f_muls, f_adds), (m, (p, q))| {
                         if !m.is_one() {
                             f_muls += 1;
                         }
-                        if !r.abs().is_one() {
+                        if !q.abs().is_one() {
                             f_muls += 1;
                         }
                         let (p_muls, p_adds) = p.ops();
@@ -473,20 +519,57 @@ impl<B: Algebra> Multivector<B> {
     }
 }
 
-impl<B: Algebra, P, M, S> FromIterator<(P, B)> for Multivector<B>
+impl<B, P> From<(B, P)> for Multivector<B>
 where
-    P: IntoIterator<Item = M>,
-    M: IntoIterator<Item = S>,
-    S: Into<Symbol>,
+    B: Algebra,
+    P: Into<Polynomial>,
 {
-    fn from_iter<V: IntoIterator<Item = (P, B)>>(iter: V) -> Self {
+    #[inline]
+    fn from((b, p): (B, P)) -> Self {
         Self {
-            map: iter
-                .into_iter()
-                .map(|(p, b)| (b, Polynomial::from_iter(p)))
-                .collect(),
+            map: BTreeMap::from([(b, p.into())]),
             onc: false,
         }
+    }
+}
+
+impl<B, P, M, Q, S, Z> FromIterator<(B, P)> for Multivector<B>
+where
+    B: Algebra,
+    P: IntoIterator<Item = (M, Q)>,
+    M: IntoIterator<Item = (S, Z)>,
+    Q: TryInto<Rational>,
+    S: Into<Symbol>,
+    Z: TryInto<Integer>,
+{
+    #[inline]
+    fn from_iter<I: IntoIterator<Item = (B, P)>>(iter: I) -> Self {
+        let map = iter
+            .into_iter()
+            .map(|(b, p)| (b, Polynomial::from_iter(p)))
+            .collect();
+        Self { map, onc: false }
+    }
+}
+
+impl<B: Algebra> Sum for Multivector<B> {
+    #[inline]
+    fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
+        iter.reduce(Self::add).unwrap_or_else(Self::zero)
+    }
+}
+
+impl<B: Algebra> Product for Multivector<B> {
+    #[inline]
+    fn product<I: Iterator<Item = Self>>(iter: I) -> Self {
+        iter.reduce(Self::mul).unwrap_or_else(Self::one)
+    }
+}
+
+impl<'a, B: Algebra> Product<&'a Self> for Multivector<B> {
+    #[inline]
+    fn product<I: Iterator<Item = &'a Self>>(iter: I) -> Self {
+        iter.fold(Self::one(), Self::mul)
     }
 }
 
@@ -503,9 +586,19 @@ impl<B: Algebra> Add for Multivector<B> {
 impl<B: Algebra> AddAssign for Multivector<B> {
     fn add_assign(&mut self, other: Self) {
         for (b, p) in other.map {
-            *self.map.entry(b).or_default() += p;
+            match self.map.entry(b) {
+                Entry::Occupied(mut entry) => {
+                    if let Some(p) = replace(entry.get_mut(), Polynomial::zero()) + p {
+                        *entry.get_mut() = p;
+                    } else {
+                        entry.remove();
+                    }
+                }
+                Entry::Vacant(entry) => {
+                    entry.insert(p);
+                }
+            }
         }
-        self.map.retain(|_b, p| !p.map.is_empty());
     }
 }
 
@@ -522,77 +615,169 @@ impl<B: Algebra> Sub for Multivector<B> {
 impl<B: Algebra> SubAssign for Multivector<B> {
     fn sub_assign(&mut self, other: Self) {
         for (b, p) in other.map {
-            *self.map.entry(b).or_default() -= p;
+            match self.map.entry(b) {
+                Entry::Occupied(mut entry) => {
+                    if let Some(p) = replace(entry.get_mut(), Polynomial::zero()) - p {
+                        *entry.get_mut() = p;
+                    } else {
+                        entry.remove();
+                    }
+                }
+                Entry::Vacant(entry) => {
+                    entry.insert(-p);
+                }
+            }
         }
-        self.map.retain(|_b, p| !p.map.is_empty());
     }
 }
 
 impl<B: Algebra> Neg for Multivector<B> {
     type Output = Self;
 
+    #[inline]
     fn neg(mut self) -> Self::Output {
-        self.map.values_mut().for_each(|p| *p = -take(p));
+        self.neg_assign();
         self
+    }
+}
+
+impl<B: Algebra> NegAssign for Multivector<B> {
+    #[inline]
+    fn neg_assign(&mut self) {
+        self.map.values_mut().for_each(Polynomial::neg_assign);
+    }
+}
+
+impl<B: Algebra> Rev for Multivector<B> {
+    type Output = Self;
+
+    #[inline]
+    fn rev(mut self) -> Self::Output {
+        self.rev_assign();
+        self
+    }
+}
+
+impl<B: Algebra> RevAssign for Multivector<B> {
+    #[inline]
+    fn rev_assign(&mut self) {
+        self.map.iter_mut().for_each(|(b, p)| {
+            let (s, _b) = b.rev();
+            if s < 0 {
+                p.neg_assign();
+            }
+        });
     }
 }
 
 impl<B: Algebra> Mul for Multivector<B> {
     type Output = Self;
 
+    #[inline]
     fn mul(self, other: Self) -> Self::Output {
-        let mut map = BTreeMap::<B, Polynomial>::new();
-        for (&lhs_b, lhs_p) in &self.map {
-            for (&rhs_b, rhs_p) in &other.map {
-                let (s, b) = lhs_b * rhs_b;
-                let p = lhs_p.clone() * rhs_p.clone();
-                *map.entry(b).or_default() += p * i32::from(s);
-            }
-        }
-        map.retain(|_b, p| !p.map.is_empty());
-        Self { map, onc: false }
+        &self * &other
     }
 }
 
 impl<B: Algebra> MulAssign for Multivector<B> {
+    #[inline]
     fn mul_assign(&mut self, other: Self) {
-        *self = take(self) * other;
+        *self = &*self * &other;
     }
 }
 
-impl<B: Algebra> Mul<i32> for Multivector<B> {
+impl<B: Algebra> Mul<&Self> for Multivector<B> {
     type Output = Self;
 
     #[inline]
-    fn mul(mut self, other: i32) -> Self::Output {
+    fn mul(self, other: &Self) -> Self::Output {
+        &self * other
+    }
+}
+
+impl<B: Algebra> MulAssign<&Self> for Multivector<B> {
+    #[inline]
+    fn mul_assign(&mut self, other: &Self) {
+        *self = &*self * other;
+    }
+}
+
+impl<B: Algebra> Mul for &Multivector<B> {
+    type Output = Multivector<B>;
+
+    fn mul(self, other: Self) -> Self::Output {
+        let mut mul = Multivector::zero();
+        for (&lhs_b, lhs_p) in &self.map {
+            for (&rhs_b, rhs_p) in &other.map {
+                let (s, b) = lhs_b * rhs_b;
+                let q = Rational::new_integer(s.into());
+                let Some(p) = q.map(|q| lhs_p.clone() * rhs_p.clone() * q) else {
+                    continue;
+                };
+                match mul.map.entry(b) {
+                    Entry::Occupied(mut entry) => {
+                        if let Some(p) = replace(entry.get_mut(), Polynomial::zero()) + p {
+                            *entry.get_mut() = p;
+                        } else {
+                            entry.remove();
+                        }
+                    }
+                    Entry::Vacant(entry) => {
+                        entry.insert(p);
+                    }
+                }
+            }
+        }
+        mul
+    }
+}
+
+impl<B: Algebra> Mul<Multivector<B>> for &Multivector<B> {
+    type Output = Multivector<B>;
+
+    #[inline]
+    fn mul(self, other: Multivector<B>) -> Self::Output {
+        self * &other
+    }
+}
+
+impl<B: Algebra, Q: TryInto<Rational>> Mul<Q> for Multivector<B> {
+    type Output = Self;
+
+    #[inline]
+    fn mul(mut self, other: Q) -> Self::Output {
         self *= other;
         self
     }
 }
 
-impl<B: Algebra> MulAssign<i32> for Multivector<B> {
-    fn mul_assign(&mut self, other: i32) {
-        if other == 0 {
-            self.map = BTreeMap::default();
-        } else {
+impl<B: Algebra, Q: TryInto<Rational>> MulAssign<Q> for Multivector<B> {
+    #[inline]
+    fn mul_assign(&mut self, other: Q) {
+        if let Ok(other) = other.try_into() {
             self.map.values_mut().for_each(|p| *p *= other);
+        } else {
+            self.map.clear();
         }
     }
 }
 
-impl<B: Algebra> Div<i32> for Multivector<B> {
+impl<B: Algebra, Q: TryInto<Rational>> Div<Q> for Multivector<B> {
     type Output = Self;
 
     #[inline]
-    fn div(mut self, other: i32) -> Self::Output {
+    fn div(mut self, other: Q) -> Self::Output {
         self /= other;
         self
     }
 }
 
-impl<B: Algebra> DivAssign<i32> for Multivector<B> {
-    fn div_assign(&mut self, other: i32) {
-        assert_ne!(other, 0, "division by zero");
+impl<B: Algebra, Q: TryInto<Rational>> DivAssign<Q> for Multivector<B> {
+    #[inline]
+    fn div_assign(&mut self, other: Q) {
+        let other = other
+            .try_into()
+            .unwrap_or_else(|_| panic!("attempt to divide multivector by zero"));
         self.map.values_mut().for_each(|p| *p /= other);
     }
 }
@@ -601,13 +786,13 @@ impl<B: Algebra> BitOr for Multivector<B> {
     type Output = Self;
 
     fn bitor(self, other: Self) -> Self::Output {
-        let mut mv = Self::default();
+        let mut v = Self::zero();
         for (lhs_grade, lhs_vector) in self.vectors() {
             for (rhs_grade, rhs_vector) in other.clone().vectors() {
-                mv += (lhs_vector.clone() * rhs_vector).vector(rhs_grade.abs_diff(lhs_grade));
+                v += (lhs_vector.clone() * rhs_vector).vector(rhs_grade.abs_diff(lhs_grade));
             }
         }
-        mv
+        v
     }
 }
 
@@ -615,13 +800,13 @@ impl<B: Algebra> BitXor for Multivector<B> {
     type Output = Self;
 
     fn bitxor(self, other: Self) -> Self::Output {
-        let mut mv = Self::default();
+        let mut v = Self::zero();
         for (lhs_grade, lhs_vector) in self.vectors() {
             for (rhs_grade, rhs_vector) in other.clone().vectors() {
-                mv += (lhs_vector.clone() * rhs_vector).vector(lhs_grade + rhs_grade);
+                v += (lhs_vector.clone() * rhs_vector).vector(lhs_grade + rhs_grade);
             }
         }
-        mv
+        v
     }
 }
 
@@ -629,12 +814,14 @@ impl<B: Algebra> Not for Multivector<B> {
     type Output = Self;
 
     fn not(self) -> Self::Output {
-        let map = BTreeMap::new();
-        let map = self.map.into_iter().fold(map, |mut map, (b, p)| {
-            let (s, b) = !b;
-            map.insert(b, p * i32::from(s));
-            map
-        });
+        let map = self
+            .map
+            .into_iter()
+            .map(|(b, p)| {
+                let (s, b) = !b;
+                (b, p * Rational::new_integer(s.into()).unwrap())
+            })
+            .collect();
         Self { map, onc: false }
     }
 }
@@ -652,7 +839,7 @@ impl<B: Algebra> Rem for Multivector<B> {
     type Output = Self;
 
     fn rem(self, other: Self) -> Self::Output {
-        (self.clone() * other.clone() - other * self) / 2
+        (self.clone() * other.clone() - other * self) / Rational::TWO
     }
 }
 
@@ -665,7 +852,7 @@ impl<B: Algebra> Shl for Multivector<B> {
             (self.clone() | (Self::one() - lhs.clone()), lhs, Self::one())
         });
         if self.is_odd() && other.is_odd() {
-            self = -self;
+            self.neg_assign();
         }
         let shl = other.clone() * self * other.rev();
         if let Some((onc, lhs, rhs)) = onc {
@@ -690,7 +877,7 @@ impl<B: Algebra> Shr for Multivector<B> {
 }
 
 impl<B: Algebra> Display for Multivector<B> {
-    #[allow(clippy::too_many_lines, clippy::cognitive_complexity)]
+    #[allow(clippy::too_many_lines)]
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         fn traverse<'a>(
             fmt: &mut fmt::Formatter,
@@ -707,31 +894,38 @@ impl<B: Algebra> Display for Multivector<B> {
             let rust = wide && !math && fmt.precision().is_some();
             match tree {
                 Tree::Add(siblings) => {
-                    let grasp = grasp || !(defer.is_empty() || defer == "+" || defer == " + ");
-                    if grasp {
-                        write!(fmt, "{defer}")?;
-                        defer = "";
-                        write!(fmt, "(")?;
-                    }
-                    for (index, sibling) in siblings.iter().enumerate() {
-                        if fmt.align().is_none() || index != 0 {
-                            defer = if wide { " + " } else { "+" };
+                    if siblings.is_empty() && depth != 0 {
+                        write!(fmt, "0")?;
+                        if fmt.precision().is_some() {
+                            write!(fmt, ".0")?;
                         }
-                        if let Some(sym) = sibling.as_sym()
-                            && sym.is_scalar()
-                        {
-                            defer = if fmt.precision().is_some() {
-                                if defer == "+" { "+1.0" } else { "1.0" }
-                            } else {
-                                if defer == "+" { "+1" } else { "1" }
-                            };
+                    } else {
+                        let grasp = grasp || !(defer.is_empty() || defer == "+" || defer == " + ");
+                        if grasp {
+                            write!(fmt, "{defer}")?;
+                            defer = "";
+                            write!(fmt, "(")?;
                         }
-                        let close = index + 1 != siblings.len();
-                        defer = traverse(fmt, sibling, depth + 1, grasp, false, close, defer)?;
-                        write!(fmt, "{defer}")?;
-                    }
-                    if grasp {
-                        write!(fmt, ")")?;
+                        for (index, sibling) in siblings.iter().enumerate() {
+                            if fmt.align().is_none() || index != 0 {
+                                defer = if wide { " + " } else { "+" };
+                            }
+                            if let Some(sym) = sibling.as_sym()
+                                && sym.is_scalar()
+                            {
+                                defer = if fmt.precision().is_some() {
+                                    if defer == "+" { "+1.0" } else { "1.0" }
+                                } else {
+                                    if defer == "+" { "+1" } else { "1" }
+                                };
+                            }
+                            let close = index + 1 != siblings.len();
+                            defer = traverse(fmt, sibling, depth + 1, grasp, false, close, defer)?;
+                            write!(fmt, "{defer}")?;
+                        }
+                        if grasp {
+                            write!(fmt, ")")?;
+                        }
                     }
                     defer = "";
                 }
@@ -802,10 +996,8 @@ impl<B: Algebra> Display for Multivector<B> {
                             "1"
                         };
                     } else {
-                        if !num.is_zero() {
-                            write!(fmt, "{defer}")?;
-                            Display::fmt(&num.abs(), fmt)?;
-                        }
+                        write!(fmt, "{defer}")?;
+                        Display::fmt(&num.abs(), fmt)?;
                         defer = "";
                     }
                     if num.is_negative() && group && !rust {
@@ -886,7 +1078,7 @@ impl<B: Algebra> LowerHex for Multivector<B> {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         for (b, p) in &self.map {
             let map = BTreeMap::from([(B::scalar(), p.clone())]);
-            let m = Self { map, onc: self.onc };
+            let v = Self { map, onc: self.onc };
             if let Some(width) = fmt.width() {
                 write!(fmt, "{:width$}", "")?;
             }
@@ -895,31 +1087,31 @@ impl<B: Algebra> LowerHex for Multivector<B> {
             if fmt.sign_plus() {
                 if rust {
                     if deref {
-                        writeln!(fmt, "{b:^} = {m:^+0.1};")?;
+                        writeln!(fmt, "{b:^} = {v:^+0.1};")?;
                     } else {
-                        writeln!(fmt, "let {b:#} = {m:>+#0.1};")?;
+                        writeln!(fmt, "let {b:#} = {v:>+#0.1};")?;
                     }
                 } else {
-                    writeln!(fmt, "{b:#}={m:<+#0}")?;
+                    writeln!(fmt, "{b:#}={v:<+#0}")?;
                 }
             } else if fmt.sign_minus() {
                 if rust {
                     if deref {
-                        writeln!(fmt, "{b:^} = {m:^-0.1};")?;
+                        writeln!(fmt, "{b:^} = {v:^-0.1};")?;
                     } else {
-                        writeln!(fmt, "let {b:#} = {m:>-#0.1};")?;
+                        writeln!(fmt, "let {b:#} = {v:>-#0.1};")?;
                     }
                 } else {
-                    writeln!(fmt, "{b:#}={m:<-#0}")?;
+                    writeln!(fmt, "{b:#}={v:<-#0}")?;
                 }
             } else if rust {
                 if deref {
-                    writeln!(fmt, "{b:^} = {m:^0.1};")?;
+                    writeln!(fmt, "{b:^} = {v:^0.1};")?;
                 } else {
-                    writeln!(fmt, "let {b:#} = {m:>#0.1};")?;
+                    writeln!(fmt, "let {b:#} = {v:>#0.1};")?;
                 }
             } else {
-                writeln!(fmt, "{b:#}={m:<#0}")?;
+                writeln!(fmt, "{b:#}={v:<#0}")?;
             }
         }
         Ok(())

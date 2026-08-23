@@ -1,5 +1,16 @@
-# Version 0.4.0 (2026-08-13)
+# Version 0.4.0 (2026-08-23)
 
+  * Refactor `FromIterator` implementations and add constructor methods for polynomial and monomial.
+  * Gate `rudimentary` (N < 2) and `exploratory` (N > 4) PGA flavors behind respective features.
+  * Implement iterator traits: `Sum` and `Product`.
+  * Implement operator traits on applicable combinations of `self`/`other` references.
+  * Define operator traits: `Rev`/`RevAssign`, `Inv`/`InvAssign`, and `NegAssign`.
+  * Distinguish between numeric and symbolic zero for either emitting or omitting zero vectors.
+  * Drop `Choose` trait in favor of constant `choose` function.
+  * Drop `Factor` trait in favor of `Rational`/`Integer` methods of which some are constant.
+  * Drop `Default` implementations in favor of explicit `zero()`/`one()` methods.
+  * Base rationals on non-zero integers such that empty polynomials are unique numeric zeros.
+  * Split sources into multiple files and split unit tests into multiple external ones.
   * Let empty monomial represent one rather than zero and drop symbolic one.
   * Implement three-way parity.
   * Format examples.

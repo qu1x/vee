@@ -3,12 +3,12 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of
 // the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-use super::Symbol;
-use core::{
-    num::NonZeroI32,
-    ops::{Div, DivAssign, Mul, MulAssign},
+use super::{Integer, Inv, InvAssign, NegAssign, Symbol};
+use core::ops::{Div, DivAssign, Mul, MulAssign};
+use std::{
+    collections::{BTreeMap, btree_map::Entry},
+    iter::Product,
 };
-use std::collections::BTreeMap;
 
 /// Uniquely reduced form of a symbolic monomial expression.
 ///
@@ -21,13 +21,23 @@ use std::collections::BTreeMap;
 ///
 /// All operators (e.g., [`Mul`], [`Div`]) implemented for [`Monomial`] reduce an arbitrary
 /// expression into this unique form.
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Monomial {
     /// Symbolic storage.
-    pub map: BTreeMap<Symbol, NonZeroI32>,
+    pub map: BTreeMap<Symbol, Integer>,
 }
 
 impl Monomial {
+    /// Creates a new monomial from `iter` over <code>[Into]<[Symbol]></code>.
+    #[must_use]
+    #[inline]
+    pub fn new<I>(iter: I) -> Self
+    where
+        I: IntoIterator,
+        I::Item: Into<Symbol>,
+    {
+        iter.into_iter().map(|s| (s, Integer::ONE)).collect()
+    }
     /// The one.
     ///
     /// ```
@@ -37,66 +47,79 @@ impl Monomial {
     /// ```
     #[must_use]
     #[inline]
-    #[allow(clippy::missing_panics_doc)]
     pub const fn one() -> Self {
         Self {
             map: BTreeMap::new(),
         }
     }
-    /// The inverse.
-    #[must_use]
-    pub fn inv(mut self) -> Self {
-        self.map.values_mut().for_each(|e| *e = -*e);
-        self
-    }
     /// Whether this monomial is one.
     #[must_use]
+    #[inline]
     pub fn is_one(&self) -> bool {
         self.map.is_empty()
     }
     /// Extends the symbol space.
     #[must_use]
-    pub fn alt(self) -> Self {
-        let map = BTreeMap::new();
-        let map = self.map.into_iter().fold(map, |mut map, (s, e)| {
-            map.insert(s.alt(), e);
-            map
-        });
-        Self { map }
+    pub fn alt(&self) -> Self {
+        Self {
+            map: self.map.iter().map(|(s, &z)| (s.alt(), z)).collect(),
+        }
     }
     /// Appends combining diacritical `mark` to all symbols.
     #[must_use]
-    pub fn cdm(self, mark: char) -> Self {
-        let map = BTreeMap::new();
-        let map = self.map.into_iter().fold(map, |mut map, (s, e)| {
-            map.insert(s.cdm(mark), e);
-            map
-        });
-        Self { map }
+    pub fn cdm(&self, mark: char) -> Self {
+        Self {
+            map: self.map.iter().map(|(s, &z)| (s.cdm(mark), z)).collect(),
+        }
     }
     /// Swaps lowercase and uppercase symbols.
     #[must_use]
-    pub fn swp(self) -> Self {
-        let map = BTreeMap::new();
-        let map = self.map.into_iter().fold(map, |mut map, (s, e)| {
-            map.insert(!s, e);
-            map
-        });
+    pub fn swp(&self) -> Self {
+        Self {
+            map: self.map.iter().map(|(s, &z)| (!s, z)).collect(),
+        }
+    }
+}
+
+impl<S, Z> From<(S, Z)> for Monomial
+where
+    S: Into<Symbol>,
+    Z: TryInto<Integer>,
+{
+    #[inline]
+    fn from((s, z): (S, Z)) -> Self {
+        z.try_into().ok().map_or_else(Self::one, |z| Self {
+            map: BTreeMap::from([(s.into(), z)]),
+        })
+    }
+}
+
+impl<S, Z> FromIterator<(S, Z)> for Monomial
+where
+    S: Into<Symbol>,
+    Z: TryInto<Integer>,
+{
+    #[inline]
+    fn from_iter<I: IntoIterator<Item = (S, Z)>>(iter: I) -> Self {
+        let map = iter
+            .into_iter()
+            .filter_map(|(s, z)| z.try_into().ok().map(|z| (s.into(), z)))
+            .collect();
         Self { map }
     }
 }
 
-impl<S> FromIterator<S> for Monomial
-where
-    S: Into<Symbol>,
-{
-    fn from_iter<M: IntoIterator<Item = S>>(iter: M) -> Self {
-        Self {
-            map: iter
-                .into_iter()
-                .map(|s| (s.into(), NonZeroI32::new(1).unwrap()))
-                .collect(),
-        }
+impl Product for Monomial {
+    #[inline]
+    fn product<I: Iterator<Item = Self>>(iter: I) -> Self {
+        iter.reduce(Self::mul).unwrap_or_else(Self::one)
+    }
+}
+
+impl<'a> Product<&'a Self> for Monomial {
+    #[inline]
+    fn product<I: Iterator<Item = &'a Self>>(iter: I) -> Self {
+        iter.fold(Self::one(), Self::mul)
     }
 }
 
@@ -110,17 +133,47 @@ impl Mul for Monomial {
     }
 }
 
+impl Mul<&Self> for Monomial {
+    type Output = Self;
+
+    #[inline]
+    fn mul(mut self, other: &Self) -> Self::Output {
+        self *= other;
+        self
+    }
+}
+
+impl Mul<Monomial> for &Monomial {
+    type Output = Monomial;
+
+    #[inline]
+    fn mul(self, mut other: Monomial) -> Self::Output {
+        other *= self;
+        other
+    }
+}
+
 impl MulAssign for Monomial {
+    #[inline]
     fn mul_assign(&mut self, other: Self) {
-        for (s, rhs_e) in other.map {
-            if let Some(lhs_e) = self.map.get(&s) {
-                if let Some(e) = NonZeroI32::new(lhs_e.get() + rhs_e.get()) {
-                    assert!(self.map.insert(s, e).is_some());
-                } else {
-                    assert!(self.map.remove(&s).is_some());
+        *self *= &other;
+    }
+}
+
+impl MulAssign<&Self> for Monomial {
+    fn mul_assign(&mut self, other: &Self) {
+        for (&s, &z) in &other.map {
+            match self.map.entry(s) {
+                #[allow(clippy::suspicious_op_assign_impl)]
+                Entry::Occupied(mut entry) => match *entry.get() + z {
+                    Some(z) => *entry.get_mut() = z,
+                    None => {
+                        entry.remove();
+                    }
+                },
+                Entry::Vacant(entry) => {
+                    entry.insert(z);
                 }
-            } else {
-                assert!(self.map.insert(s, rhs_e).is_none());
             }
         }
     }
@@ -136,10 +189,65 @@ impl Div for Monomial {
     }
 }
 
+impl Div<&Self> for Monomial {
+    type Output = Self;
+
+    #[inline]
+    fn div(mut self, other: &Self) -> Self::Output {
+        self /= other;
+        self
+    }
+}
+
+impl Div<Monomial> for &Monomial {
+    type Output = Monomial;
+
+    #[inline]
+    fn div(self, mut other: Monomial) -> Self::Output {
+        other /= self;
+        other
+    }
+}
+
 impl DivAssign for Monomial {
     #[inline]
-    #[allow(clippy::suspicious_op_assign_impl)]
     fn div_assign(&mut self, other: Self) {
-        *self *= other.inv();
+        *self /= &other;
+    }
+}
+
+impl DivAssign<&Self> for Monomial {
+    fn div_assign(&mut self, other: &Self) {
+        for (&s, &z) in &other.map {
+            match self.map.entry(s) {
+                #[allow(clippy::suspicious_op_assign_impl)]
+                Entry::Occupied(mut entry) => match *entry.get() - z {
+                    Some(z) => *entry.get_mut() = z,
+                    None => {
+                        entry.remove();
+                    }
+                },
+                Entry::Vacant(entry) => {
+                    entry.insert(-z);
+                }
+            }
+        }
+    }
+}
+
+impl Inv for Monomial {
+    type Output = Self;
+
+    #[inline]
+    fn inv(mut self) -> Self::Output {
+        self.inv_assign();
+        self
+    }
+}
+
+impl InvAssign for Monomial {
+    #[inline]
+    fn inv_assign(&mut self) {
+        self.map.values_mut().for_each(Integer::neg_assign);
     }
 }

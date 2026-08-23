@@ -44,6 +44,7 @@ impl Ord for Symbol {
 }
 
 impl PartialOrd for Symbol {
+    #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
@@ -176,6 +177,16 @@ impl Not for Symbol {
             cdm: self.cdm,
             lab: self.lab,
         }
+    }
+}
+
+impl Not for &Symbol {
+    type Output = Symbol;
+
+    /// Swaps lowercase and uppercase character.
+    #[inline]
+    fn not(self) -> Self::Output {
+        !*self
     }
 }
 

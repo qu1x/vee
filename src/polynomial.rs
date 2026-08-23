@@ -3,12 +3,12 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of
 // the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-use super::{Factor, Factorization, Monomial, Rational, Symbol};
-use core::{
-    mem::take,
-    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
+use super::{Factorization, Integer, Monomial, NegAssign, Rational, Symbol};
+use core::ops::{Add, Div, DivAssign, Mul, MulAssign, Neg, Sub};
+use std::{
+    collections::{BTreeMap, btree_map::Entry},
+    iter::{Product, Sum},
 };
-use std::collections::BTreeMap;
 
 /// Uniquely reduced form of a symbolic polynomial expression.
 ///
@@ -22,13 +22,43 @@ use std::collections::BTreeMap;
 ///
 /// All operators (e.g., [`Add`], [`Mul`]) implemented for [`Polynomial`] reduce an arbitrary
 /// expression into this unique form.
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Polynomial {
     /// Symbolic storage.
     pub map: BTreeMap<Monomial, Rational>,
 }
 
 impl Polynomial {
+    /// Creates a new polynomial from `iter` over <code>[Into]<[Symbol]></code>.
+    #[must_use]
+    #[inline]
+    pub fn new<I>(iter: I) -> Self
+    where
+        I: IntoIterator,
+        I::Item: Into<Symbol>,
+    {
+        iter.into_iter()
+            .map(|s| ([(s, Integer::ONE)], Rational::ONE))
+            .collect()
+    }
+    /// The zero.
+    ///
+    /// ```
+    /// use vee::Polynomial;
+    ///
+    /// assert_eq!(Polynomial::zero() * Polynomial::zero(), Polynomial::zero());
+    /// assert_eq!(
+    ///     Polynomial::zero() + Polynomial::zero(),
+    ///     Some(Polynomial::zero())
+    /// );
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn zero() -> Self {
+        Self {
+            map: BTreeMap::new(),
+        }
+    }
     /// The one.
     ///
     /// ```
@@ -36,32 +66,28 @@ impl Polynomial {
     ///
     /// assert_eq!(Polynomial::one() * Polynomial::one(), Polynomial::one());
     ///
+    /// assert_eq!(Polynomial::one() * Polynomial::zero(), Polynomial::zero());
     /// assert_eq!(
-    ///     Polynomial::one() * Polynomial::default(),
-    ///     Polynomial::default()
+    ///     Polynomial::one() + Polynomial::zero(),
+    ///     Some(Polynomial::one())
     /// );
-    /// assert_eq!(
-    ///     Polynomial::default() + Polynomial::default(),
-    ///     Polynomial::default()
-    /// );
-    /// assert_eq!(Polynomial::one() + Polynomial::default(), Polynomial::one());
     /// ```
     #[must_use]
+    #[inline]
     pub fn one() -> Self {
-        Self {
-            map: BTreeMap::from([(Monomial::one(), Rational::ONE)]),
-        }
+        Self::from((Monomial::one(), Rational::ONE))
     }
     /// Whether this polynomial is zero.
     ///
     /// ```
     /// use vee::Polynomial;
     ///
-    /// assert!(Polynomial::default().is_zero());
+    /// assert!(Polynomial::zero().is_zero());
     /// ```
     #[must_use]
+    #[inline]
     pub fn is_zero(&self) -> bool {
-        self.map.is_empty() || self.map.iter().all(|(_m, c)| c.is_zero())
+        self.map.is_empty()
     }
     /// Whether this polynomial is one.
     ///
@@ -74,37 +100,40 @@ impl Polynomial {
     pub fn is_one(&self) -> bool {
         self.map
             .first_key_value()
-            .is_some_and(|(m, c)| self.map.len() == 1 && m.is_one() && c.is_one())
+            .is_some_and(|(m, q)| self.map.len() == 1 && m.is_one() && q.is_one())
     }
     /// Extends the symbol space.
     #[must_use]
-    pub fn alt(self) -> Self {
-        let map = BTreeMap::new();
-        let map = self.map.into_iter().fold(map, |mut map, (s, c)| {
-            map.insert(s.alt(), c);
-            map
-        });
-        Self { map }
+    pub fn alt(&self) -> Self {
+        Self {
+            map: self.map.iter().map(|(m, &q)| (m.alt(), q)).collect(),
+        }
+    }
+    #[inline]
+    pub(crate) fn alt_assign(&mut self) {
+        *self = self.alt();
     }
     /// Appends combining diacritical `mark` to all symbols.
     #[must_use]
-    pub fn cdm(self, mark: char) -> Self {
-        let map = BTreeMap::new();
-        let map = self.map.into_iter().fold(map, |mut map, (s, c)| {
-            map.insert(s.cdm(mark), c);
-            map
-        });
-        Self { map }
+    pub fn cdm(&self, mark: char) -> Self {
+        Self {
+            map: self.map.iter().map(|(m, &q)| (m.cdm(mark), q)).collect(),
+        }
+    }
+    #[inline]
+    pub(crate) fn cdm_assign(&mut self, mark: char) {
+        *self = self.cdm(mark);
     }
     /// Swaps lowercase and uppercase symbols.
     #[must_use]
-    pub fn swp(self) -> Self {
-        let map = BTreeMap::new();
-        let map = self.map.into_iter().fold(map, |mut map, (s, c)| {
-            map.insert(s.swp(), c);
-            map
-        });
-        Self { map }
+    pub fn swp(&self) -> Self {
+        Self {
+            map: self.map.iter().map(|(m, &q)| (m.swp(), q)).collect(),
+        }
+    }
+    #[inline]
+    pub(crate) fn swp_assign(&mut self) {
+        *self = self.swp();
     }
     /// Returns the number of `(multiplications, additions)`.
     #[must_use]
@@ -112,12 +141,12 @@ impl Polynomial {
         (
             self.map
                 .iter()
-                .map(|(m, r)| {
+                .map(|(m, q)| {
                     (m.map
                         .values()
-                        .filter_map(|e| usize::try_from(e.get()).ok())
+                        .filter_map(|z| usize::try_from(z.get()).ok())
                         .sum::<usize>()
-                        + usize::from(!r.abs().is_one()))
+                        + usize::from(!q.abs().is_one()))
                     .saturating_sub(1)
                 })
                 .sum::<usize>(),
@@ -126,190 +155,272 @@ impl Polynomial {
     }
     /// GCD of coefficients.
     #[must_use]
-    pub fn gcd(&self) -> Rational {
+    pub fn gcd(&self) -> Option<Rational> {
         Rational::gcd_reduce(self.map.values().copied())
     }
     /// LCM of coefficients.
     #[must_use]
-    pub fn lcm(&self) -> Rational {
+    pub fn lcm(&self) -> Option<Rational> {
         Rational::lcm_reduce(self.map.values().copied())
     }
     /// GCD and predominant sign of coefficients.
     #[must_use]
-    pub fn signed_gcd(&self) -> Rational {
+    pub fn signed_gcd(&self) -> Option<Rational> {
         Rational::signed_gcd_reduce(self.map.values().copied())
     }
     /// LCD and predominant sign of coefficients.
     #[must_use]
-    pub fn signed_lcd(&self) -> Rational {
+    pub fn signed_lcd(&self) -> Option<Rational> {
         Rational::signed_lcm_reduce(self.map.values().copied())
     }
 }
 
 impl From<Factorization> for Polynomial {
     fn from(f: Factorization) -> Self {
-        let mut p = Self::default();
-        for (f_m, (f_p, f_r)) in f.map {
-            for (m, c) in f_p.map {
-                *p.map.entry(f_m.clone() * m).or_default() += c * f_r * f.gcd;
-            }
-        }
-        p
+        let map = f
+            .map
+            .into_iter()
+            .flat_map(|(f_m, (f_p, f_q))| {
+                f_p.map
+                    .into_iter()
+                    .map(move |(m, q)| (f_m.clone() * m, q * f_q * f.gcd))
+            })
+            .collect();
+        Self { map }
     }
 }
 
-impl<M, S> FromIterator<M> for Polynomial
-where
-    M: IntoIterator<Item = S>,
-    S: Into<Symbol>,
-{
-    fn from_iter<P: IntoIterator<Item = M>>(iter: P) -> Self {
+impl From<Rational> for Polynomial {
+    #[inline]
+    fn from(q: Rational) -> Self {
         Self {
-            map: iter
-                .into_iter()
-                .map(|sym| (Monomial::from_iter(sym), Rational::ONE))
-                .collect(),
+            map: BTreeMap::from([(Monomial::one(), q)]),
         }
+    }
+}
+
+impl<M, Q> From<(M, Q)> for Polynomial
+where
+    M: Into<Monomial>,
+    Q: TryInto<Rational>,
+{
+    #[inline]
+    fn from((m, q): (M, Q)) -> Self {
+        q.try_into().ok().map_or_else(Self::zero, |q| Self {
+            map: BTreeMap::from([(m.into(), q)]),
+        })
+    }
+}
+
+impl<M, Q, S, Z> FromIterator<(M, Q)> for Polynomial
+where
+    M: IntoIterator<Item = (S, Z)>,
+    Q: TryInto<Rational>,
+    S: Into<Symbol>,
+    Z: TryInto<Integer>,
+{
+    #[inline]
+    fn from_iter<I: IntoIterator<Item = (M, Q)>>(iter: I) -> Self {
+        let map = iter
+            .into_iter()
+            .filter_map(|(m, q)| q.try_into().ok().map(|q| (Monomial::from_iter(m), q)))
+            .collect();
+        Self { map }
+    }
+}
+
+impl Sum for Polynomial {
+    #[inline]
+    fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
+        iter.fold(Self::zero(), |a, b| a.add(b).unwrap_or_else(Self::zero))
+    }
+}
+
+impl Product for Polynomial {
+    #[inline]
+    fn product<I: Iterator<Item = Self>>(iter: I) -> Self {
+        iter.reduce(Self::mul).unwrap_or_else(Self::one)
+    }
+}
+
+impl<'a> Product<&'a Self> for Polynomial {
+    #[inline]
+    fn product<I: Iterator<Item = &'a Self>>(iter: I) -> Self {
+        iter.fold(Self::one(), Self::mul)
     }
 }
 
 impl Add for Polynomial {
-    type Output = Self;
+    type Output = Option<Self>;
 
-    #[inline]
     fn add(mut self, other: Self) -> Self::Output {
-        self += other;
-        self
-    }
-}
-
-impl AddAssign for Polynomial {
-    fn add_assign(&mut self, other: Self) {
-        for (m, c) in other.map {
-            *self.map.entry(m).or_default() += c;
+        if self.is_zero() {
+            Some(self)
+        } else {
+            for (m, rhs_q) in other.map {
+                match self.map.entry(m) {
+                    Entry::Occupied(mut entry) => match *entry.get() + rhs_q {
+                        Some(q) => *entry.get_mut() = q,
+                        None => {
+                            entry.remove();
+                        }
+                    },
+                    Entry::Vacant(entry) => {
+                        entry.insert(rhs_q);
+                    }
+                }
+            }
+            (!self.is_zero()).then_some(self)
         }
-        self.map.retain(|_m, c| !c.is_zero());
     }
 }
 
 impl Sub for Polynomial {
-    type Output = Self;
+    type Output = Option<Self>;
 
-    #[inline]
     fn sub(mut self, other: Self) -> Self::Output {
-        self -= other;
-        self
-    }
-}
-
-impl SubAssign for Polynomial {
-    fn sub_assign(&mut self, other: Self) {
-        for (m, c) in other.map {
-            *self.map.entry(m).or_default() -= c;
+        if self.is_zero() {
+            Some(self)
+        } else {
+            for (m, rhs_q) in other.map {
+                match self.map.entry(m) {
+                    Entry::Occupied(mut entry) => match *entry.get() - rhs_q {
+                        Some(q) => *entry.get_mut() = q,
+                        None => {
+                            entry.remove();
+                        }
+                    },
+                    Entry::Vacant(entry) => {
+                        entry.insert(-rhs_q);
+                    }
+                }
+            }
+            (!self.is_zero()).then_some(self)
         }
-        self.map.retain(|_m, c| !c.is_zero());
     }
 }
 
 impl Neg for Polynomial {
     type Output = Self;
 
+    #[inline]
     fn neg(mut self) -> Self::Output {
-        self.map.values_mut().for_each(|c| *c = -*c);
+        self.neg_assign();
         self
+    }
+}
+
+impl NegAssign for Polynomial {
+    #[inline]
+    fn neg_assign(&mut self) {
+        self.map.values_mut().for_each(Rational::neg_assign);
     }
 }
 
 impl Mul for Polynomial {
     type Output = Self;
 
+    #[inline]
     fn mul(self, other: Self) -> Self::Output {
-        let mut map = BTreeMap::new();
-        for (lhs_m, lhs_c) in &self.map {
-            for (rhs_s, rhs_c) in &other.map {
-                let m = lhs_m.clone() * rhs_s.clone();
-                let c = *lhs_c * *rhs_c;
-                *map.entry(m).or_default() += c;
-            }
-        }
-        map.retain(|_m, c: &mut Rational| !c.is_zero());
-        Self { map }
+        &self * &other
     }
 }
 
 impl MulAssign for Polynomial {
+    #[inline]
     fn mul_assign(&mut self, other: Self) {
-        *self = take(self) * other;
+        *self = &*self * &other;
     }
 }
 
-impl Mul<Rational> for Polynomial {
+impl Mul<&Self> for Polynomial {
     type Output = Self;
 
     #[inline]
-    fn mul(mut self, other: Rational) -> Self::Output {
+    fn mul(self, other: &Self) -> Self::Output {
+        &self * other
+    }
+}
+
+impl MulAssign<&Self> for Polynomial {
+    #[inline]
+    fn mul_assign(&mut self, other: &Self) {
+        *self = &*self * other;
+    }
+}
+
+impl Mul for &Polynomial {
+    type Output = Polynomial;
+
+    fn mul(self, other: Self) -> Self::Output {
+        let mut mul = Polynomial::zero();
+        for (lhs_m, lhs_q) in &self.map {
+            for (rhs_m, rhs_q) in &other.map {
+                let m = lhs_m.clone() * rhs_m;
+                let q = *lhs_q * *rhs_q;
+                match mul.map.entry(m) {
+                    Entry::Occupied(mut entry) => match *entry.get() + q {
+                        Some(q) => *entry.get_mut() = q,
+                        None => {
+                            entry.remove();
+                        }
+                    },
+                    Entry::Vacant(entry) => {
+                        entry.insert(q);
+                    }
+                }
+            }
+        }
+        mul
+    }
+}
+
+impl Mul<Polynomial> for &Polynomial {
+    type Output = Polynomial;
+
+    #[inline]
+    fn mul(self, other: Polynomial) -> Self::Output {
+        self * &other
+    }
+}
+
+impl<Q: TryInto<Rational>> Mul<Q> for Polynomial {
+    type Output = Self;
+
+    #[inline]
+    fn mul(mut self, other: Q) -> Self::Output {
         self *= other;
         self
     }
 }
 
-impl MulAssign<Rational> for Polynomial {
-    fn mul_assign(&mut self, other: Rational) {
-        if other.is_zero() {
-            self.map = BTreeMap::default();
+impl<Q: TryInto<Rational>> MulAssign<Q> for Polynomial {
+    #[inline]
+    fn mul_assign(&mut self, other: Q) {
+        if let Ok(other) = other.try_into() {
+            self.map.values_mut().for_each(|q| *q *= other);
         } else {
-            self.map.values_mut().for_each(|c| *c *= other);
+            self.map.clear();
         }
     }
 }
 
-impl Mul<i32> for Polynomial {
+impl<Q: TryInto<Rational>> Div<Q> for Polynomial {
     type Output = Self;
 
     #[inline]
-    fn mul(mut self, other: i32) -> Self::Output {
-        self *= other;
-        self
-    }
-}
-
-impl MulAssign<i32> for Polynomial {
-    #[inline]
-    fn mul_assign(&mut self, other: i32) {
-        *self *= Rational::from(other);
-    }
-}
-
-impl Div<Rational> for Polynomial {
-    type Output = Self;
-
-    #[inline]
-    fn div(mut self, other: Rational) -> Self::Output {
+    fn div(mut self, other: Q) -> Self::Output {
         self /= other;
         self
     }
 }
 
-impl DivAssign<Rational> for Polynomial {
-    fn div_assign(&mut self, other: Rational) {
-        assert!(!other.is_zero(), "division by zero");
-        self.map.values_mut().for_each(|c| *c /= other);
-    }
-}
-
-impl Div<i32> for Polynomial {
-    type Output = Self;
-
+impl<Q: TryInto<Rational>> DivAssign<Q> for Polynomial {
     #[inline]
-    fn div(mut self, other: i32) -> Self::Output {
-        self /= other;
-        self
-    }
-}
-
-impl DivAssign<i32> for Polynomial {
-    #[inline]
-    fn div_assign(&mut self, other: i32) {
-        *self /= Rational::from(other);
+    fn div_assign(&mut self, other: Q) {
+        let other = other
+            .try_into()
+            .unwrap_or_else(|_| panic!("attempt to divide polynomial by zero"));
+        self.map.values_mut().for_each(|q| *q /= other);
     }
 }

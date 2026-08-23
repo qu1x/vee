@@ -3,7 +3,7 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of
 // the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-use super::{Choose, Factor, Symbol};
+use super::{Rev, Symbol, choose};
 use core::{
     fmt::{Debug, Display},
     ops::{Mul, Not},
@@ -25,11 +25,11 @@ where
         + PartialEq
         + Ord
         + PartialOrd
-        + Default
         + Into<Symbol>
         + TryFrom<Symbol, Error = Symbol>
         + Debug
         + Display
+        + Rev<Output = (i8, Self)>
         + Mul<Output = (i8, Self)>
         + Not<Output = (i8, Self)>,
 {
@@ -58,10 +58,20 @@ where
     /// ```
     #[must_use]
     fn blade_len(&self) -> usize;
-    /// The reverse.
-    #[must_use]
+}
+
+impl<B: Algebra> Rev for B {
+    type Output = (i8, Self);
+
     #[inline]
     fn rev(self) -> (i8, Self) {
-        (1 - i8::from(self.grade().choose(2).is_odd()) * 2, self)
+        (
+            if choose(self.grade(), 2) & 1 != 0 {
+                -1
+            } else {
+                1
+            },
+            self,
+        )
     }
 }

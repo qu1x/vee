@@ -313,6 +313,31 @@
 //! ]);
 //! ```
 //!
+//! Either emit or omit zero vectors:
+//!
+//! ```
+//! use vee::{PgaP3 as Vee, format_eq, pga::PgaP3 as Bee};
+//!
+//! // Emit zero vector as numeric zero.
+//! let plane = Vee::plane().eval([(Bee::e0(), 0)]);
+//!
+//! format_eq!("{:#x}", plane, [
+//!     "let e0 = 0.0;",
+//!     "let e1 = v1;",
+//!     "let e2 = v2;",
+//!     "let e3 = v3;",
+//! ]);
+//!
+//! // Omit zero vector as symbolic zero.
+//! let normal = plane.omit();
+//!
+//! format_eq!("{:#x}", normal, [
+//!     "let e1 = v1;",
+//!     "let e2 = v2;",
+//!     "let e3 = v3;",
+//! ]);
+//! ```
+//!
 //! Generate Rust code dereferencing fields with `"{:^x}"`:
 //!
 //! ```
@@ -398,10 +423,15 @@
 //! ]);
 //! ```
 
+#![cfg_attr(docsrs, feature(doc_cfg))]
+
+mod factor;
+use factor::Factor;
+
 mod algebra;
 mod choose;
-mod factor;
 mod factorization;
+mod integer;
 mod monomial;
 mod multivector;
 mod polynomial;
@@ -410,9 +440,9 @@ mod symbol;
 mod tree;
 
 pub use algebra::Algebra;
-pub use choose::Choose;
-pub use factor::Factor;
+pub use choose::choose;
 pub use factorization::Factorization;
+pub use integer::Integer;
 pub use monomial::Monomial;
 pub use multivector::Multivector;
 pub use polynomial::Polynomial;
@@ -447,11 +477,51 @@ macro_rules! format_eq {
     }};
 }
 
+/// The unary negation assignment operator.
+pub trait NegAssign {
+    /// Performs the unary negation assignment operation.
+    fn neg_assign(&mut self);
+}
+
+/// The unary reversion operator.
+pub trait Rev {
+    /// The resulting type after applying the unary reversion operator.
+    type Output;
+
+    /// Performs the unary reversion operation.
+    #[must_use]
+    fn rev(self) -> Self::Output;
+}
+
+/// The unary reversion assignment operator.
+pub trait RevAssign {
+    /// Performs the unary reversion assignment operation.
+    fn rev_assign(&mut self);
+}
+
+/// The unary inversion operator.
+pub trait Inv {
+    /// The resulting type after applying the unary inversion operator.
+    type Output;
+
+    /// Performs the unary inversion operation.
+    #[must_use]
+    fn inv(self) -> Self::Output;
+}
+
+/// The unary inversion assignment operator.
+pub trait InvAssign {
+    /// Performs the unary inversion assignment operation.
+    fn inv_assign(&mut self);
+}
+
 pub mod pga;
 
 /// Multivector for Elliptic 0D PGA.
+#[cfg(feature = "rudimentary")]
 pub type PgaE0 = Multivector<pga::PgaE0>;
 /// Multivector for Elliptic 1D PGA.
+#[cfg(feature = "rudimentary")]
 pub type PgaE1 = Multivector<pga::PgaE1>;
 /// Multivector for Elliptic 2D PGA.
 pub type PgaE2 = Multivector<pga::PgaE2>;
@@ -460,15 +530,20 @@ pub type PgaE3 = Multivector<pga::PgaE3>;
 /// Multivector for Elliptic 4D PGA.
 pub type PgaE4 = Multivector<pga::PgaE4>;
 /// Multivector for Elliptic 5D PGA (exploratory).
+#[cfg(feature = "exploratory")]
 pub type PgaE5 = Multivector<pga::PgaE5>;
 /// Multivector for Elliptic 6D PGA (exploratory).
+#[cfg(feature = "exploratory")]
 pub type PgaE6 = Multivector<pga::PgaE6>;
 /// Multivector for Elliptic 7D PGA (exploratory).
+#[cfg(feature = "exploratory")]
 pub type PgaE7 = Multivector<pga::PgaE7>;
 
 /// Multivector for Hyperbolic 0D PGA.
+#[cfg(feature = "rudimentary")]
 pub type PgaH0 = Multivector<pga::PgaH0>;
 /// Multivector for Hyperbolic 1D PGA.
+#[cfg(feature = "rudimentary")]
 pub type PgaH1 = Multivector<pga::PgaH1>;
 /// Multivector for Hyperbolic 2D PGA.
 pub type PgaH2 = Multivector<pga::PgaH2>;
@@ -477,15 +552,20 @@ pub type PgaH3 = Multivector<pga::PgaH3>;
 /// Multivector for Hyperbolic 4D PGA.
 pub type PgaH4 = Multivector<pga::PgaH4>;
 /// Multivector for Hyperbolic 5D PGA (exploratory).
+#[cfg(feature = "exploratory")]
 pub type PgaH5 = Multivector<pga::PgaH5>;
 /// Multivector for Hyperbolic 6D PGA (exploratory).
+#[cfg(feature = "exploratory")]
 pub type PgaH6 = Multivector<pga::PgaH6>;
 /// Multivector for Hyperbolic 7D PGA (exploratory).
+#[cfg(feature = "exploratory")]
 pub type PgaH7 = Multivector<pga::PgaH7>;
 
 /// Multivector for Parabolic (Euclidean) 0D PGA.
+#[cfg(feature = "rudimentary")]
 pub type PgaP0 = Multivector<pga::PgaP0>;
 /// Multivector for Parabolic (Euclidean) 1D PGA.
+#[cfg(feature = "rudimentary")]
 pub type PgaP1 = Multivector<pga::PgaP1>;
 /// Multivector for Parabolic (Euclidean) 2D PGA.
 pub type PgaP2 = Multivector<pga::PgaP2>;
@@ -494,8 +574,11 @@ pub type PgaP3 = Multivector<pga::PgaP3>;
 /// Multivector for Parabolic (Euclidean) 4D PGA.
 pub type PgaP4 = Multivector<pga::PgaP4>;
 /// Multivector for Parabolic (Euclidean) 5D PGA (exploratory).
+#[cfg(feature = "exploratory")]
 pub type PgaP5 = Multivector<pga::PgaP5>;
 /// Multivector for Parabolic (Euclidean) 6D PGA (exploratory).
+#[cfg(feature = "exploratory")]
 pub type PgaP6 = Multivector<pga::PgaP6>;
 /// Multivector for Parabolic (Euclidean) 7D PGA (exploratory).
+#[cfg(feature = "exploratory")]
 pub type PgaP7 = Multivector<pga::PgaP7>;
