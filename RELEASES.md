@@ -1,5 +1,6 @@
 # Version 0.4.0 (2026-08-23)
 
+  * Update KaTeX.
   * Refactor `FromIterator` implementations and add constructor methods for polynomial and monomial.
   * Gate `rudimentary` (N < 2) and `exploratory` (N > 4) PGA flavors behind respective features.
   * Implement iterator traits: `Sum` and `Product`.
