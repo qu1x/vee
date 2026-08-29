@@ -153,7 +153,14 @@
 //! [`PgaP3::motor()`]. This isometry (i.e., up to a screw motion) is isomorphic to the
 //! transformation of a homogeneoous point by a dual quaternion.
 //!
-//! [`PgaP3::point()`]: struct.Multivector.html#method.point-2
+#![cfg_attr(
+    not(feature = "rudimentary"),
+    doc = "[`PgaP3::point()`]: struct.Multivector.html#method.point-1"
+)]
+#![cfg_attr(
+    feature = "rudimentary",
+    doc = "[`PgaP3::point()`]: struct.Multivector.html#method.point-2"
+)]
 //! [`PgaP3::motor()`]: struct.Multivector.html#method.motor-1
 //!
 //! ```
