@@ -9,7 +9,9 @@ repository = "https://github.com/qu1x/vee"
 authors = ["Rouven Spreckels <rs@qu1x.dev>"]
 license = "MPL-2.0"
 keywords = [
+	"plane-based",
 	"geometric-algebra",
+	"code-generator",
 ]
 categories = [
 	"science",
