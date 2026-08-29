@@ -10,7 +10,7 @@
 //! rational coefficients. In contrast, rational polynomials and hence polynomial division is not
 //! required for lower dimensional geometric algebra flavors as the inverse of a multivector is
 //! given by multiplying it with the inverse of its mixed-grade norm realizing a Study number for
-//! dimensions $`D < 6`$, i.e., a generalized complex number.[^1] See the [examples](#examples)
+//! dimensions $`D < 6`$, i.e., a generalized complex number.[^1] See the [contents](#contents)
 //! below where the symbolic expressions are generated in text and code form. The next releases will
 //! implement further code forms (e.g., Rust code in various profiles based on SIMD using [`lav`]
 //! with and without generics or arbitrary precision types using [`rug`]). The pre-generated code
@@ -44,6 +44,20 @@
 //!
 //! [`lav`]: https://docs.rs/lav
 //! [`rug`]: https://docs.rs/rug
+//!
+//! # Contents
+//!
+//!   * [Operators](#operators)
+//!   * [Text Form](struct.Multivector.html#text-form-in-unicodeasciilatex-mode)
+//!       * [Unicode Mode](#text-form-in-unicode-mode)
+//!       * [ASCII Mode](#text-form-in-ascii-mode)
+//!       * $`\LaTeX`$ [Mode](#text-form-in-latex-mode)
+//!   * [Code Form](struct.Multivector.html#code-form-in-genericrust-mode)
+//!       * [Generic Mode](#code-form-in-generic-mode)
+//!       * [Rust Mode](#code-form-in-rust-mode)
+//!   * [Tree Form](struct.Multivector.html#tree-form-in-unicodeascii-mode)
+//!       * [Unicode Mode](#tree-form-in-unicode-mode)
+//!       * [ASCII Mode](#tree-form-in-ascii-mode)
 //!
 //! # Operators
 //!
@@ -144,7 +158,7 @@
 //! `a ^ b`             | Meet (progressive)            | $`\bitxor`$
 //! `a & b`             | Join (regressive)             | $`\bitand`$
 //!
-//! # Examples
+//! # Text Form in Unicode Mode
 //!
 //! Generates the expression for rotating and/or translating a point in [`PgaP3`], i.e., the type
 //! alias of [`Multivector`] parameterized for the Parabolic (Euclidean) 3D PGA. The
@@ -212,38 +226,6 @@
 //! assert_eq!(!Vee::plane(), Vee::point().swp());
 //! ```
 //!
-//! Alternatively, symbols are labelled after their initially assigned basis blades starting with:
-//!
-//!   * `'p'` if pinned with [`PgaP3::pin()`],
-//!   * `'l'` if left-hand side as in [`PgaP3::lhs()`],
-//!   * `'r'` if right-hand side as in [`PgaP3::rhs()`],
-//!   * `'v'` otherwise.
-//!
-//! ```
-//! use vee::{PgaP3 as Vee, format_eq};
-//!
-//! format_eq!("{:#}", Vee::point().pin() << Vee::motor().unit(), [
-//!     "+p123*e123",
-//!     "+(+(+1-2*v31*v31-2*v12*v12)*p032+2*(+v*v12+v23*v31)*p013+2*(-v*v31+v23*v12)*p021\
-//!        +2*(-v0123*v23-v01*v-v02*v12+v03*v31)*p123)*e032",
-//!     "+(+2*(-v*v12+v23*v31)*p032+(+1-2*v23*v23-2*v12*v12)*p013+2*(+v*v23+v31*v12)*p021\
-//!        +2*(-v0123*v31+v01*v12-v02*v-v03*v23)*p123)*e013",
-//!     "+(+2*(+v*v31+v23*v12)*p032+2*(-v*v23+v31*v12)*p013+(+1-2*v23*v23-2*v31*v31)*p021\
-//!        +2*(-v0123*v12-v01*v31+v02*v23-v03*v)*p123)*e021",
-//! ]);
-//!
-//! format_eq!("{:#}", Vee::line().lhs() * Vee::line().rhs(), [
-//!     "-l23*r23-l31*r31-l12*r12",
-//!     "+(-l02*r12+r02*l12+l03*r31-r03*l31)*e01",
-//!     "+(+l01*r12-r01*l12-l03*r23+r03*l23)*e02",
-//!     "+(-l01*r31+r01*l31+l02*r23-r02*l23)*e03",
-//!     "+(-l31*r12+r31*l12)*e23",
-//!     "+(+l23*r12-r23*l12)*e31",
-//!     "+(-l23*r31+r23*l31)*e12",
-//!     "+(+l01*r23+r01*l23+l02*r31+r02*l31+l03*r12+r03*l12)*I",
-//! ]);
-//! ```
-//!
 //! Optional plus signs are skipped with `"{:<}"`:
 //!
 //! ```
@@ -294,6 +276,78 @@
 //! ]);
 //! ```
 //!
+//! # Text Form in ASCII Mode
+//!
+//! Alternatively, symbols are labelled after their initially assigned basis blades starting with:
+//!
+//!   * `'p'` if pinned with [`PgaP3::pin()`],
+//!   * `'l'` if left-hand side as in [`PgaP3::lhs()`],
+//!   * `'r'` if right-hand side as in [`PgaP3::rhs()`],
+//!   * `'v'` otherwise.
+//!
+//! ```
+//! use vee::{PgaP3 as Vee, format_eq};
+//!
+//! format_eq!("{:#}", Vee::point().pin() << Vee::motor().unit(), [
+//!     "+p123*e123",
+//!     "+(+(+1-2*v31*v31-2*v12*v12)*p032+2*(+v*v12+v23*v31)*p013+2*(-v*v31+v23*v12)*p021\
+//!        +2*(-v0123*v23-v01*v-v02*v12+v03*v31)*p123)*e032",
+//!     "+(+2*(-v*v12+v23*v31)*p032+(+1-2*v23*v23-2*v12*v12)*p013+2*(+v*v23+v31*v12)*p021\
+//!        +2*(-v0123*v31+v01*v12-v02*v-v03*v23)*p123)*e013",
+//!     "+(+2*(+v*v31+v23*v12)*p032+2*(-v*v23+v31*v12)*p013+(+1-2*v23*v23-2*v31*v31)*p021\
+//!        +2*(-v0123*v12-v01*v31+v02*v23-v03*v)*p123)*e021",
+//! ]);
+//!
+//! format_eq!("{:#}", Vee::line().lhs() * Vee::line().rhs(), [
+//!     "-l23*r23-l31*r31-l12*r12",
+//!     "+(-l02*r12+r02*l12+l03*r31-r03*l31)*e01",
+//!     "+(+l01*r12-r01*l12-l03*r23+r03*l23)*e02",
+//!     "+(-l01*r31+r01*l31+l02*r23-r02*l23)*e03",
+//!     "+(-l31*r12+r31*l12)*e23",
+//!     "+(+l23*r12-r23*l12)*e31",
+//!     "+(-l23*r31+r23*l31)*e12",
+//!     "+(+l01*r23+r01*l23+l02*r31+r02*l31+l03*r12+r03*l12)*I",
+//! ]);
+//! ```
+//!
+//! # Text Form in $`\LaTeX`$ Mode
+//!
+//! Generate $`\LaTeX`$ documentation as in
+//!
+//! ```math
+//! \begin{aligned}
+//!   (-r_{01} l_1 - r_{02} l_2 - r_{03} l_3) & \boldsymbol{e}_0 \\
+//!   + (-l_2 r_{12} + r_{31} l_3) & \boldsymbol{e}_1 \\
+//!   + (l_1 r_{12} - r_{23} l_3) & \boldsymbol{e}_2 \\
+//!   + (-l_1 r_{31} + r_{23} l_2) & \boldsymbol{e}_3 \\
+//!   + (l_1 r_{23} + l_2 r_{31} + l_3 r_{12}) & \boldsymbol{e}_{123} \\
+//!   + (-l_0 r_{23} - r_{02} l_3 + r_{03} l_2) & \boldsymbol{e}_{032} \\
+//!   + (-l_0 r_{31} + r_{01} l_3 - r_{03} l_1) & \boldsymbol{e}_{013} \\
+//!   + (-l_0 r_{12} - r_{01} l_2 + r_{02} l_1) & \boldsymbol{e}_{021}
+//! \end{aligned}
+//! ```
+//!
+//! with `"{:$>}"`, using only the standard `amsmath` package:
+//!
+//! ```
+//! use vee::{PgaP3 as Vee, format_eq};
+//!
+//! format_eq!("{:$>}", Vee::plane().lhs() * Vee::line().rhs(), [
+//!     r"\begin{aligned}",
+//!     r"  (-r_{01} l_1 - r_{02} l_2 - r_{03} l_3) & \boldsymbol{e}_0 \\",
+//!     r"  + (-l_2 r_{12} + r_{31} l_3) & \boldsymbol{e}_1 \\",
+//!     r"  + (l_1 r_{12} - r_{23} l_3) & \boldsymbol{e}_2 \\",
+//!     r"  + (-l_1 r_{31} + r_{23} l_2) & \boldsymbol{e}_3 \\",
+//!     r"  + (l_1 r_{23} + l_2 r_{31} + l_3 r_{12}) & \boldsymbol{e}_{123} \\",
+//!     r"  + (-l_0 r_{23} - r_{02} l_3 + r_{03} l_2) & \boldsymbol{e}_{032} \\",
+//!     r"  + (-l_0 r_{31} + r_{01} l_3 - r_{03} l_1) & \boldsymbol{e}_{013} \\",
+//!     r"  + (-l_0 r_{12} - r_{01} l_2 + r_{02} l_1) & \boldsymbol{e}_{021}",
+//!     r"\end{aligned}",
+//! ]);
+//! ```
+//!
+//! # Code Form in Generic Mode
+//!
 //! Generate generic statements with `"{:x}"`:
 //!
 //! ```
@@ -306,6 +360,8 @@
 //!     "e12=l*r12+r*l12-l23*r31+r23*l31",
 //! ]);
 //! ```
+//!
+//! # Code Form in Rust Mode
 //!
 //! Generate Rust code with `"{:#x}"`:
 //!
@@ -358,41 +414,9 @@
 //! ]);
 //! ```
 //!
-//! Generate $`\LaTeX`$ documentation as in
+//! # Tree Form in Unicode Mode
 //!
-//! ```math
-//! \begin{aligned}
-//!   (-r_{01} l_1 - r_{02} l_2 - r_{03} l_3) & \boldsymbol{e}_0 \\
-//!   + (-l_2 r_{12} + r_{31} l_3) & \boldsymbol{e}_1 \\
-//!   + (l_1 r_{12} - r_{23} l_3) & \boldsymbol{e}_2 \\
-//!   + (-l_1 r_{31} + r_{23} l_2) & \boldsymbol{e}_3 \\
-//!   + (l_1 r_{23} + l_2 r_{31} + l_3 r_{12}) & \boldsymbol{e}_{123} \\
-//!   + (-l_0 r_{23} - r_{02} l_3 + r_{03} l_2) & \boldsymbol{e}_{032} \\
-//!   + (-l_0 r_{31} + r_{01} l_3 - r_{03} l_1) & \boldsymbol{e}_{013} \\
-//!   + (-l_0 r_{12} - r_{01} l_2 + r_{02} l_1) & \boldsymbol{e}_{021}
-//! \end{aligned}
-//! ```
-//!
-//! with `"{:$>}"`, using only the standard `amsmath` package:
-//!
-//! ```
-//! use vee::{PgaP3 as Vee, format_eq};
-//!
-//! format_eq!("{:$>}", Vee::plane().lhs() * Vee::line().rhs(), [
-//!     r"\begin{aligned}",
-//!     r"  (-r_{01} l_1 - r_{02} l_2 - r_{03} l_3) & \boldsymbol{e}_0 \\",
-//!     r"  + (-l_2 r_{12} + r_{31} l_3) & \boldsymbol{e}_1 \\",
-//!     r"  + (l_1 r_{12} - r_{23} l_3) & \boldsymbol{e}_2 \\",
-//!     r"  + (-l_1 r_{31} + r_{23} l_2) & \boldsymbol{e}_3 \\",
-//!     r"  + (l_1 r_{23} + l_2 r_{31} + l_3 r_{12}) & \boldsymbol{e}_{123} \\",
-//!     r"  + (-l_0 r_{23} - r_{02} l_3 + r_{03} l_2) & \boldsymbol{e}_{032} \\",
-//!     r"  + (-l_0 r_{31} + r_{01} l_3 - r_{03} l_1) & \boldsymbol{e}_{013} \\",
-//!     r"  + (-l_0 r_{12} - r_{01} l_2 + r_{02} l_1) & \boldsymbol{e}_{021}",
-//!     r"\end{aligned}",
-//! ]);
-//! ```
-//!
-//! Generate DOT graphs (i.e., [`text/vnd.graphviz`]) with `"{:o}"`:
+//! Generate DOT graphs (i.e., [`text/vnd.graphviz`]) in Unicode mode with `"{:o}"`:
 //!
 //! [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
 //!
@@ -423,6 +447,46 @@
 //!     r#"  n10 [label="∏" shape=box]"#,
 //!     r#"  n0 -> n10"#,
 //!     r#"  n11 [label="z" shape=ellipse]"#,
+//!     r#"  n10 -> n11"#,
+//!     r#"  n12 [label="e3" shape=diamond]"#,
+//!     r#"  n10 -> n12"#,
+//!     r#"}"#,
+//! ]);
+//! ```
+//!
+//! # Tree Form in ASCII Mode
+//!
+//! Generate DOT graphs (i.e., [`text/vnd.graphviz`]) in ASCII mode with `"{:#o}"`:
+//!
+//! [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
+//!
+//! ```
+//! use vee::{PgaP3 as Vee, format_eq};
+//!
+//! format_eq!("{:#o}", Vee::plane(), [
+//!     r#"digraph vee {"#,
+//!     r#"  n0 [label="+" shape=box]"#,
+//!     r#"  n1 [label="*" shape=box]"#,
+//!     r#"  n0 -> n1"#,
+//!     r#"  n2 [label="v0" shape=ellipse]"#,
+//!     r#"  n1 -> n2"#,
+//!     r#"  n3 [label="e0" shape=diamond]"#,
+//!     r#"  n1 -> n3"#,
+//!     r#"  n4 [label="*" shape=box]"#,
+//!     r#"  n0 -> n4"#,
+//!     r#"  n5 [label="v1" shape=ellipse]"#,
+//!     r#"  n4 -> n5"#,
+//!     r#"  n6 [label="e1" shape=diamond]"#,
+//!     r#"  n4 -> n6"#,
+//!     r#"  n7 [label="*" shape=box]"#,
+//!     r#"  n0 -> n7"#,
+//!     r#"  n8 [label="v2" shape=ellipse]"#,
+//!     r#"  n7 -> n8"#,
+//!     r#"  n9 [label="e2" shape=diamond]"#,
+//!     r#"  n7 -> n9"#,
+//!     r#"  n10 [label="*" shape=box]"#,
+//!     r#"  n0 -> n10"#,
+//!     r#"  n11 [label="v3" shape=ellipse]"#,
 //!     r#"  n10 -> n11"#,
 //!     r#"  n12 [label="e3" shape=diamond]"#,
 //!     r#"  n10 -> n12"#,

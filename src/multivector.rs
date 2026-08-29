@@ -31,38 +31,44 @@ use std::{
 /// All operators (e.g., [`Add`], [`Mul`]) implemented for [`Multivector`] reduce an arbitrary
 /// expression into this unique form.
 ///
-/// Generate text form with:
+/// # Text Form in Unicode/ASCII/$`\LaTeX`$ Mode
+///
+/// Leverage the [`Display`] trait to generate text form, in **Unicode mode** by default:
 ///
 ///   * `"{}"` for factorization of pinned symbols and GCDs,
 ///   * `"{:-}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
 ///   * `"{:+}"` for expanded form (i.e., no factorization),
-///   * `"{:#}"` for alternative symbols labelled after basis blades,
-///   * `"{:0}"` for zero newlines (and no alignment environment in case of $`\LaTeX`$),
+///   * `"{:#}"` for **ASCII mode** using alternative symbols labelled after basis blades,
+///   * `"{:0}"` for zero newlines (and no alignment environment in case of $`\textbf{\LaTeX}`$ **mode**),
 ///   * `"{:.1}"` for floating points,
 ///   * `"{:<}"` for omitting plus signs,
 ///   * `"{:>}"` for omitting plus signs and surrounding operators with spaces,
-///   * `"{:^}"` for dereferencing input and output fields implying `"{:>#}"`,
-///   * `"{:$^}"` for $`\LaTeX`$ where the [`width`](std::fmt#width) parameter as in
+///   * `"{:^}"` for dereferencing input and output fields implying `"{:>#}"` (used by code form),
+///   * `"{:$^}"` for $`\textbf{\LaTeX}`$ **mode** where the [`width`](std::fmt#width) parameter as in
 ///     `r"  \boldsymbol\ell = {:$^2}"` indents successive lines by additional two spaces,
-///   * `"{:$>}"` for $`\LaTeX`$ omitting top alignment argument,
-///   * `"{:$<}"` for $`\LaTeX`$ omitting environment begin and end.
+///   * `"{:$>}"` for $`\textbf{\LaTeX}`$ **mode** omitting top alignment argument,
+///   * `"{:$<}"` for $`\textbf{\LaTeX}`$ **mode** omitting environment begin and end.
 ///
-/// Generate code form (i.e., generic statements and Rust) with:
+/// # Code Form in Generic/Rust Mode
+///
+/// Leverage the [`LowerHex`] trait to generate code form, in **generic mode** by default:
 ///
 ///   * `"{:x}"` for factorization of pinned symbols and GCDs,
 ///   * `"{:-x}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
 ///   * `"{:+x}"` for expanded form (i.e., no factorization),
-///   * `"{:#x}"` for Rust instead of generic statements,
-///   * `"{:^x}"` for Rust dereferencing input and output fields.
+///   * `"{:#x}"` for **Rust mode** instead of generic statements,
+///   * `"{:^x}"` for **Rust mode** dereferencing input and output fields.
 ///
 /// where the [`width`](std::fmt#width) parameter as in `"{:^#4x}"` indents the code by four spaces.
 ///
-/// Generate DOT form (i.e., [`text/vnd.graphviz`]) with:
+/// # Tree Form in Unicode/ASCII mode
+///
+/// Leverage the [`Octal`] trait to generate tree form (i.e., DOT as in [`text/vnd.graphviz`]), in **Unicode mode** by default:
 ///
 ///   * `"{:o}"` for factorization of pinned symbols and GCDs,
 ///   * `"{:-o}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
 ///   * `"{:+o}"` for expanded form (i.e., no factorization),
-///   * `"{:#o}"` for alternative symbols labelled after basis blades,
+///   * `"{:#o}"` for **ASCII mode** using alternative symbols labelled after basis blades,
 ///   * `"{:0o}"` for left-to-right rank direction.
 ///
 /// [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
