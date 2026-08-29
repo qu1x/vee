@@ -23,28 +23,30 @@ The goal of this crate is to generate optimized code for geometric algebra flavo
 ## Features
 
   * Zero non-optional dependencies.
-  * Uniquely reduce symbolic multivector expressions.
-  * Generate expressions in text form (i.e., Unicode and LaTeX).
-  * Generate expressions in code form (i.e., generic statements and Rust).
-  * Generate expressions in DOT form (i.e., [`text/vnd.graphviz`]).
-  * Eliminate orthonormalization conditions from expressions using reflection/projection operator by
-    factoring pinned symbols, GCD coefficients, and predominant signs.
+  * Uniquely reduce symbolic multivector expressions for algebraic and structural equivalence to
+    coincide.
+  * Generate text form in Unicode/ASCII/LaTeX mode.
+  * Generate code form in generic/Rust mode.
+  * Generate tree form (i.e., DOT as in [`text/vnd.graphviz`]) in Unicode/ASCII mode.
+  * Eliminate orthonormalization conditions from expressions using reflection/projection
+    operator by factoring pinned symbols, GCD coefficients, and predominant signs.
   * Evaluate symbols as rationals.
   * Count operations (i.e., multiplications and additions).
-  * Define the metric-agnostic basis (i.e., elliptic, parabolic, hyperbolic) and the multivector
-    entities for dimensions D = N + 1 < 8 of the plane-based pistachio flavor, i.e., projective
-    geometric algebra (PGA).
+  * Define the metric-agnostic basis, i.e., elliptic, hyperbolic, and parabolic (Euclidean)
+    along with the multivector entities for dimensions D = N + 1 < 8 of the
+    plane-based pistachio flavor, i.e., projective geometric algebra (PGA).
 
 [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
 
 ## Roadmap
 
-  * Simplify emitter by flattening expression tree into token stream and perform defer logic during
-    stream iteration rather than tree traversal.
-  * Further optimize expressions to reduce operation count by domain-specific common subexpression
-    elimination (CSE) targeting exterior products. Reduce search space by leveraging applicable
-    geometric decomposition, e.g., Euclidean decomposition for parabolic reflection operator.
-  * Generate expressions in SIMD code form.
+  * Simplify emitter by flattening expression tree into token stream and perform defer logic
+    during stream iteration rather than tree traversal.
+  * Further optimize expressions to reduce operation count by domain-specific common
+    subexpression elimination (CSE) targeting exterior products. Reduce search space by
+    leveraging applicable geometric decomposition, e.g., Euclidean decomposition for parabolic
+    reflection operator.
+  * Generate expressions in SIMD mode.
   * Define other geometric algebra flavors.
 
 See the [release history](RELEASES.md) to keep track of the development.

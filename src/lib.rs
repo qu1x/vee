@@ -11,27 +11,27 @@
 //! required for lower dimensional geometric algebra flavors as the inverse of a multivector is
 //! given by multiplying it with the inverse of its mixed-grade norm realizing a Study number for
 //! dimensions $`D < 6`$, i.e., a generalized complex number.[^1] See the [contents](#contents)
-//! below where the symbolic expressions are generated in text and code form. The next releases will
-//! implement further code forms (e.g., Rust code in various profiles based on SIMD using [`lav`]
-//! with and without generics or arbitrary precision types using [`rug`]). The pre-generated code
-//! forms will be provided along with the code generator behind respective feature gates. When
-//! [`packages_as_namespaces`] is stable, each code form will become a crate. Currently, the
-//! plane-based pistachio flavor -- Projective Geometric Algebra (PGA) -- is implemented for
-//! $`D \equiv N + 1 \le 8`$ in all three metrics, i.e., elliptic, hyperbolic, and parabolic
-//! (Euclidean).[^2] The 5D, 6D, and 7D PGAs (i.e., $`N = 5`$, $`N = 6`$, and $`N = 7`$) are
-//! exploratory as there are no inverses based on generalized complex numbers. They provide
-//! dimension-agnostic insights regarding duality, the choice of basis blades, and grade-preserving
-//! conditions among orthonormalization conditions. The PGA is especially of interest for computer
-//! graphics (e.g., game and physics engines) as it is the most compact flavor (i.e., a one-up
-//! flavor) unifying the established but scattered frameworks, e.g., homogeneous coordinates,
-//! Plücker coordinates, (dual) quaternions, and screw theory. Even without any knowledge of
-//! geometric algebra, an API can be more intuitive as it unifies the positional and directional
-//! aspects of geometric entities (e.g., planes, lines, points) and the linear and angular aspects
-//! of rigid-body dynamics in a dimension-agnostic as well as metric-agnostic way with closed-form
-//! (i.e., non-iterative) solutions up to 4D (e.g., [`PgaP2`], [`PgaP3`], [`PgaP4`]).[^3]
+//! below where the symbolic expressions are generated in text, code, and tree form. For evaluating
+//! symbols as rationals, see the [code form in Rust mode](#code-form-in-rust-mode) example.
 //!
-//! [`packages_as_namespaces`]:
-//! https://rust-lang.github.io/rfcs/3243-packages-as-optional-namespaces.html
+//! Currently, the plane-based pistachio flavor -- Projective Geometric Algebra (PGA) -- is
+//! implemented for $`D \equiv N + 1 \le 8`$ in all three metrics, i.e., elliptic, hyperbolic, and
+//! parabolic (Euclidean).[^2]
+//!
+//!   * The PGAs with $`N < 2`$ are gated behind the `rudimentary` feature as both lack rotations.
+//!   * The PGAs with $`N > 4`$ are gated behind the `exploratory` feature as there are no inverses
+//!     based on Study numbers.
+//!
+//! Both features provide dimension-agnostic insights regarding duality and the choice of basis
+//! blades. Additionally, the latter feature explores grade-preserving conditions among
+//! orthonormalization conditions. The PGA is especially of interest for computer graphics (e.g.,
+//! game and physics engines) as it is the most compact flavor (i.e., a one-up flavor) unifying the
+//! established but scattered frameworks, e.g., homogeneous coordinates, Plücker coordinates, (dual)
+//! quaternions, and screw theory. Even without any knowledge of geometric algebra, an API can be
+//! more intuitive as it unifies the positional and directional aspects of geometric entities (e.g.,
+//! planes, lines, points) and the linear and angular aspects of rigid-body dynamics in a
+//! dimension-agnostic as well as metric-agnostic way with closed-form (i.e., non-iterative)
+//! solutions up to 4D (e.g., [`PgaP2`], [`PgaP3`], [`PgaP4`]).[^3]
 //!
 //! [^1]: S. De Keninck and M. Roelfs, “Normalization, square roots, and the exponential and
 //! logarithmic maps in geometric algebras of less than 6D”, [Mathematical Methods in the Applied
@@ -42,11 +42,10 @@
 //! [Advanced Computational Applications of Geometric Algebra,
 //! 43–76](https://doi.org/10.1007/978-3-031-55985-3_2).
 //!
-//! [`lav`]: https://docs.rs/lav
-//! [`rug`]: https://docs.rs/rug
-//!
 //! # Contents
 //!
+//!   * [Features](#features)
+//!   * [Roadmap](#roadmap)
 //!   * [Operators](#operators)
 //!   * [Text Form](struct.Multivector.html#text-form-in-unicodeasciilatex-mode)
 //!       * [Unicode Mode](#text-form-in-unicode-mode)
@@ -58,6 +57,35 @@
 //!   * [Tree Form](struct.Multivector.html#tree-form-in-unicodeascii-mode)
 //!       * [Unicode Mode](#tree-form-in-unicode-mode)
 //!       * [ASCII Mode](#tree-form-in-ascii-mode)
+//!
+//! # Features
+//!
+//!   * Zero non-optional dependencies.
+//!   * Uniquely reduce symbolic multivector expressions for algebraic and structural equivalence to
+//!     coincide.
+//!   * Generate text form in Unicode/ASCII/$`\LaTeX`$ mode.
+//!   * Generate code form in generic/Rust mode.
+//!   * Generate tree form (i.e., DOT graphs as in [`text/vnd.graphviz`]) in Unicode/ASCII mode.
+//!   * Eliminate orthonormalization conditions from expressions using reflection/projection
+//!     operator by factoring pinned symbols, GCD coefficients, and predominant signs.
+//!   * Evaluate symbols as rationals.
+//!   * Count operations (i.e., multiplications and additions).
+//!   * Define the metric-agnostic basis, i.e., elliptic, hyperbolic, and parabolic (Euclidean)
+//!     along with the multivector entities for dimensions $`D \equiv N + 1 \le 8`$ of the
+//!     plane-based pistachio flavor, i.e., projective geometric algebra (PGA).
+//!
+//! [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
+//!
+//! # Roadmap
+//!
+//!   * Simplify emitter by flattening expression tree into token stream and perform defer logic
+//!     during stream iteration rather than tree traversal.
+//!   * Further optimize expressions to reduce operation count by domain-specific common
+//!     subexpression elimination (CSE) targeting exterior products. Reduce search space by
+//!     leveraging applicable geometric decomposition, e.g., Euclidean decomposition for parabolic
+//!     reflection operator.
+//!   * Generate expressions in SIMD mode.
+//!   * Define other geometric algebra flavors.
 //!
 //! # Operators
 //!
@@ -167,6 +195,7 @@
 //! [`PgaP3::motor()`]. This isometry (i.e., up to a screw motion) is isomorphic to the
 //! transformation of a homogeneoous point by a dual quaternion.
 //!
+//! [`PgaP3::motor()`]: struct.Multivector.html#method.motor-1
 #![cfg_attr(
     not(feature = "rudimentary"),
     doc = "[`PgaP3::point()`]: struct.Multivector.html#method.point-1"
@@ -175,7 +204,6 @@
     feature = "rudimentary",
     doc = "[`PgaP3::point()`]: struct.Multivector.html#method.point-2"
 )]
-//! [`PgaP3::motor()`]: struct.Multivector.html#method.motor-1
 //!
 //! ```
 //! use vee::{PgaP3 as Vee, Symbol, format_eq, pga::PgaP3 as Bee};
@@ -382,12 +410,14 @@
 //! use vee::{PgaP3 as Vee, format_eq, pga::PgaP3 as Bee};
 //!
 //! // Emit zero vector as numeric zero.
-//! let plane = Vee::plane().eval([(Bee::e0(), 0)]);
+//! let plane = Vee::plane()
+//!     .eval([(Bee::e0(), 0), (Bee::e1(), 1)])
+//!     .eval([(Bee::e2(), (1, 2))]);
 //!
 //! format_eq!("{:#x}", plane, [
 //!     "let e0 = 0.0;",
-//!     "let e1 = v1;",
-//!     "let e2 = v2;",
+//!     "let e1 = 1.0;",
+//!     "let e2 = 1.0 / 2.0;",
 //!     "let e3 = v3;",
 //! ]);
 //!
@@ -395,8 +425,8 @@
 //! let normal = plane.omit();
 //!
 //! format_eq!("{:#x}", normal, [
-//!     "let e1 = v1;",
-//!     "let e2 = v2;",
+//!     "let e1 = 1.0;",
+//!     "let e2 = 1.0 / 2.0;",
 //!     "let e3 = v3;",
 //! ]);
 //! ```
@@ -417,8 +447,6 @@
 //! # Tree Form in Unicode Mode
 //!
 //! Generate DOT graphs (i.e., [`text/vnd.graphviz`]) in Unicode mode with `"{:o}"`:
-//!
-//! [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
 //!
 //! ```
 //! use vee::{PgaP3 as Vee, format_eq};
@@ -457,8 +485,6 @@
 //! # Tree Form in ASCII Mode
 //!
 //! Generate DOT graphs (i.e., [`text/vnd.graphviz`]) in ASCII mode with `"{:#o}"`:
-//!
-//! [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
 //!
 //! ```
 //! use vee::{PgaP3 as Vee, format_eq};

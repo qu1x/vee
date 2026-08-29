@@ -39,13 +39,13 @@ use std::{
 ///   * `"{:-}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
 ///   * `"{:+}"` for expanded form (i.e., no factorization),
 ///   * `"{:#}"` for **ASCII mode** using alternative symbols labelled after basis blades,
-///   * `"{:0}"` for zero newlines (and no alignment environment in case of $`\textbf{\LaTeX}`$ **mode**),
+///   * `"{:0}"` for zero newlines (and no alignment environment in $`\textbf{\LaTeX}`$ **mode**),
 ///   * `"{:.1}"` for floating points,
 ///   * `"{:<}"` for omitting plus signs,
 ///   * `"{:>}"` for omitting plus signs and surrounding operators with spaces,
 ///   * `"{:^}"` for dereferencing input and output fields implying `"{:>#}"` (used by code form),
-///   * `"{:$^}"` for $`\textbf{\LaTeX}`$ **mode** where the [`width`](std::fmt#width) parameter as in
-///     `r"  \boldsymbol\ell = {:$^2}"` indents successive lines by additional two spaces,
+///   * `"{:$^}"` for $`\textbf{\LaTeX}`$ **mode** where the [`width`](std::fmt#width) parameter as
+///     in `r"  \boldsymbol\ell = {:$^2}"` indents successive lines by additional two spaces,
 ///   * `"{:$>}"` for $`\textbf{\LaTeX}`$ **mode** omitting top alignment argument,
 ///   * `"{:$<}"` for $`\textbf{\LaTeX}`$ **mode** omitting environment begin and end.
 ///
@@ -63,7 +63,8 @@ use std::{
 ///
 /// # Tree Form in Unicode/ASCII mode
 ///
-/// Leverage the [`Octal`] trait to generate tree form (i.e., DOT as in [`text/vnd.graphviz`]), in **Unicode mode** by default:
+/// Leverage the [`Octal`] trait to generate tree form (i.e., DOT graphs as in
+/// [`text/vnd.graphviz`]), in **Unicode mode** by default:
 ///
 ///   * `"{:o}"` for factorization of pinned symbols and GCDs,
 ///   * `"{:-o}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
