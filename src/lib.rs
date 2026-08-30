@@ -547,6 +547,13 @@ pub use rational::Rational;
 pub use symbol::Symbol;
 pub use tree::Tree;
 
+#[cfg(not(feature = "pretty_assertions"))]
+#[doc(hidden)]
+pub use core::assert_eq as __assert_eq;
+#[cfg(feature = "pretty_assertions")]
+#[doc(hidden)]
+pub use pretty_assertions::assert_eq as __assert_eq;
+
 /// Formats the `$lhs` expression using [`Display`] and asserts the `$rhs` string literals.
 ///
 /// Passes `$fmt` to [`Display`] with `{}` as default if omitted. Appends `"\n"` to each `$rhs`
@@ -559,18 +566,16 @@ pub use tree::Tree;
 #[macro_export]
 macro_rules! format_eq {
     ($lhs:expr, [$($rhs:literal),* $(,)?]) => {{
-        format_eq!("{}", $lhs, [$($rhs),*]);
+        $crate::format_eq!("{}", $lhs, [$($rhs),*]);
     }};
     ($fmt:literal, $lhs:expr, [$($rhs:literal),* $(,)?]) => {{
-        #[cfg(feature = "pretty_assertions")]
-        use pretty_assertions::assert_eq;
         let lhs = format!($fmt, $lhs);
         let mut rhs = String::with_capacity(lhs.len());
         $(
             rhs.push_str($rhs);
             rhs.push_str("\n");
         )*
-        assert_eq!(lhs, rhs);
+        $crate::__assert_eq!(lhs, rhs);
     }};
 }
 
