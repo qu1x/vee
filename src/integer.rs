@@ -390,7 +390,7 @@ impl TryFrom<u64> for Integer {
     fn try_from(i: u64) -> Result<Self, Self::Error> {
         let i = i
             .try_into()
-            .expect("attempt to create rational with overflow");
+            .expect("attempt to create integer with overflow");
         Self::new(i).ok_or(())
     }
 }
