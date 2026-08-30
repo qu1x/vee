@@ -258,6 +258,16 @@ impl Sum for Polynomial {
     }
 }
 
+impl Sum<(Monomial, Rational)> for Polynomial {
+    #[inline]
+    fn sum<I: Iterator<Item = (Monomial, Rational)>>(iter: I) -> Self {
+        iter.fold(Self::zero(), |mut p, (m, q)| {
+            p.add_entry(m, q);
+            p
+        })
+    }
+}
+
 impl Product for Polynomial {
     #[inline]
     fn product<I: Iterator<Item = Self>>(iter: I) -> Self {
@@ -279,20 +289,27 @@ impl Add for Polynomial {
         if self.is_zero() {
             Some(other)
         } else {
-            for (m, rhs_q) in other.map {
-                match self.map.entry(m) {
-                    Entry::Occupied(mut entry) => match *entry.get() + rhs_q {
-                        Some(q) => *entry.get_mut() = q,
-                        None => {
-                            entry.remove();
-                        }
-                    },
-                    Entry::Vacant(entry) => {
-                        entry.insert(rhs_q);
-                    }
-                }
+            for (m, q) in other.map {
+                self.add_entry(m, q);
             }
             (!self.is_zero()).then_some(self)
+        }
+    }
+}
+
+impl Polynomial {
+    #[inline]
+    fn add_entry(&mut self, m: Monomial, q: Rational) {
+        match self.map.entry(m) {
+            Entry::Occupied(mut entry) => match *entry.get() + q {
+                Some(sum) => *entry.get_mut() = sum,
+                None => {
+                    entry.remove();
+                }
+            },
+            Entry::Vacant(entry) => {
+                entry.insert(q);
+            }
         }
     }
 }
@@ -304,18 +321,8 @@ impl Sub for Polynomial {
         if self.is_zero() {
             Some(-other)
         } else {
-            for (m, rhs_q) in other.map {
-                match self.map.entry(m) {
-                    Entry::Occupied(mut entry) => match *entry.get() - rhs_q {
-                        Some(q) => *entry.get_mut() = q,
-                        None => {
-                            entry.remove();
-                        }
-                    },
-                    Entry::Vacant(entry) => {
-                        entry.insert(-rhs_q);
-                    }
-                }
+            for (m, q) in other.map {
+                self.add_entry(m, -q);
             }
             (!self.is_zero()).then_some(self)
         }
@@ -375,25 +382,15 @@ impl Mul for &Polynomial {
     type Output = Polynomial;
 
     fn mul(self, other: Self) -> Self::Output {
-        let mut mul = Polynomial::zero();
-        for (lhs_m, lhs_q) in &self.map {
-            for (rhs_m, rhs_q) in &other.map {
-                let m = lhs_m.clone() * rhs_m;
-                let q = *lhs_q * *rhs_q;
-                match mul.map.entry(m) {
-                    Entry::Occupied(mut entry) => match *entry.get() + q {
-                        Some(q) => *entry.get_mut() = q,
-                        None => {
-                            entry.remove();
-                        }
-                    },
-                    Entry::Vacant(entry) => {
-                        entry.insert(q);
-                    }
-                }
-            }
-        }
-        mul
+        self.map
+            .iter()
+            .flat_map(|(lhs_m, lhs_q)| {
+                other
+                    .map
+                    .iter()
+                    .map(move |(rhs_m, rhs_q)| (lhs_m.clone() * rhs_m, *lhs_q * *rhs_q))
+            })
+            .sum()
     }
 }
 

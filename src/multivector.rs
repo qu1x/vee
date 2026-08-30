@@ -8,16 +8,15 @@ use super::{
 };
 use core::{
     fmt::{self, Alignment, Debug, Display, LowerHex, Octal},
+    iter::{Product, Sum},
     mem::replace,
     ops::{
-        Add, AddAssign, BitAnd, BitOr, BitXor, Div, DivAssign, Mul, MulAssign, Neg, Not, Rem, Shl,
-        Shr, Sub, SubAssign,
+        Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div,
+        DivAssign, Mul, MulAssign, Neg, Not, Rem, RemAssign, Shl, ShlAssign, Shr, ShrAssign, Sub,
+        SubAssign,
     },
 };
-use std::{
-    collections::{BTreeMap, BTreeSet, btree_map::Entry},
-    iter::{Product, Sum},
-};
+use std::collections::{BTreeMap, BTreeSet, btree_map::Entry};
 
 /// Uniquely reduced form of a symbolic multivector expression.
 ///
@@ -283,16 +282,14 @@ impl<B: Algebra> Multivector<B> {
     }
     /// Collects the vectors per grade.
     #[must_use]
-    pub fn vectors(mut self) -> BTreeMap<u32, Self> {
-        let mut vectors = BTreeMap::new();
-        for grade in self.grades() {
-            let map = self
+    pub fn vectors(self) -> BTreeMap<u32, Self> {
+        self.map.into_iter().fold(BTreeMap::new(), |mut v, (b, p)| {
+            v.entry(b.grade())
+                .or_insert_with(Self::zero)
                 .map
-                .extract_if(.., |b, _p| b.grade() == grade)
-                .collect();
-            vectors.insert(grade, Self { map, onc: false });
-        }
-        vectors
+                .insert(b, p);
+            v
+        })
     }
     /// Returns the vector of `grade`. The vector is empty if there is no `grade`.
     #[must_use]
@@ -566,6 +563,16 @@ impl<B: Algebra> Sum for Multivector<B> {
     }
 }
 
+impl<B: Algebra> Sum<(B, Polynomial)> for Multivector<B> {
+    #[inline]
+    fn sum<I: Iterator<Item = (B, Polynomial)>>(iter: I) -> Self {
+        iter.fold(Self::zero(), |mut v, (b, p)| {
+            v.add_entry(b, p);
+            v
+        })
+    }
+}
+
 impl<B: Algebra> Product for Multivector<B> {
     #[inline]
     fn product<I: Iterator<Item = Self>>(iter: I) -> Self {
@@ -593,17 +600,24 @@ impl<B: Algebra> Add for Multivector<B> {
 impl<B: Algebra> AddAssign for Multivector<B> {
     fn add_assign(&mut self, other: Self) {
         for (b, p) in other.map {
-            match self.map.entry(b) {
-                Entry::Occupied(mut entry) => {
-                    if let Some(p) = replace(entry.get_mut(), Polynomial::zero()) + p {
-                        *entry.get_mut() = p;
-                    } else {
-                        entry.remove();
-                    }
+            self.add_entry(b, p);
+        }
+    }
+}
+
+impl<B: Algebra> Multivector<B> {
+    #[inline]
+    fn add_entry(&mut self, b: B, p: Polynomial) {
+        match self.map.entry(b) {
+            Entry::Occupied(mut entry) => {
+                if let Some(p) = replace(entry.get_mut(), Polynomial::zero()) + p {
+                    *entry.get_mut() = p;
+                } else {
+                    entry.remove();
                 }
-                Entry::Vacant(entry) => {
-                    entry.insert(p);
-                }
+            }
+            Entry::Vacant(entry) => {
+                entry.insert(p);
             }
         }
     }
@@ -713,29 +727,17 @@ impl<B: Algebra> Mul for &Multivector<B> {
     type Output = Multivector<B>;
 
     fn mul(self, other: Self) -> Self::Output {
-        let mut mul = Multivector::zero();
-        for (&lhs_b, lhs_p) in &self.map {
-            for (&rhs_b, rhs_p) in &other.map {
-                let (s, b) = lhs_b * rhs_b;
-                let q = Rational::new_integer(s.into());
-                let Some(p) = q.map(|q| lhs_p.clone() * rhs_p.clone() * q) else {
-                    continue;
-                };
-                match mul.map.entry(b) {
-                    Entry::Occupied(mut entry) => {
-                        if let Some(p) = replace(entry.get_mut(), Polynomial::zero()) + p {
-                            *entry.get_mut() = p;
-                        } else {
-                            entry.remove();
-                        }
-                    }
-                    Entry::Vacant(entry) => {
-                        entry.insert(p);
-                    }
-                }
-            }
-        }
-        mul
+        self.map
+            .iter()
+            .flat_map(|(&lhs_b, lhs_p)| {
+                other.map.iter().filter_map(move |(&rhs_b, rhs_p)| {
+                    let (s, b) = lhs_b * rhs_b;
+                    let q = Rational::new_integer(s.into())?;
+                    let p = lhs_p.clone() * rhs_p.clone() * q;
+                    Some((b, p))
+                })
+            })
+            .sum()
     }
 }
 
@@ -793,13 +795,22 @@ impl<B: Algebra> BitOr for Multivector<B> {
     type Output = Self;
 
     fn bitor(self, other: Self) -> Self::Output {
-        let mut v = Self::zero();
-        for (lhs_grade, lhs_vector) in self.vectors() {
-            for (rhs_grade, rhs_vector) in other.clone().vectors() {
-                v += (lhs_vector.clone() * rhs_vector).vector(rhs_grade.abs_diff(lhs_grade));
-            }
-        }
-        v
+        let other_vectors = other.vectors();
+        self.vectors()
+            .iter()
+            .flat_map(|(&lhs_grade, lhs_vector)| {
+                other_vectors.iter().map(move |(&rhs_grade, rhs_vector)| {
+                    (lhs_vector * rhs_vector).vector(lhs_grade.abs_diff(rhs_grade))
+                })
+            })
+            .sum()
+    }
+}
+
+impl<B: Algebra> BitOrAssign for Multivector<B> {
+    #[inline]
+    fn bitor_assign(&mut self, other: Self) {
+        *self = replace(self, Self::zero()) | other;
     }
 }
 
@@ -807,13 +818,22 @@ impl<B: Algebra> BitXor for Multivector<B> {
     type Output = Self;
 
     fn bitxor(self, other: Self) -> Self::Output {
-        let mut v = Self::zero();
-        for (lhs_grade, lhs_vector) in self.vectors() {
-            for (rhs_grade, rhs_vector) in other.clone().vectors() {
-                v += (lhs_vector.clone() * rhs_vector).vector(lhs_grade + rhs_grade);
-            }
-        }
-        v
+        let other_vectors = other.vectors();
+        self.vectors()
+            .iter()
+            .flat_map(|(&lhs_grade, lhs_vector)| {
+                other_vectors.iter().map(move |(&rhs_grade, rhs_vector)| {
+                    (lhs_vector * rhs_vector).vector(lhs_grade + rhs_grade)
+                })
+            })
+            .sum()
+    }
+}
+
+impl<B: Algebra> BitXorAssign for Multivector<B> {
+    #[inline]
+    fn bitxor_assign(&mut self, other: Self) {
+        *self = replace(self, Self::zero()) ^ other;
     }
 }
 
@@ -842,11 +862,59 @@ impl<B: Algebra> BitAnd for Multivector<B> {
     }
 }
 
+impl<B: Algebra> BitAndAssign for Multivector<B> {
+    #[inline]
+    fn bitand_assign(&mut self, other: Self) {
+        *self = replace(self, Self::zero()) & other;
+    }
+}
+
 impl<B: Algebra> Rem for Multivector<B> {
     type Output = Self;
 
+    #[inline]
     fn rem(self, other: Self) -> Self::Output {
-        (self.clone() * other.clone() - other * self) / Rational::TWO
+        &self % &other
+    }
+}
+
+impl<B: Algebra> RemAssign for Multivector<B> {
+    #[inline]
+    fn rem_assign(&mut self, other: Self) {
+        *self %= &other;
+    }
+}
+
+impl<B: Algebra> Rem<&Self> for Multivector<B> {
+    type Output = Self;
+
+    #[inline]
+    fn rem(self, other: &Self) -> Self::Output {
+        &self % other
+    }
+}
+
+impl<B: Algebra> RemAssign<&Self> for Multivector<B> {
+    #[inline]
+    fn rem_assign(&mut self, other: &Self) {
+        *self = &*self % other;
+    }
+}
+
+impl<B: Algebra> Rem for &Multivector<B> {
+    type Output = Multivector<B>;
+
+    fn rem(self, other: Self) -> Self::Output {
+        (self * other - other * self) / Rational::TWO
+    }
+}
+
+impl<B: Algebra> Rem<Multivector<B>> for &Multivector<B> {
+    type Output = Multivector<B>;
+
+    #[inline]
+    fn rem(self, other: Multivector<B>) -> Self::Output {
+        self % &other
     }
 }
 
@@ -861,12 +929,19 @@ impl<B: Algebra> Shl for Multivector<B> {
         if self.is_odd() && other.is_odd() {
             self.neg_assign();
         }
-        let shl = other.clone() * self * other.rev();
+        let shl = &other * &self * other.rev();
         if let Some((onc, lhs, rhs)) = onc {
             (shl + onc).cond(&lhs, &rhs)
         } else {
             shl
         }
+    }
+}
+
+impl<B: Algebra> ShlAssign for Multivector<B> {
+    #[inline]
+    fn shl_assign(&mut self, other: Self) {
+        *self = replace(self, Self::zero()) << other;
     }
 }
 
@@ -880,6 +955,13 @@ impl<B: Algebra> Shr for Multivector<B> {
         } else {
             shr
         }
+    }
+}
+
+impl<B: Algebra> ShrAssign for Multivector<B> {
+    #[inline]
+    fn shr_assign(&mut self, other: Self) {
+        *self = replace(self, Self::zero()) >> other;
     }
 }
 
