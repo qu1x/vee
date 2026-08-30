@@ -51,6 +51,10 @@ impl Polynomial {
     ///     Polynomial::zero() + Polynomial::zero(),
     ///     Some(Polynomial::zero())
     /// );
+    /// assert_eq!(
+    ///     Polynomial::zero() - Polynomial::zero(),
+    ///     Some(Polynomial::zero())
+    /// );
     /// ```
     #[must_use]
     #[inline]
@@ -69,6 +73,24 @@ impl Polynomial {
     /// assert_eq!(Polynomial::one() * Polynomial::zero(), Polynomial::zero());
     /// assert_eq!(
     ///     Polynomial::one() + Polynomial::zero(),
+    ///     Some(Polynomial::one())
+    /// );
+    ///
+    /// assert_eq!(
+    ///     Polynomial::zero() + Polynomial::one(),
+    ///     Some(Polynomial::one())
+    /// );
+    /// assert_eq!(
+    ///     Polynomial::one() + Polynomial::zero(),
+    ///     Some(Polynomial::one())
+    /// );
+    ///
+    /// assert_eq!(
+    ///     Polynomial::zero() - Polynomial::one(),
+    ///     Some(-Polynomial::one())
+    /// );
+    /// assert_eq!(
+    ///     Polynomial::one() - Polynomial::zero(),
     ///     Some(Polynomial::one())
     /// );
     /// ```
@@ -255,7 +277,7 @@ impl Add for Polynomial {
 
     fn add(mut self, other: Self) -> Self::Output {
         if self.is_zero() {
-            Some(self)
+            Some(other)
         } else {
             for (m, rhs_q) in other.map {
                 match self.map.entry(m) {
@@ -280,7 +302,7 @@ impl Sub for Polynomial {
 
     fn sub(mut self, other: Self) -> Self::Output {
         if self.is_zero() {
-            Some(self)
+            Some(-other)
         } else {
             for (m, rhs_q) in other.map {
                 match self.map.entry(m) {
