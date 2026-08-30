@@ -350,10 +350,12 @@ impl<B: Algebra> Multivector<B> {
                     }
                     match new_p.map.entry(new_m) {
                         Entry::Occupied(mut entry) => {
-                            match new_q.and_then(|new_q| *entry.get() + new_q) {
-                                Some(q) => *entry.get_mut() = q,
-                                None => {
-                                    entry.remove();
+                            if let Some(new_q) = new_q {
+                                match *entry.get() + new_q {
+                                    Some(q) => *entry.get_mut() = q,
+                                    None => {
+                                        entry.remove();
+                                    }
                                 }
                             }
                         }

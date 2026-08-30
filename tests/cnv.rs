@@ -181,6 +181,35 @@ fn cnv() {
         );
         format_eq!(
             "{:#x}",
+            Vee::plane()
+                .norm_squared()
+                .eval([(Bee::e1(), 3), (Bee::e2(), 0)]),
+            ["let e = 9.0 + v3 * v3;"]
+        );
+        format_eq!(
+            "{:#x}",
+            Vee::plane()
+                .norm_squared()
+                .eval([(Bee::e1(), 3)])
+                .eval([(Bee::e2(), 0)]),
+            ["let e = 9.0 + v3 * v3;"]
+        );
+        format_eq!(
+            "{:#x}",
+            Vee::plane()
+                .norm_squared()
+                .eval([(Bee::e1(), 3), (Bee::e2(), 0), (Bee::e3(), 0)]),
+            ["let e = 9.0;"]
+        );
+        format_eq!(
+            "{:#x}",
+            Vee::plane()
+                .norm_squared()
+                .eval([(Bee::e1(), 1), (Bee::e2(), 0), (Bee::e3(), 0)]),
+            ["let e = 1.0;"]
+        );
+        format_eq!(
+            "{:#x}",
             Vee::norm().eval([(Bee::e(), 0)]),
             ["let e = 0.0;", "let e0123 = v0123;"]
         );
