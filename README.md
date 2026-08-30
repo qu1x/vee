@@ -27,7 +27,7 @@ The goal of this crate is to generate optimized code for geometric algebra flavo
     coincide.
   * Generate text form in Unicode/ASCII/LaTeX mode.
   * Generate code form in generic/Rust mode.
-  * Generate tree form (i.e., DOT as in [`text/vnd.graphviz`]) in Unicode/ASCII mode.
+  * Generate tree form (i.e., DOT graphs as in [`text/vnd.graphviz`]) in Unicode/ASCII mode.
   * Eliminate orthonormalization conditions from expressions using reflection/projection
     operator by factoring pinned symbols, GCD coefficients, and predominant signs.
   * Evaluate symbols as rationals.
