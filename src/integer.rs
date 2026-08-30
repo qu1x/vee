@@ -502,7 +502,7 @@ impl Neg for Integer {
 impl NegAssign for Integer {
     #[inline]
     fn neg_assign(&mut self) {
-        self.0 = self.0.neg();
+        *self = self.neg();
     }
 }
 
