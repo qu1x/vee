@@ -64,7 +64,7 @@ cargo tex --open
 
 Copyright © 2025-2026 Rouven Spreckels <rs@qu1x.dev>
 
-Licensed under the terms of the [`MPL-2.0`](LICENSES-MPL).
+Licensed under the terms of the [`MPL-2.0`](LICENSE-MPL).
 
 ## Contribution
 
