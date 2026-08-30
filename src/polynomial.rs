@@ -190,9 +190,9 @@ impl Polynomial {
     pub fn signed_gcd(&self) -> Option<Rational> {
         Rational::signed_gcd_reduce(self.map.values().copied())
     }
-    /// LCD and predominant sign of coefficients.
+    /// LCM and predominant sign of coefficients.
     #[must_use]
-    pub fn signed_lcd(&self) -> Option<Rational> {
+    pub fn signed_lcm(&self) -> Option<Rational> {
         Rational::signed_lcm_reduce(self.map.values().copied())
     }
 }
