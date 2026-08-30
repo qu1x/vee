@@ -1261,7 +1261,7 @@ impl<B: Algebra> Octal for Multivector<B> {
                             Symbol::PIN => "hexagon",
                             Symbol::LHS => "larrow",
                             Symbol::RHS => "rarrow",
-                            label => panic!("unknown symbol label `{label}`"),
+                            _ => "octagon",
                         }
                     };
                     if fmt.alternate() {
