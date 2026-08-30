@@ -23,6 +23,7 @@ include = [
 	"src/**/*.rs",
 	"tests/**/*.rs",
 	"tests/**/*.ct",
+	"cargo-tex",
 	"katex.html",
 	"Cargo.toml",
 	"README.md",
