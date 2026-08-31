@@ -193,7 +193,7 @@
 //! [`PgaP3::pin()`] method pins symbols of [`PgaP3::point()`] with the *combining x below* (i.e.,
 //! the Unicode *combining diacritical mark* `"◌͓"`) to distinguish them from the symbols of
 //! [`PgaP3::motor()`]. This isometry (i.e., up to a screw motion) is isomorphic to the
-//! transformation of a homogeneoous point by a dual quaternion.
+//! transformation of a homogeneous point by a dual quaternion.
 //!
 //! [`PgaP3::motor()`]: struct.Multivector.html#method.motor-1
 #![cfg_attr(
