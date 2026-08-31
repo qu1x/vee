@@ -8,7 +8,7 @@
   * Gate `rudimentary` (N < 2) and `exploratory` (N > 4) PGA flavors behind respective features.
   * Implement iterator traits: `Sum` and `Product`.
   * Implement operator traits on applicable combinations of `self`/`other` references.
-  * Define operator traits: `Rev`/`RevAssign`, `Inv`/`InvAssign`, and `NegAssign`.
+  * Define operator traits: `Rev`/`RevAssign`, `Inv`/`InvAssign`, and `NegAssign`/`NotAssign`.
   * Distinguish between numeric and symbolic zero for either emitting or omitting zero vectors.
   * Drop `Choose` trait in favor of constant `choose` function.
   * Make `Factor` trait private in favor of `Rational`/`Integer` methods of which some are constant.

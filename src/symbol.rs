@@ -3,6 +3,7 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of
 // the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+use super::NotAssign;
 use core::{
     cmp::Ordering,
     fmt::{self, Alignment, Display},
@@ -182,6 +183,14 @@ impl Not for Symbol {
             cdm: self.cdm,
             lab: self.lab,
         }
+    }
+}
+
+impl NotAssign for Symbol {
+    /// Swaps lowercase and uppercase character.
+    #[inline]
+    fn not_assign(&mut self) {
+        *self = !*self;
     }
 }
 

@@ -602,6 +602,12 @@ macro_rules! format_eq {
     }};
 }
 
+/// The unary logical negation assignment operator.
+pub trait NotAssign {
+    /// Performs the unary logical negation assignment operation.
+    fn not_assign(&mut self);
+}
+
 /// The unary negation assignment operator.
 pub trait NegAssign {
     /// Performs the unary negation assignment operation.
