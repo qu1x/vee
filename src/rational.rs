@@ -17,6 +17,14 @@ use core::{
 /// Comprises two non-zero 64-bit <code>[Integer]s</code>, the numerator and the denominator.
 ///
 /// The [`None`] variant of <code>[Option]<[Rational]></code> represents zero.
+///
+/// Note that not only [`Add`]/[`Sub`] or [`Mul`]/[`Div`]  operators can panic on overflow.
+///
+/// ```should_panic
+/// use vee::{Integer, Rational};
+///
+/// let _ = Rational::MAX.cmp(&Rational::from((Integer::ONE, Integer::TWO)));
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Rational(Integer, Integer);
 
@@ -55,6 +63,22 @@ impl Rational {
     /// use vee::Rational;
     ///
     /// let _ = Rational::new(0, 0);
+    /// ```
+    ///
+    /// Panics on negating division when [`i64::MIN`] overflows [`i64::MAX`].
+    ///
+    /// ```should_panic
+    /// use vee::Rational;
+    ///
+    /// let _ = Rational::new(i64::MIN, -1);
+    /// ```
+    ///
+    /// Panics on negating division when [`i64::MIN`] overflows [`i64::MAX`].
+    ///
+    /// ```should_panic
+    /// use vee::Rational;
+    ///
+    /// let _ = Rational::new(1, i64::MIN);
     /// ```
     #[must_use]
     #[inline]
