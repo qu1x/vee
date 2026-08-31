@@ -123,6 +123,16 @@ impl<'a> Product<&'a Self> for Monomial {
     }
 }
 
+impl Product<(Symbol, Integer)> for Monomial {
+    #[inline]
+    fn product<I: Iterator<Item = (Symbol, Integer)>>(iter: I) -> Self {
+        iter.fold(Self::one(), |mut m, (s, z)| {
+            m.mul_entry(s, z);
+            m
+        })
+    }
+}
+
 impl Mul for Monomial {
     type Output = Self;
 
@@ -163,17 +173,25 @@ impl MulAssign for Monomial {
 impl MulAssign<&Self> for Monomial {
     fn mul_assign(&mut self, other: &Self) {
         for (&s, &z) in &other.map {
-            match self.map.entry(s) {
-                #[allow(clippy::suspicious_op_assign_impl)]
-                Entry::Occupied(mut entry) => match *entry.get() + z {
-                    Some(z) => *entry.get_mut() = z,
-                    None => {
-                        entry.remove();
-                    }
-                },
-                Entry::Vacant(entry) => {
-                    entry.insert(z);
+            self.mul_entry(s, z);
+        }
+    }
+}
+
+impl Monomial {
+    #[inline]
+    fn mul_entry(&mut self, s: Symbol, z: Integer) {
+        match self.map.entry(s) {
+            #[allow(clippy::suspicious_op_assign_impl)]
+            Entry::Occupied(mut entry) => {
+                if let Some(z) = *entry.get() + z {
+                    *entry.get_mut() = z;
+                } else {
+                    entry.remove();
                 }
+            }
+            Entry::Vacant(entry) => {
+                entry.insert(z);
             }
         }
     }
@@ -221,12 +239,13 @@ impl DivAssign<&Self> for Monomial {
         for (&s, &z) in &other.map {
             match self.map.entry(s) {
                 #[allow(clippy::suspicious_op_assign_impl)]
-                Entry::Occupied(mut entry) => match *entry.get() - z {
-                    Some(z) => *entry.get_mut() = z,
-                    None => {
+                Entry::Occupied(mut entry) => {
+                    if let Some(z) = *entry.get() - z {
+                        *entry.get_mut() = z;
+                    } else {
                         entry.remove();
                     }
-                },
+                }
                 Entry::Vacant(entry) => {
                     entry.insert(-z);
                 }
