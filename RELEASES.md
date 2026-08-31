@@ -1,5 +1,8 @@
-# Version 0.4.0 (2026-08-23)
+# Version 0.4.0 (2026-08-31)
 
+  * Rephrase documentation.
+  * Drop self-referencing dev-dependency.
+  * Optimize operators reducing clones.
   * Update KaTeX.
   * Refactor `FromIterator` implementations and add constructor methods for polynomial and monomial.
   * Gate `rudimentary` (N < 2) and `exploratory` (N > 4) PGA flavors behind respective features.
@@ -8,7 +11,7 @@
   * Define operator traits: `Rev`/`RevAssign`, `Inv`/`InvAssign`, and `NegAssign`.
   * Distinguish between numeric and symbolic zero for either emitting or omitting zero vectors.
   * Drop `Choose` trait in favor of constant `choose` function.
-  * Drop `Factor` trait in favor of `Rational`/`Integer` methods of which some are constant.
+  * Make `Factor` trait private in favor of `Rational`/`Integer` methods of which some are constant.
   * Drop `Default` implementations in favor of explicit `zero()`/`one()` methods.
   * Base rationals on non-zero integers such that empty polynomials are unique numeric zeros.
   * Split sources into multiple files and split unit tests into multiple external ones.
@@ -18,6 +21,7 @@
   * Predefine symbols for evaluation as rationals.
   * Fix formula of reflection operator.
   * Fix operators, evaluation, and code form. Thank you, [Lars Hadidi].
+      * Fix refactor related regressions.
       * Fix sign of twisted Clifford-Lipschitz group for odd mixed-grade versor.
       * Fix panic on foreign symbol.
       * Fix multiplication for monomial one.
