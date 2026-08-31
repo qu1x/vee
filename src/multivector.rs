@@ -348,22 +348,8 @@ impl<B: Algebra> Multivector<B> {
                                 .map(|(new_q, map_q)| new_q * map_q.pow(old_z));
                         }
                     }
-                    match new_p.map.entry(new_m) {
-                        Entry::Occupied(mut entry) => {
-                            if let Some(new_q) = new_q {
-                                match *entry.get() + new_q {
-                                    Some(q) => *entry.get_mut() = q,
-                                    None => {
-                                        entry.remove();
-                                    }
-                                }
-                            }
-                        }
-                        Entry::Vacant(entry) => {
-                            if let Some(new_q) = new_q {
-                                entry.insert(new_q);
-                            }
-                        }
+                    if let Some(new_q) = new_q {
+                        new_p.add_entry(new_m, new_q);
                     }
                 }
                 *old_p = new_p;

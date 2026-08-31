@@ -299,14 +299,15 @@ impl Add for Polynomial {
 
 impl Polynomial {
     #[inline]
-    fn add_entry(&mut self, m: Monomial, q: Rational) {
+    pub(crate) fn add_entry(&mut self, m: Monomial, q: Rational) {
         match self.map.entry(m) {
-            Entry::Occupied(mut entry) => match *entry.get() + q {
-                Some(sum) => *entry.get_mut() = sum,
-                None => {
+            Entry::Occupied(mut entry) => {
+                if let Some(q) = *entry.get() + q {
+                    *entry.get_mut() = q;
+                } else {
                     entry.remove();
                 }
-            },
+            }
             Entry::Vacant(entry) => {
                 entry.insert(q);
             }
