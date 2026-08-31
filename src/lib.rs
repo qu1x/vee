@@ -44,21 +44,33 @@
 //!
 //! # Contents
 //!
-//!   * [Features](#features)
-//!   * [Roadmap](#roadmap)
-//!   * [Operators](#operators)
-//!   * [Text Form](struct.Multivector.html#text-form-in-unicodeasciilatex-mode)
-//!       * [Unicode Mode](#text-form-in-unicode-mode)
-//!       * [ASCII Mode](#text-form-in-ascii-mode)
-//!       * $`\LaTeX`$ [Mode](#text-form-in-latex-mode)
-//!   * [Code Form](struct.Multivector.html#code-form-in-genericrust-mode)
-//!       * [Generic Mode](#code-form-in-generic-mode)
-//!       * [Rust Mode](#code-form-in-rust-mode)
-//!   * [Tree Form](struct.Multivector.html#tree-form-in-unicodeascii-mode)
-//!       * [Unicode Mode](#tree-form-in-unicode-mode)
-//!       * [ASCII Mode](#tree-form-in-ascii-mode)
+//!   * [Symbolic Engine](#symbolic-engine)
+//!   * [Multivector Operators](#multivector-operators)
+//!   * [Text Form Arguments](struct.Multivector.html#text-form-in-unicodeasciilatex-mode)
+//!       * [Unicode Mode Examples](#text-form-in-unicode-mode)
+//!       * [ASCII Mode Examples](#text-form-in-ascii-mode)
+//!       * $`\LaTeX`$ [Mode Examples](#text-form-in-latex-mode)
+//!   * [Code Form Arguments](struct.Multivector.html#code-form-in-genericrust-mode)
+//!       * [Generic Mode Examples](#code-form-in-generic-mode)
+//!       * [Rust Mode Examples](#code-form-in-rust-mode)
+//!   * [Tree Form Arguments](struct.Multivector.html#tree-form-in-unicodeascii-mode)
+//!       * [Unicode Mode Examples](#tree-form-in-unicode-mode)
+//!       * [ASCII Mode Examples](#tree-form-in-ascii-mode)
 //!
-//! # Features
+//! # Symbolic Engine
+//!
+//! The symbolic engine uses [`BTreeMap`] as storage container such that the canonical form of the
+//! [`Multivector`]/[`Polynomial`]/[`Monomial`] hierarchy over [`Symbol`] is structurally enforced
+//! by the choice of keys and values. Therefore, the non-volatile [`BTreeMap`] fields are public.
+//! The canonical forms of non-zero [`Rational`] coefficients and non-zero [`Integer`] exponents are
+//! behaviourally enforced by internally finalizing operators with [`Rational::reduce()`] and
+//! excluding zero with the [`None`] variant of <code>[Option]<[Rational]></code> and
+//! <code>[Option]<[Integer]></code>. Therefore, the volatile numerator/denominator field of
+//! [`Rational`] and the volatile [`i64`] field of [`Integer`] are private.
+//!
+//! [`BTreeMap`]: `std::collections::BTreeMap`
+//!
+//! ## Features
 //!
 //!   * Zero non-optional dependencies.
 //!   * Uniquely reduce symbolic multivector expressions for algebraic and structural equivalence to
@@ -76,7 +88,7 @@
 //!
 //! [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
 //!
-//! # Roadmap
+//! ## Roadmap
 //!
 //!   * Simplify emitter by flattening expression tree into token stream and perform defer logic
 //!     during stream iteration rather than tree traversal.
@@ -87,11 +99,20 @@
 //!   * Generate expressions in SIMD mode.
 //!   * Define other geometric algebra flavors.
 //!
-//! # Operators
+//! # Multivector Operators
 //!
-//! Following table lists the common operators shared between flavors. The code for the first three
-//! will be manually written based on generalized complex numbers whereas the code for the remaining
-//! ones will be automatically generated based on [`Multivector`].
+//! Following table lists some common operators shared between flavors. The first three and the
+//! omitted even-grade operators (e.g., square root, exponential, logarithm, power) must be manually
+//! implemented based on Study numbers (i.e., generalized complex numbers) whereas the expressions
+//! for the remaining ones are generated based on [`Multivector`] leveraging its respective symbolic
+//! operator implementations. Otherwise, [`Multivector::norm_squared()`] is the closest offered and
+//! [`Multivector::unit()`] is a marker, affecting only the multi-plane reflection operator (i.e,
+//! the group conjugation or the sandwich product) and the projection operator inclusive rejection.
+//! The table suggests the mixed-grade selection `B::from(a)` which is applicable whenever the
+//! target implementation supports distinct types `B` for blades and versors rather than one
+//! multivector type for all. Symbolic grade selection is supported with [`Multivector::grade()`]
+//! and [`Multivector::vector()`] or with their mixed-grade complements [`Multivector::grades()`]
+//! and [`Multivector::vectors()`].
 //!
 //! ```gdef
 //! \gdef\norm{
@@ -193,7 +214,9 @@
 //! [`PgaP3::pin()`] method pins symbols of [`PgaP3::point()`] with the *combining x below* (i.e.,
 //! the Unicode *combining diacritical mark* `"◌͓"`) to distinguish them from the symbols of
 //! [`PgaP3::motor()`]. This isometry (i.e., up to a screw motion) is isomorphic to the
-//! transformation of a homogeneous point by a dual quaternion.
+//! transformation of a homogeneous point by a dual quaternion. When importing type aliases, the
+//! examples rename the multivector type as `Vee` and its basis blade type as `Bee`, with the former
+//! being parameterized by the latter.
 //!
 //! [`PgaP3::motor()`]: struct.Multivector.html#method.motor-1
 #![cfg_attr(
