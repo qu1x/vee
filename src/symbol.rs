@@ -95,15 +95,20 @@ impl Symbol {
     pub const fn is_alt(&self) -> bool {
         self.alt == Self::ALT
     }
-    /// Creates symbol for variable `var` with symbol name `sym`.
+    /// Creates symbol for `variable` and non-empty `label` in $`\e`$-notation.
+    ///
+    /// # Panics
+    ///
+    /// Panics on empty symbol `label`.
     #[must_use]
     #[inline]
-    pub const fn new(var: char, sym: &'static str) -> Self {
+    pub const fn new(variable: char, label: &'static str) -> Self {
+        assert!(!label.is_empty(), "empty symbol label");
         Self {
-            var,
+            var: variable,
             alt: Self::NIL,
             cdm: Self::NIL,
-            lab: sym,
+            lab: label,
         }
     }
     /// Marks this symbol with [`Self::ALT`].
@@ -142,18 +147,18 @@ impl Symbol {
 
 impl From<(&str, &'static str)> for Symbol {
     #[inline]
-    fn from((vars, sym): (&str, &'static str)) -> Self {
+    fn from((vars, lab): (&str, &'static str)) -> Self {
         let mut vars = vars.chars();
         let var = vars.next().unwrap_or_default();
         assert_eq!(vars.next(), None, "multi-character symbol");
-        Self::new(var, sym)
+        Self::new(var, lab)
     }
 }
 
 impl From<(char, &'static str)> for Symbol {
     #[inline]
-    fn from((var, sym): (char, &'static str)) -> Self {
-        Self::new(var, sym)
+    fn from((var, lab): (char, &'static str)) -> Self {
+        Self::new(var, lab)
     }
 }
 
