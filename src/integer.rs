@@ -5,7 +5,7 @@
 
 #![deny(clippy::arithmetic_side_effects)]
 
-use super::{Factor, Inv, NegAssign};
+use super::{Factor, Inv, NegAssign, Rational};
 use core::{
     mem::swap,
     ops::{Add, Div, Mul, MulAssign, Neg, Sub},
@@ -100,8 +100,8 @@ impl Integer {
     /// The inverse.
     #[must_use]
     #[inline]
-    pub const fn inv(self) -> Option<Self> {
-        Self::ONE.div(self)
+    pub const fn inv(self) -> Rational {
+        Rational::from_integer(self).inv()
     }
     /// The power.
     ///
@@ -532,7 +532,7 @@ impl Div for Integer {
 }
 
 impl Inv for Integer {
-    type Output = Option<Self>;
+    type Output = Rational;
 
     #[inline]
     fn inv(self) -> Self::Output {
