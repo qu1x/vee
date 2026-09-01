@@ -151,7 +151,7 @@ basis!(TAB6, LUT6, 6, [
     ('V', e0123456),
 ]);
 
-/// The named entities of the PGA with embedded dimension $`N = 6`$ (exploratory).
+/// The named entities of the PGA with embedded dimension $`N = 6`$.
 impl<const M: i8> Multivector<Pga<M, 6>> {
     /// The multivector of scalar $`s \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]

@@ -25,13 +25,13 @@ pub type PgaE2 = Pga<1, 2>;
 pub type PgaE3 = Pga<1, 3>;
 /// Basis blade of Elliptic 4D PGA.
 pub type PgaE4 = Pga<1, 4>;
-/// Basis blade of Elliptic 5D PGA (exploratory).
+/// Basis blade of Elliptic 5D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaE5 = Pga<1, 5>;
-/// Basis blade of Elliptic 6D PGA (exploratory).
+/// Basis blade of Elliptic 6D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaE6 = Pga<1, 6>;
-/// Basis blade of Elliptic 7D PGA (exploratory).
+/// Basis blade of Elliptic 7D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaE7 = Pga<1, 7>;
 
@@ -47,13 +47,13 @@ pub type PgaH2 = Pga<-1, 2>;
 pub type PgaH3 = Pga<-1, 3>;
 /// Basis blade of Hyperbolic 4D PGA.
 pub type PgaH4 = Pga<-1, 4>;
-/// Basis blade of Hyperbolic 5D PGA (exploratory).
+/// Basis blade of Hyperbolic 5D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaH5 = Pga<-1, 5>;
-/// Basis blade of Hyperbolic 6D PGA (exploratory).
+/// Basis blade of Hyperbolic 6D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaH6 = Pga<-1, 6>;
-/// Basis blade of Hyperbolic 7D PGA (exploratory).
+/// Basis blade of Hyperbolic 7D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaH7 = Pga<-1, 7>;
 
@@ -69,13 +69,13 @@ pub type PgaP2 = Pga<0, 2>;
 pub type PgaP3 = Pga<0, 3>;
 /// Basis blade of Parabolic (Euclidean) 4D PGA.
 pub type PgaP4 = Pga<0, 4>;
-/// Basis blade of Parabolic (Euclidean) 5D PGA (exploratory).
+/// Basis blade of Parabolic (Euclidean) 5D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaP5 = Pga<0, 5>;
-/// Basis blade of Parabolic (Euclidean) 6D PGA (exploratory).
+/// Basis blade of Parabolic (Euclidean) 6D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaP6 = Pga<0, 6>;
-/// Basis blade of Parabolic (Euclidean) 7D PGA (exploratory).
+/// Basis blade of Parabolic (Euclidean) 7D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaP7 = Pga<0, 7>;
 

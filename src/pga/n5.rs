@@ -73,7 +73,7 @@ basis!(TAB5, LUT5, 5, [
     ('V', e012345),
 ]);
 
-/// The named entities of the PGA with embedded dimension $`N = 5`$ (exploratory).
+/// The named entities of the PGA with embedded dimension $`N = 5`$.
 impl<const M: i8> Multivector<Pga<M, 5>> {
     /// The multivector of scalar $`s \equiv v\e`$ where $`\e \equiv 1`$.
     #[must_use]

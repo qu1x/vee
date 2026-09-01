@@ -658,13 +658,13 @@ pub type PgaE2 = Multivector<pga::PgaE2>;
 pub type PgaE3 = Multivector<pga::PgaE3>;
 /// Multivector for Elliptic 4D PGA.
 pub type PgaE4 = Multivector<pga::PgaE4>;
-/// Multivector for Elliptic 5D PGA (exploratory).
+/// Multivector for Elliptic 5D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaE5 = Multivector<pga::PgaE5>;
-/// Multivector for Elliptic 6D PGA (exploratory).
+/// Multivector for Elliptic 6D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaE6 = Multivector<pga::PgaE6>;
-/// Multivector for Elliptic 7D PGA (exploratory).
+/// Multivector for Elliptic 7D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaE7 = Multivector<pga::PgaE7>;
 
@@ -680,13 +680,13 @@ pub type PgaH2 = Multivector<pga::PgaH2>;
 pub type PgaH3 = Multivector<pga::PgaH3>;
 /// Multivector for Hyperbolic 4D PGA.
 pub type PgaH4 = Multivector<pga::PgaH4>;
-/// Multivector for Hyperbolic 5D PGA (exploratory).
+/// Multivector for Hyperbolic 5D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaH5 = Multivector<pga::PgaH5>;
-/// Multivector for Hyperbolic 6D PGA (exploratory).
+/// Multivector for Hyperbolic 6D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaH6 = Multivector<pga::PgaH6>;
-/// Multivector for Hyperbolic 7D PGA (exploratory).
+/// Multivector for Hyperbolic 7D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaH7 = Multivector<pga::PgaH7>;
 
@@ -702,12 +702,12 @@ pub type PgaP2 = Multivector<pga::PgaP2>;
 pub type PgaP3 = Multivector<pga::PgaP3>;
 /// Multivector for Parabolic (Euclidean) 4D PGA.
 pub type PgaP4 = Multivector<pga::PgaP4>;
-/// Multivector for Parabolic (Euclidean) 5D PGA (exploratory).
+/// Multivector for Parabolic (Euclidean) 5D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaP5 = Multivector<pga::PgaP5>;
-/// Multivector for Parabolic (Euclidean) 6D PGA (exploratory).
+/// Multivector for Parabolic (Euclidean) 6D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaP6 = Multivector<pga::PgaP6>;
-/// Multivector for Parabolic (Euclidean) 7D PGA (exploratory).
+/// Multivector for Parabolic (Euclidean) 7D PGA.
 #[cfg(feature = "exploratory")]
 pub type PgaP7 = Multivector<pga::PgaP7>;
