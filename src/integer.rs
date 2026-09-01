@@ -204,7 +204,8 @@ impl Integer {
     }
     /// The least common multiple (LCM).
     ///
-    /// Equals <code>`Self::gcd_lcm()`.1</code>.
+    /// See [`Self::gcd_lcm()`] for calculating [`Self::gcd()`] and [`Self::lcm()`] by reusing the
+    /// former for the latter.
     ///
     /// # Examples
     ///
