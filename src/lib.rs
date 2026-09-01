@@ -209,14 +209,16 @@
 //!
 //! # Text Form in Unicode Mode
 //!
-//! Generates the expression for rotating and/or translating a point in [`PgaP3`], i.e., the type
-//! alias of [`Multivector`] parameterized for the Parabolic (Euclidean) 3D PGA. The
+//! Following example generates the expression for rotating and/or translating a point in [`PgaP3`],
+//! i.e., the type alias of [`Multivector`] parameterized for the Parabolic (Euclidean) 3D PGA. The
 //! [`PgaP3::pin()`] method pins symbols of [`PgaP3::point()`] with the *combining x below* (i.e.,
 //! the Unicode *combining diacritical mark* `"◌͓"`) to distinguish them from the symbols of
 //! [`PgaP3::motor()`]. This isometry (i.e., up to a screw motion) is isomorphic to the
 //! transformation of a homogeneous point by a dual quaternion. When importing type aliases, the
 //! examples rename the multivector type as `Vee` and its basis blade type as `Bee`, with the former
-//! being parameterized by the latter.
+//! being parameterized by the latter. While the examples use the [`format_eq!`] macro to serve as
+//! unit tests by asserting against the array concatenation, the standard [`format!`] or [`print!`]
+//! macros work as well.
 //!
 //! [`PgaP3::motor()`]: struct.Multivector.html#method.motor-1
 #![cfg_attr(
