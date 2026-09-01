@@ -577,15 +577,13 @@ pub use core::assert_eq as __assert_eq;
 #[doc(hidden)]
 pub use pretty_assertions::assert_eq as __assert_eq;
 
-/// Formats the `$lhs` expression using [`Display`] and asserts the `$rhs` string literals.
+/// Formats the `$lhs` expression using [`format!`] and asserts the `$rhs` string literals.
 ///
-/// Passes `$fmt` to [`Display`] with `{}` as default if omitted. Appends `"\n"` to each `$rhs`
+/// Passes `$fmt` to [`format!`] with `{}` as default if omitted. Appends `"\n"` to each `$rhs`
 /// literal and asserts the concatenation thereof.
 ///
 /// With the `pretty_assertions` feature, the respective [`assert_eq!`] macro is used. In this way,
 /// the Unicode *combining diacritical marks* are rendered as in the examples using [`format_eq!`].
-///
-/// [`Display`]: `core::fmt::Display`
 #[macro_export]
 macro_rules! format_eq {
     ($lhs:expr, [$($rhs:literal),* $(,)?]) => {{
