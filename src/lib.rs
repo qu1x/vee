@@ -11,8 +11,10 @@
 //! required for lower dimensional geometric algebra flavors as the inverse of a multivector is
 //! given by multiplying it with the inverse of its mixed-grade norm realizing a Study number for
 //! dimensions $`D < 6`$, i.e., a generalized complex number.[^1] See the [contents](#contents)
-//! below where the symbolic expressions are generated in text, code, and tree form. For evaluating
-//! symbols as rationals, see the [code form in Rust mode](#code-form-in-rust-mode) example.
+//! where the symbolic expressions are generated in text, code, list, and tree form. For evaluating
+//! symbols as rationals, see the [code form in Rust mode](#code-form-in-rust-mode) example. For
+//! exporting expressions to [Scheme] or [`egglog`], see the [list form in ASCII mode](
+//! #list-form-in-ascii-mode) examples.
 //!
 //! Currently, the plane-based pistachio flavor -- Projective Geometric Algebra (PGA) -- is
 //! implemented for $`D \equiv N + 1 \le 8`$ in all three metrics, i.e., elliptic, hyperbolic, and
@@ -46,16 +48,24 @@
 //!
 //!   * [Symbolic Engine](#symbolic-engine)
 //!   * [Multivector Operators](#multivector-operators)
-//!   * [Text Form Arguments](struct.Multivector.html#text-form-in-unicodeasciilatex-mode)
+//!   * [Text Form Arguments]
 //!       * [Unicode Mode Examples](#text-form-in-unicode-mode)
 //!       * [ASCII Mode Examples](#text-form-in-ascii-mode)
 //!       * $`\LaTeX`$ [Mode Examples](#text-form-in-latex-mode)
-//!   * [Code Form Arguments](struct.Multivector.html#code-form-in-genericrust-mode)
+//!   * [Code Form Arguments]
 //!       * [Generic Mode Examples](#code-form-in-generic-mode)
 //!       * [Rust Mode Examples](#code-form-in-rust-mode)
-//!   * [Tree Form Arguments](struct.Multivector.html#tree-form-in-unicodeascii-mode)
+//!   * [List Form Arguments]
+//!       * [Unicode Mode Examples](#list-form-in-unicode-mode)
+//!       * [ASCII Mode Examples](#list-form-in-ascii-mode)
+//!   * [Tree Form Arguments]
 //!       * [Unicode Mode Examples](#tree-form-in-unicode-mode)
 //!       * [ASCII Mode Examples](#tree-form-in-ascii-mode)
+//!
+//! [Text Form Arguments]: struct.Multivector.html#text-form-in-unicodeasciilatex-mode
+//! [Code Form Arguments]: struct.Multivector.html#code-form-in-genericrust-mode
+//! [List Form Arguments]: struct.Multivector.html#list-form-in-unicodeascii-mode
+//! [Tree Form Arguments]: struct.Multivector.html#tree-form-in-unicodeascii-mode
 //!
 //! # Symbolic Engine
 //!
@@ -77,6 +87,7 @@
 //!     coincide.
 //!   * Generate text form in Unicode/ASCII/$`\LaTeX`$ mode.
 //!   * Generate code form in generic/Rust mode.
+//!   * Generate list form (i.e., [s-expressions], [Scheme], or [`egglog`]) in Unicode/ASCII mode.
 //!   * Generate tree form (i.e., DOT graphs as in [`text/vnd.graphviz`]) in Unicode/ASCII mode.
 //!   * Eliminate orthonormalization conditions from expressions using reflection/projection
 //!     operator by factoring pinned symbols, GCD coefficients, and predominant signs.
@@ -86,16 +97,19 @@
 //!     along with the multivector entities for dimensions $`D \equiv N + 1 \le 8`$ of the
 //!     plane-based pistachio flavor, i.e., projective geometric algebra (PGA).
 //!
+//! [s-expressions]: https://en.wikipedia.org/wiki/S-expression
+//! [Scheme]: https://en.wikipedia.org/wiki/Scheme_(programming_language)
+//! [`egglog`]: https://docs.rs/egglog
 //! [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
 //!
 //! ## Roadmap
 //!
 //!   * Simplify emitter by flattening expression tree into token stream and perform defer logic
 //!     during stream iteration rather than tree traversal.
-//!   * Further optimize expressions to reduce operation count by domain-specific common
-//!     subexpression elimination (CSE) targeting exterior products. Reduce search space by
-//!     leveraging applicable geometric decomposition, e.g., Euclidean decomposition for parabolic
-//!     reflection operator.
+//!   * Explore [`egglog`] to further optimize expressions to reduce operation count by
+//!     domain-specific common subexpression elimination (CSE) targeting exterior products. Reduce
+//!     search space by leveraging applicable geometric decomposition, e.g., Euclidean decomposition
+//!     for parabolic reflection operator. If promising, import expressions back.
 //!   * Generate expressions in SIMD mode.
 //!   * Define other geometric algebra flavors.
 //!
@@ -468,6 +482,107 @@
 //!     "o.e12 = l.e * r.e12 + r.e * l.e12 - l.e23 * r.e31 + r.e23 * l.e31;",
 //! ]);
 //! ```
+//!
+//! # List Form in Unicode Mode
+//!
+//! Generate list form (i.e., [s-expressions], [Scheme], or [`egglog`]) in Unicode mode with
+//! `"{:e}"`:
+//!
+//! ```
+//! use vee::{PgaP3 as Vee, format_eq};
+//!
+//! format_eq!("{:e}", Vee::rotator().lhs() * Vee::rotator().rhs(), [
+//!     "(+ (+ (* v͔ v͕) (* -1 x͔ x͕) (* -1 y͔ y͕) (* -1 z͔ z͕))",
+//!     "   (* (+ (* v͔ x͕) (* v͕ x͔) (* -1 y͔ z͕) (* y͕ z͔)) e23)",
+//!     "   (* (+ (* v͔ y͕) (* v͕ y͔) (* x͔ z͕) (* -1 x͕ z͔)) e31)",
+//!     "   (* (+ (* v͔ z͕) (* v͕ z͔) (* -1 x͔ y͕) (* x͕ y͔)) e12))",
+//! ]);
+//! ```
+//!
+//! # List Form in ASCII Mode
+//!
+//! Generate list form (i.e., [s-expressions], [Scheme], or [`egglog`]) in ASCII mode with
+//! `"{:#e}"`:
+//!
+//! ```
+//! use vee::{PgaP3 as Vee, format_eq};
+//!
+//! // By default, negation is done as in `(* -1 x y)` or `(* -2 x y)`.
+//! format_eq!("{:#e}", Vee::rotator().lhs() * Vee::rotator().rhs(), [
+//!     "(+ (+ (* l r) (* -1 l23 r23) (* -1 l31 r31) (* -1 l12 r12))",
+//!     "   (* (+ (* l r23) (* r l23) (* -1 l31 r12) (* r31 l12)) e23)",
+//!     "   (* (+ (* l r31) (* r l31) (* l23 r12) (* -1 r23 l12)) e31)",
+//!     "   (* (+ (* l r12) (* r l12) (* -1 l23 r31) (* r23 l31)) e12))",
+//! ]);
+//!
+//! // Alternatively, negation is done as in `(- (x y))` or `(- (* 2 x y))`.
+//! format_eq!("{:-^#e}", Vee::rotator().lhs() * Vee::rotator().rhs(), [
+//!     "(+ (+ (* l r) (- (* l23 r23)) (- (* l31 r31)) (- (* l12 r12)))",
+//!     "   (* (+ (* l r23) (* r l23) (- (* l31 r12)) (* r31 l12)) e23)",
+//!     "   (* (+ (* l r31) (* r l31) (* l23 r12) (- (* r23 l12))) e31)",
+//!     "   (* (+ (* l r12) (* r l12) (- (* l23 r31)) (* r23 l31)) e12))",
+//! ]);
+//!
+//! // Additionally, the predominant sign is factored.
+//! format_eq!("{:-^-#e}", Vee::rotator().lhs() * Vee::rotator().rhs(), [
+//!     "(+ (- (+ (- (* l r)) (* l23 r23) (* l31 r31) (* l12 r12)))",
+//!     "   (* (+ (* l r23) (* r l23) (- (* l31 r12)) (* r31 l12)) e23)",
+//!     "   (* (+ (* l r31) (* r l31) (* l23 r12) (- (* r23 l12))) e31)",
+//!     "   (* (+ (* l r12) (* r l12) (- (* l23 r31)) (* r23 l31)) e12))",
+//! ]);
+//! ```
+//!
+//! Bind variables using [Scheme]'s `let` operator:
+//!
+//! ```
+//! use vee::{PgaP3 as Vee, format_eq};
+//!
+//! let rotator = Vee::rotator().lhs() * Vee::rotator().rhs();
+//!
+//! format_eq!("(let {:<#5e}  (process e e23 e31 e12))\n", rotator, [
+//!    "(let ((e (+ (* l r) (* -1 l23 r23) (* -1 l31 r31) (* -1 l12 r12)))",
+//!    "      (e23 (+ (* l r23) (* r l23) (* -1 l31 r12) (* r31 l12)))",
+//!    "      (e31 (+ (* l r31) (* r l31) (* l23 r12) (* -1 r23 l12)))",
+//!    "      (e12 (+ (* l r12) (* r l12) (* -1 l23 r31) (* r23 l31))))",
+//!    "  (process e e23 e31 e12))",
+//! ]);
+//! ```
+//!
+//! Define variables using [Scheme]'s `define-values` operator:
+//!
+//! ```
+//! use vee::{PgaP3 as Vee, format_eq};
+//!
+//! format_eq!("{:>#e}", Vee::rotator().lhs() * Vee::rotator().rhs(), [
+//!     "(define-values (e",
+//!     "                e23",
+//!     "                e31",
+//!     "                e12)",
+//!     "  (values (+ (* l r) (* -1 l23 r23) (* -1 l31 r31) (* -1 l12 r12))",
+//!     "          (+ (* l r23) (* r l23) (* -1 l31 r12) (* r31 l12))",
+//!     "          (+ (* l r31) (* r l31) (* l23 r12) (* -1 r23 l12))",
+//!     "          (+ (* l r12) (* r l12) (* -1 l23 r31) (* r23 l31))))",
+//! ]);
+//! ```
+//!
+//! Export expressions to [`egglog`] with `"{:#E}"`:
+//!
+//! ```
+//! use vee::{PgaP2 as Vee, format_eq};
+//!
+//! format_eq!("{:-^-#E}", Vee::point() / -2, [
+//!    "(Add (multiset-of (Mul (multiset-of \
+//!            (Neg (Mul (multiset-of (Num (rational 1 2)) (Sym \"v12\")))) (Bee \"e12\")))",
+//!    "     (Mul (multiset-of \
+//!            (Neg (Mul (multiset-of (Num (rational 1 2)) (Sym \"v20\")))) (Bee \"e20\")))",
+//!    "     (Mul (multiset-of \
+//!            (Neg (Mul (multiset-of (Num (rational 1 2)) (Sym \"v01\")))) (Bee \"e01\")))))",
+//! ]);
+//! ```
+//!
+//! See [List Form Arguments] for the [`egglog`] data type definition. Alternatively, transform the
+//! data type through [Scheme] with `"{:<#E}"` or `"{:>#E}"` to suit your rewrite rules. Importing
+//! back optimized expressions along with their CSEs might be supported in the future.
 //!
 //! # Tree Form in Unicode Mode
 //!

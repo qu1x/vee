@@ -27,6 +27,7 @@ The goal of this crate is to generate optimized code for geometric algebra flavo
     coincide.
   * Generate text form in Unicode/ASCII/LaTeX mode.
   * Generate code form in generic/Rust mode.
+  * Generate list form (i.e., [s-expressions], [Scheme], or [`egglog`]) in Unicode/ASCII mode.
   * Generate tree form (i.e., DOT graphs as in [`text/vnd.graphviz`]) in Unicode/ASCII mode.
   * Eliminate orthonormalization conditions from expressions using reflection/projection
     operator by factoring pinned symbols, GCD coefficients, and predominant signs.
@@ -36,16 +37,19 @@ The goal of this crate is to generate optimized code for geometric algebra flavo
     along with the multivector entities for dimensions D = N + 1 <= 8 of the
     plane-based pistachio flavor, i.e., projective geometric algebra (PGA).
 
+[s-expressions]: https://en.wikipedia.org/wiki/S-expression
+[Scheme]: https://en.wikipedia.org/wiki/Scheme_(programming_language)
+[`egglog`]: https://docs.rs/egglog
 [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
 
 ## Roadmap
 
   * Simplify emitter by flattening expression tree into token stream and perform defer logic
     during stream iteration rather than tree traversal.
-  * Further optimize expressions to reduce operation count by domain-specific common
-    subexpression elimination (CSE) targeting exterior products. Reduce search space by
-    leveraging applicable geometric decomposition, e.g., Euclidean decomposition for parabolic
-    reflection operator.
+  * Explore [`egglog`] to further optimize expressions to reduce operation count by
+    domain-specific common subexpression elimination (CSE) targeting exterior products. Reduce
+    search space by leveraging applicable geometric decomposition, e.g., Euclidean decomposition
+    for parabolic reflection operator. If promising, import expressions back.
   * Generate expressions in SIMD mode.
   * Define other geometric algebra flavors.
 

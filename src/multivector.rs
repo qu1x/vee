@@ -7,7 +7,7 @@ use super::{
     Algebra, Factorization, Integer, NegAssign, Polynomial, Rational, Rev, RevAssign, Symbol, Tree,
 };
 use core::{
-    fmt::{self, Alignment, Debug, Display, LowerHex, Octal},
+    fmt::{self, Alignment, Debug, Display, LowerExp, LowerHex, Octal, UpperExp},
     iter::{Product, Sum},
     mem::replace,
     ops::{
@@ -43,8 +43,8 @@ use std::collections::{BTreeMap, BTreeSet, btree_map::Entry};
 ///   * `"{:<}"` for omitting plus signs,
 ///   * `"{:>}"` for omitting plus signs and surrounding operators with spaces,
 ///   * `"{:^}"` for dereferencing input and output fields implying `"{:>#}"` (used by code form),
-///   * `"{:$^}"` for $`\textbf{\LaTeX}`$ **mode** where the [`width`](std::fmt#width) parameter as
-///     in `r"  \boldsymbol\ell = {:$^2}"` indents successive lines by additional two spaces,
+///   * `"{:$^}"` for $`\textbf{\LaTeX}`$ **mode** where the [`width`] parameter as in
+///     `r"  \boldsymbol\ell = {:$^2}"` indents successive lines by additional two spaces,
 ///   * `"{:$>}"` for $`\textbf{\LaTeX}`$ **mode** omitting top alignment argument,
 ///   * `"{:$<}"` for $`\textbf{\LaTeX}`$ **mode** omitting environment begin and end.
 ///
@@ -58,7 +58,45 @@ use std::collections::{BTreeMap, BTreeSet, btree_map::Entry};
 ///   * `"{:#x}"` for **Rust mode** instead of generic statements,
 ///   * `"{:^x}"` for **Rust mode** dereferencing input and output fields.
 ///
-/// where the [`width`](std::fmt#width) parameter as in `"{:^#4x}"` indents the code by four spaces.
+/// where the [`width`] parameter as in `"{:^#4x}"` indents the code by four spaces.
+///
+/// # List Form in Unicode/ASCII mode
+///
+/// Leverage the [`LowerExp`] trait to generate list form (i.e., [s-expressions], [Scheme], or
+/// [`egglog`]), in **Unicode mode** by default:
+///
+///   * `"{:e}"` for factorization of pinned symbols and GCDs,
+///   * `"{:-e}"` for factorization of pinned symbols and GCDs inclusive the predominant sign,
+///   * `"{:+e}"` for expanded form (i.e., no factorization),
+///   * `"{:#e}"` for **ASCII mode** using alternative symbols labelled after basis blades,
+///   * `"{:0e}"` for zero newlines,
+///   * `"{:<e}"` for the `<bindings>` expression of [Scheme]'s `let` operator as in
+///     `(let <bindings> <body>)`,
+///   * `"{:>e}"` for defining variables in [Scheme] as in `(define-values (e0 e1) (values V x))`,
+///   * `"{:^e}"` for neither `"{:>e}"` nor `"{:<e}"`,
+///   * `"{:-^e}"` for converting, e.g., `(* -1 x y)`/`(* -2 x y)` into `(- (x y))`/`(- (* 2 x y))`,
+///
+/// where the [`width`] parameter as in `"{:<2e}"`/`"{:^2e}"` (`"{:>2e}"`) indents successive (all)
+/// lines by additional two spaces.
+///
+/// Leverage the [`UpperExp`] trait with identical arguments to generate list form as [`egglog`]
+/// (i.e., directly with `"{:E}"` or indirectly through [Scheme] with `"{:<E}"` or `"{:>E}"`):
+///
+/// ```text
+/// (datatype*
+///   (Vee
+///     (Add Mee)
+///     (Neg Vee)
+///     (Mul Mee)
+///     (Num Rational)
+///     (Sym String)
+///     (Bee String))
+///   (sort Mee (MultiSet Vee)))
+/// ```
+///
+/// [s-expressions]: https://en.wikipedia.org/wiki/S-expression
+/// [Scheme]: https://en.wikipedia.org/wiki/Scheme_(programming_language)
+/// [`egglog`]: https://docs.rs/egglog
 ///
 /// # Tree Form in Unicode/ASCII mode
 ///
@@ -72,6 +110,8 @@ use std::collections::{BTreeMap, BTreeSet, btree_map::Entry};
 ///   * `"{:0o}"` for left-to-right rank direction.
 ///
 /// [`text/vnd.graphviz`]: https://en.wikipedia.org/wiki/DOT_(graph_description_language)
+///
+/// [`width`]: std::fmt#width
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Multivector<B: Algebra> {
     /// Symbolic storage.
@@ -1190,6 +1230,228 @@ impl<B: Algebra> LowerHex for Multivector<B> {
             } else {
                 writeln!(fmt, "{b:#}={v:<#0}")?;
             }
+        }
+        Ok(())
+    }
+}
+
+impl<B: Algebra> LowerExp for Multivector<B> {
+    #[inline]
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        Self::list_fmt(self, fmt, ["+", "-", "*", "", "", ""])
+    }
+}
+
+impl<B: Algebra> UpperExp for Multivector<B> {
+    #[inline]
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        Self::list_fmt(self, fmt, ["Add", "Neg", "Mul", "Num", "Sym", "Bee"])
+    }
+}
+
+impl<B: Algebra> Multivector<B> {
+    fn list_traverse(
+        fmt: &mut fmt::Formatter,
+        ops: [&str; 6],
+        tree: &Tree,
+        close: bool,
+    ) -> fmt::Result {
+        let [add, neg, mul, num, sym, bee] = ops;
+        let (ary, mid, end) = if bee.is_empty() {
+            ("", "", "")
+        } else {
+            (" (multiset-of", "  ", ")")
+        };
+        match tree {
+            Tree::Add(siblings) => {
+                write!(fmt, "({add}{ary}")?;
+                for (index, sibling) in siblings.iter().enumerate() {
+                    write!(fmt, " ")?;
+                    Self::list_traverse(fmt, ops, sibling, index + 1 != siblings.len())?;
+                }
+                write!(fmt, "{end})")?;
+            }
+            Tree::Mul(siblings) => {
+                let vec = siblings
+                    .last()
+                    .and_then(Tree::as_sym)
+                    .filter(Symbol::is_vec);
+                if vec.as_ref().is_some_and(Symbol::is_scalar) && siblings.len() == 2 {
+                    Self::list_traverse(fmt, ops, &siblings[0], false)?;
+                } else if fmt.fill() == '-'
+                    && let Some(num) = siblings
+                        .first()
+                        .and_then(Tree::as_num)
+                        .filter(|num| num.is_negative())
+                {
+                    let siblings = &siblings[1..];
+                    write!(fmt, "({neg} ")?;
+                    if num.abs().is_one() && !siblings.is_empty() {
+                        if siblings.len() == 1 {
+                            Self::list_traverse(fmt, ops, &siblings[0], false)?;
+                        } else {
+                            write!(fmt, "({mul}{ary}")?;
+                            for sibling in siblings {
+                                write!(fmt, " ")?;
+                                Self::list_traverse(fmt, ops, sibling, false)?;
+                            }
+                            write!(fmt, "{end})")?;
+                        }
+                    } else {
+                        write!(fmt, "({mul}{ary} ")?;
+                        Self::list_traverse(fmt, ops, &num.abs().into(), false)?;
+                        for sibling in siblings {
+                            write!(fmt, " ")?;
+                            Self::list_traverse(fmt, ops, sibling, false)?;
+                        }
+                        write!(fmt, "{end})")?;
+                    }
+                    write!(fmt, ")")?;
+                } else {
+                    write!(fmt, "({mul}{ary}")?;
+                    for sibling in siblings {
+                        write!(fmt, " ")?;
+                        Self::list_traverse(fmt, ops, sibling, false)?;
+                    }
+                    write!(fmt, "{end})")?;
+                }
+                if close && !fmt.sign_aware_zero_pad() && vec.is_some() {
+                    write!(fmt, "\n{mid}  ")?;
+                    if let Some(width) = fmt.width() {
+                        write!(fmt, "{:width$}", "")?;
+                    }
+                }
+            }
+            Tree::Num(q) => {
+                if num.is_empty() {
+                    write!(fmt, "{q}")?;
+                } else {
+                    let (m, n) = (q.numerator().get(), q.denominator().get());
+                    write!(fmt, "({num} (rational {m} {n}))")?;
+                }
+            }
+            Tree::Sym(s) if s.is_vec() => {
+                let b = B::try_from(*s).map_err(|_s| fmt::Error)?;
+                if sym.is_empty() {
+                    write!(fmt, "{b:#}")?;
+                } else {
+                    write!(fmt, "({bee} \"{b:#}\")")?;
+                }
+            }
+            Tree::Sym(s) => {
+                if fmt.alternate() {
+                    if sym.is_empty() {
+                        write!(fmt, "{s:#}")?;
+                    } else {
+                        write!(fmt, "({sym} \"{s:#}\")")?;
+                    }
+                } else {
+                    if sym.is_empty() {
+                        write!(fmt, "{s}")?;
+                    } else {
+                        write!(fmt, "({sym} \"{s}\")")?;
+                    }
+                }
+            }
+        }
+        Ok(())
+    }
+    fn list_fmt(&self, fmt: &mut fmt::Formatter, ops: [&str; 6]) -> fmt::Result {
+        let quote = if ops[5].is_empty() { "" } else { "'" };
+        match fmt.align() {
+            Some(Alignment::Left) => {
+                write!(fmt, "(")?;
+                for (i, (b, p)) in self.map.iter().enumerate() {
+                    let map = BTreeMap::from([(B::scalar(), p.clone())]);
+                    let v = Self { map, onc: self.onc };
+                    let t = if fmt.sign_plus() {
+                        Tree::from(v)
+                    } else {
+                        Tree::with_factorization(v, fmt.sign_minus())
+                    };
+                    if i != 0
+                        && !fmt.sign_aware_zero_pad()
+                        && let Some(width) = fmt.width()
+                    {
+                        write!(fmt, "{:width$}", "")?;
+                    }
+                    if i != 0 {
+                        write!(fmt, " ")?;
+                    }
+                    write!(fmt, "({b:#} {quote}")?;
+                    Self::list_traverse(fmt, ops, &t, false)?;
+                    write!(fmt, ")")?;
+                    if i + 1 != self.map.len() {
+                        if fmt.sign_aware_zero_pad() {
+                            write!(fmt, " ")?;
+                        } else {
+                            writeln!(fmt)?;
+                        }
+                    }
+                }
+                write!(fmt, ")")?;
+            }
+            Some(Alignment::Right) => {
+                if !self.map.is_empty() {
+                    let width = fmt
+                        .width()
+                        .filter(|_width| !fmt.sign_aware_zero_pad())
+                        .map(|width| format!("{:width$}", ""))
+                        .unwrap_or_default();
+                    write!(fmt, "{width}(define-values (")?;
+                    for (i, b) in self.map.keys().enumerate() {
+                        if i != 0 && !fmt.sign_aware_zero_pad() {
+                            write!(fmt, "{width}{:16}", "")?;
+                        }
+                        write!(fmt, "{b:#}")?;
+                        if i + 1 != self.map.len() {
+                            if fmt.sign_aware_zero_pad() {
+                                write!(fmt, " ")?;
+                            } else {
+                                writeln!(fmt)?;
+                            }
+                        }
+                    }
+                    write!(fmt, ")")?;
+                    if !fmt.sign_aware_zero_pad() {
+                        write!(fmt, "\n{width} ")?;
+                    }
+                    write!(fmt, " (values ")?;
+                    for (i, p) in self.map.values().enumerate() {
+                        let map = BTreeMap::from([(B::scalar(), p.clone())]);
+                        let v = Self { map, onc: self.onc };
+                        let t = if fmt.sign_plus() {
+                            Tree::from(v)
+                        } else {
+                            Tree::with_factorization(v, fmt.sign_minus())
+                        };
+                        if i != 0 && !fmt.sign_aware_zero_pad() {
+                            write!(fmt, "{width}{:10}", "")?;
+                        }
+                        write!(fmt, "{quote}")?;
+                        Self::list_traverse(fmt, ops, &t, false)?;
+                        if i + 1 != self.map.len() {
+                            if fmt.sign_aware_zero_pad() {
+                                write!(fmt, " ")?;
+                            } else {
+                                writeln!(fmt)?;
+                            }
+                        }
+                    }
+                    write!(fmt, "))")?;
+                }
+            }
+            _ => {
+                let t = if fmt.sign_plus() {
+                    Tree::from(self.clone())
+                } else {
+                    Tree::with_factorization(self.clone(), fmt.sign_minus())
+                };
+                Self::list_traverse(fmt, ops, &t, false)?;
+            }
+        }
+        if !fmt.sign_aware_zero_pad() {
+            writeln!(fmt)?;
         }
         Ok(())
     }
